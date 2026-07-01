@@ -3,14 +3,18 @@ using UnityEngine;
 public class ThirdPersonCamera : MonoBehaviour
 {
     [Header("Mục tiêu theo dõi")]
-    public Transform target;          // Nhân vật (rp_nathan_...)
+    public Transform target;          // Nhân vật 
 
-    [Header("Cấu hình Camera")]
-    public float distance = 6f;       // Khoảng cách từ cam đến lưng nhân vật
-    public float sensitivity = 3f;    // Tốc độ xoay/Độ nhạy của chuột
+    [Header("Cấu hình Camera (Phong cách Wukong)")]
+    public float distance = 2.5f;     
+    public float sensitivity = 3f;
+
+    [Header("Độ lệch (Over-the-Shoulder)")]
+    public float offsetX = 1.2f;      // Đẩy cam sang PHẢI 1.2m -> Nhân vật sẽ nằm bên TRÁI
+    public float offsetY = 2f;      // Chiều cao ngắm tới (Ngang ngực/vai thay vì đỉnh đầu)
 
     [Header("Giới hạn góc nhìn ngước lên/cúi xuống")]
-    public float minY = -10f;
+    public float minY = -15f;
     public float maxY = 60f;
 
     private float rotationX = 0f;
@@ -18,7 +22,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Start()
     {
-        // Ẩn con trỏ chuột và khóa nó vào giữa màn hình khi đang chơi game
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -27,21 +31,25 @@ public class ThirdPersonCamera : MonoBehaviour
     {
         if (target == null) return;
 
-        // Đọc dữ liệu di chuyển từ chuột trái/phải và lên/xuống
+        // Đọc dữ liệu di chuyển từ chuột
         rotationX += Input.GetAxis("Mouse X") * sensitivity;
         rotationY -= Input.GetAxis("Mouse Y") * sensitivity;
-
-        // Giới hạn góc để camera không bị lộn nhào lộn ngửa qua đầu nhân vật
         rotationY = Mathf.Clamp(rotationY, minY, maxY);
 
         // Tính toán góc quay của Camera
         Quaternion rotation = Quaternion.Euler(rotationY, rotationX, 0);
 
-        // Tính vị trí đứng của Camera (nhìn vào điểm ngang vai/đầu nhân vật cao hơn gốc chân 1.5m)
-        Vector3 targetLookAtPos = target.position + Vector3.up * 1.5f;
+        // ĐIỂM MẤU CHỐT TẠO GÓC WUKONG NẰM Ở ĐÂY:
+        // Lấy hướng "sang phải" của camera nhân với offsetX để đẩy điểm nhìn lệch đi
+        Vector3 rightOffset = rotation * Vector3.right * offsetX;
+
+        // Vị trí mục tiêu bây giờ = Vị trí NV + Chiều cao (offsetY) + Lệch sang phải (rightOffset)
+        Vector3 targetLookAtPos = target.position + (Vector3.up * offsetY) + rightOffset;
+
+        // Kéo vị trí camera lùi về sau dựa trên khoảng cách (distance)
         Vector3 position = targetLookAtPos - (rotation * Vector3.forward * distance);
 
-        // Áp dụng vị trí và hướng nhìn cho Camera
+        // Áp dụng
         transform.rotation = rotation;
         transform.position = position;
     }
