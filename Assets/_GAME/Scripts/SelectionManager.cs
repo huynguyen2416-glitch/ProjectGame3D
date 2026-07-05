@@ -25,13 +25,14 @@ public class SelectionManager : MonoBehaviour
             if (interactable && interactable.playerInRange)
             {
                 onTarget = true;
+
                 interaction_text.text = interactable.GetItemName();
                 interaction_Info_UI.SetActive(true);
 
-                // Nhặt đồ bằng chuột trái hoặc phím F
-                if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.F))
+                // Nhặt đồ bằng phím F
+                if ( Input.GetKeyDown(KeyCode.F))
                 {
-                    // LUỒNG QUAN TRỌNG: Gọi balo để thêm vật phẩm bằng Tên trước khi xóa
+                    //  Gọi balo để thêm vật phẩm bằng Tên trước khi xóa
                     InventorySystem.Instance.AddToInventory(interactable.GetItemName());
 
                     Destroy(selectionTransform.gameObject);
