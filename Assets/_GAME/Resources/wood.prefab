@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1739249594197892237}
   - component: {fileID: 5291591370453311083}
   - component: {fileID: 4374480622610446812}
+  - component: {fileID: -8294113487045560936}
   m_Layer: 0
   m_Name: wood
   m_TagString: Untagged
@@ -102,3 +103,26 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &-8294113487045560936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8971540396001914063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
+  isTrashable: 1
+  thisName: "G\u1ED7"
+  thisDescription: "H\u1EA7u nh\u01B0 m\u1ECDi d\u1EE5ng c\u1EE5 b\u1EA1n t\u1EA1o
+    \u0111\u1EC1u xu\u1EA5t ph\xE1t t\u1EEB \u0111\xE2y, qu\u1EA3 l\xE0 m\u1ED9t
+    nguy\xEAn li\u1EC7u h\u1EEFu \xEDch"
+  thisFunctionality: "Nguy\xEAn li\u1EC7u ch\u1EBF t\u1EA1o"
+  isConsumable: 0
+  healthEffect: 0
+  caloriesEffect: 0
+  hydrationEffect: 0
+  item3DPrefab: {fileID: 6883307088233738953, guid: 4924ab1ef2a91e847b5f258a59bed3b6, type: 3}

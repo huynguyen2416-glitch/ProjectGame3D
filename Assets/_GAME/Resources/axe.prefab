@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6499660295495873940}
   - component: {fileID: 4470554013207985170}
   - component: {fileID: 2590565360988903879}
+  - component: {fileID: 7616058333394604987}
   m_Layer: 0
   m_Name: axe
   m_TagString: Untagged
@@ -102,3 +103,26 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &7616058333394604987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7418165583574327131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
+  isTrashable: 1
+  thisName: "R\xECu"
+  thisDescription: "R\xECu h\u1EA1ng nh\u1EB9, c\xF3 v\u1EBB nh\u01B0 ng\u01B0\u1EDDi
+    l\xE0m ra n\xF3 \u0111\xE3 r\u1EA5t t\xE2m huy\u1EBFt, d\xF9ng \u0111\u1EC3 ch\u1EB7t
+    c\xE2y"
+  thisFunctionality: "C\xF3 th\u1EC3 ch\u1EBF t\u1EA1o [C]"
+  isConsumable: 0
+  healthEffect: 0
+  caloriesEffect: 0
+  hydrationEffect: 0
+  item3DPrefab: {fileID: 4193319500868392664, guid: 19ddd6f290a6fbc4d9ad2689f3a74d92, type: 3}

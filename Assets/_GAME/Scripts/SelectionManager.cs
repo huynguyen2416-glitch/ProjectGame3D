@@ -6,6 +6,8 @@ public class SelectionManager : MonoBehaviour
     public GameObject interaction_Info_UI;
     Text interaction_text;
     public bool onTarget;
+    public Image centerDotImage;
+    public Image handIcon;
 
     private void Start()
     {
@@ -26,8 +28,18 @@ public class SelectionManager : MonoBehaviour
             {
                 onTarget = true;
 
-                interaction_text.text = interactable.GetItemName();
+                interaction_text.text = interactable.GetDisplayName();
                 interaction_Info_UI.SetActive(true);
+                if (interactable.CompareTag("pickable"))
+                {
+                    centerDotImage.gameObject.SetActive(false);
+                    handIcon.gameObject.SetActive(true);
+                }
+                else
+                {
+                    handIcon.gameObject.SetActive(false);
+                    centerDotImage.gameObject.SetActive(true);
+                }
 
                 // Nhặt đồ bằng phím F
                 if ( Input.GetKeyDown(KeyCode.F))
@@ -44,12 +56,16 @@ public class SelectionManager : MonoBehaviour
             {
                 onTarget = false;
                 interaction_Info_UI.SetActive(false);
+                handIcon.gameObject.SetActive(false);
+                centerDotImage.gameObject.SetActive(true);
             }
         }
         else
         {
             onTarget = false;
             interaction_Info_UI.SetActive(false);
+            handIcon.gameObject.SetActive(false);
+            centerDotImage.gameObject.SetActive(true);
         }
     }
 }

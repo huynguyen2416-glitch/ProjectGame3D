@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1976673140562814475
+--- !u!1 &5274339241808281985
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,11 +8,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1025190972428743262}
-  - component: {fileID: 1576571879130090060}
-  - component: {fileID: 4404784306223736197}
-  - component: {fileID: 3534319544976632225}
-  - component: {fileID: 3740275200704768463}
+  - component: {fileID: 6986197974863405046}
+  - component: {fileID: 8547589448116931275}
+  - component: {fileID: 2008600979910275472}
+  - component: {fileID: 8072570951365976347}
+  - component: {fileID: 7505841465075545775}
+  - component: {fileID: 5692579224520440325}
   m_Layer: 0
   m_Name: mushroom
   m_TagString: Untagged
@@ -20,15 +21,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1025190972428743262
+--- !u!224 &6986197974863405046
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976673140562814475}
+  m_GameObject: {fileID: 5274339241808281985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2628.4136}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -36,24 +37,24 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1328.0691, y: -2.24998}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1576571879130090060
+--- !u!222 &8547589448116931275
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976673140562814475}
+  m_GameObject: {fileID: 5274339241808281985}
   m_CullTransparentMesh: 1
---- !u!114 &4404784306223736197
+--- !u!114 &2008600979910275472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976673140562814475}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -77,28 +78,50 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3534319544976632225
+--- !u!114 &8072570951365976347
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976673140562814475}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1824a6dab9a982c4eb3e6d0cb3155e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragDrop
   canvas: {fileID: 0}
---- !u!225 &3740275200704768463
+--- !u!225 &7505841465075545775
 CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976673140562814475}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &5692579224520440325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5274339241808281985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
+  isTrashable: 1
+  thisName: "N\u1EA5m"
+  thisDescription: "Lo\u1EA1i th\u1EF1c ph\u1EA9m c\xF3 kh\u1EAFp n\u01A1i tr\xEAn
+    h\xF2n \u0111\u1EA3o n\xE0y, ch\xFAng c\xF3 v\u1EBB c\xF3 th\u1EC3 \u0103n \u0111\u01B0\u1EE3c"
+  thisFunctionality: "C\xF3 th\u1EC3 ti\xEAu th\u1EE5 [E]"
+  isConsumable: 1
+  healthEffect: 100
+  caloriesEffect: 10
+  hydrationEffect: 10
+  item3DPrefab: {fileID: 0}

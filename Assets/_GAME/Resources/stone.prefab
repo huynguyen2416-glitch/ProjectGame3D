@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3138165463149563637}
   - component: {fileID: 8214177794135750817}
   - component: {fileID: 2780004333785048951}
+  - component: {fileID: 1656145850274953736}
   m_Layer: 0
   m_Name: stone
   m_TagString: Untagged
@@ -102,3 +103,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1656145850274953736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3643666181518094536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
+  isTrashable: 1
+  thisName: "\u0110\xE1"
+  thisDescription: "Nguy\xEAn li\u1EC7u kh\xF4ng th\u1EC3 thi\u1EBFu \u0111\u1EC3
+    c\xF3 th\u1EC3 ch\u1EBF t\u1EA1o nh\u1EEFng \u0111\u1ED3 d\xF9ng thi\u1EBFt y\u1EBFu"
+  thisFunctionality: "Nguy\xEAn li\u1EC7u ch\u1EBF t\u1EA1o"
+  isConsumable: 0
+  healthEffect: 0
+  caloriesEffect: 0
+  hydrationEffect: 0
+  item3DPrefab: {fileID: 0}

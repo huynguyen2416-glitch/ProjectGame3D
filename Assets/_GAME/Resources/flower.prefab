@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2400558019678126524
+--- !u!1 &1883672974577044019
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,11 +8,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7920640147138741541}
-  - component: {fileID: 4171369595835032746}
-  - component: {fileID: 6441642779231172574}
-  - component: {fileID: 6826289226255802219}
-  - component: {fileID: 2514152288670316010}
+  - component: {fileID: 7083072031011279996}
+  - component: {fileID: 4414964322858263969}
+  - component: {fileID: 8949204285809148780}
+  - component: {fileID: 1948660470295537394}
+  - component: {fileID: 8980964958922569047}
+  - component: {fileID: -401380473336856997}
   m_Layer: 0
   m_Name: flower
   m_TagString: Untagged
@@ -20,15 +21,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &7920640147138741541
+--- !u!224 &7083072031011279996
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2400558019678126524}
+  m_GameObject: {fileID: 1883672974577044019}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1046.0056}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -36,24 +37,24 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 36.487118, y: -224.99998}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &4171369595835032746
+--- !u!222 &4414964322858263969
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2400558019678126524}
+  m_GameObject: {fileID: 1883672974577044019}
   m_CullTransparentMesh: 1
---- !u!114 &6441642779231172574
+--- !u!114 &8949204285809148780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2400558019678126524}
+  m_GameObject: {fileID: 1883672974577044019}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -77,28 +78,50 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6826289226255802219
+--- !u!114 &1948660470295537394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2400558019678126524}
+  m_GameObject: {fileID: 1883672974577044019}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1824a6dab9a982c4eb3e6d0cb3155e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragDrop
   canvas: {fileID: 0}
---- !u!225 &2514152288670316010
+--- !u!225 &8980964958922569047
 CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2400558019678126524}
+  m_GameObject: {fileID: 1883672974577044019}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &-401380473336856997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1883672974577044019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
+  isTrashable: 1
+  thisName: "B\xF4ng Hoa"
+  thisDescription: "M\u1ED9t b\xF4ng hoa nh\u1ECF c\xF3 th\u1EC3 l\xE0m g\xEC \u0111\xF3"
+  thisFunctionality: "C\xF3 th\u1EC3 ti\xEAu th\u1EE5 [E] , C\xF3 th\u1EC3 ch\u1EBF
+    thu\u1ED1c [C]"
+  isConsumable: 1
+  healthEffect: 10
+  caloriesEffect: 100
+  hydrationEffect: 30
+  item3DPrefab: {fileID: 0}

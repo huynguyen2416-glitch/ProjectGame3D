@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +10,6 @@ public class InventorySystem : MonoBehaviour
     public GameObject inventoryScreenUI;
 
     // ĐÂY LÀ KHỐI PREFAB CHỨA UI IMAGE ĐỂ SINH RA (ví dụ file 'silver' hoặc 'stone' dạng Prefab UI)
-    [Header("Item Prefab Config")]
     public GameObject itemIconPrefab;
 
     public List<GameObject> slotList = new List<GameObject>();
@@ -19,6 +19,11 @@ public class InventorySystem : MonoBehaviour
     public bool isOpen;
     public bool isFull;
 
+    //popup
+    public GameObject pickupAlert;
+    public Text pickupName;
+    public Image pickupImage;
+    public GameObject itemInfoUI;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -101,6 +106,11 @@ public class InventorySystem : MonoBehaviour
 
                     itemList.Add(itemName);
                     Debug.Log("Đã nhặt thành công: " + itemName);
+                    InventoryItem itemScript = itemToAdd.GetComponent<InventoryItem>();
+                    string displayName = (itemScript != null && !string.IsNullOrEmpty(itemScript.thisName)) ? itemScript.thisName : itemName;
+
+                    // Truyền displayName (Tiếng Việt) vào Popup thay vì itemName (Tiếng Anh)
+                    TriggerPickupPopup(displayName, itemToAdd.GetComponent<Image>().sprite);
                 }
                 else
                 {
@@ -110,6 +120,21 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
+    void TriggerPickupPopup(string itemName, Sprite itemSprite)
+    {
+        pickupAlert.SetActive(true);
+        pickupName.text = itemName;
+        pickupImage.sprite = itemSprite;
+
+        // Dừng các hiệu ứng tắt cũ (nếu có) và bắt đầu đếm ngược tắt Popup
+        StopAllCoroutines();
+        StartCoroutine(HidePopupCoroutine());
+    }
+    private IEnumerator HidePopupCoroutine()
+    {
+        yield return new WaitForSeconds(2f); // Đợi 2 giây
+        pickupAlert.SetActive(false);        // Tắt Popup
+    }
     private GameObject FindNextEmptySlot()
     {
         foreach (GameObject slot in slotList)

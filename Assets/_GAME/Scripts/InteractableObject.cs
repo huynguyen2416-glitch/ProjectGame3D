@@ -3,12 +3,25 @@ using UnityEngine;
 public class InteractableObject : MonoBehaviour
 {
     public string itemName;
-    public Sprite itemIcon; // Khai báo thêm biến chứa hình ảnh
+    public string displayItemName;
+
+    public Sprite itemIcon;
     public bool playerInRange;
 
+    // Trả về ID không dấu cho hệ thống Balo
     public string GetItemName()
     {
         return itemName;
+    }
+
+    // Trả về Tên có dấu để in ra UI
+    public string GetDisplayName()
+    {
+        if (string.IsNullOrEmpty(displayItemName))
+        {
+            return itemName;
+        }
+        return displayItemName;
     }
 
     private void OnTriggerEnter(Collider other)

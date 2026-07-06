@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 2183526067844555590}
   m_Layer: 0
   m_Name: Flower
-  m_TagString: Untagged
+  m_TagString: pickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -204,7 +204,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 2.24, z: 1}
+  m_Size: {x: 2.18, y: 2.46, z: 3.18}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2183526067844555590
 MonoBehaviour:
@@ -219,6 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
   itemName: flower
+  displayItemName: Hoa
   itemIcon: {fileID: 0}
   playerInRange: 0
 --- !u!1 &3147240064290245847

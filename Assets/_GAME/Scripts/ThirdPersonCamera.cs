@@ -27,6 +27,8 @@ public class ThirdPersonCamera : MonoBehaviour
     void Update()
     {
         if (target == null) return;
+        //lock nếu chuột mở thao tác khác
+        if (Cursor.lockState != CursorLockMode.Locked) return;
 
         // Đọc chuột ở Update để nhận phản hồi nhanh nhất, không bị miss frame
         rotationX += Input.GetAxis("Mouse X") * sensitivity;
@@ -49,8 +51,7 @@ public class ThirdPersonCamera : MonoBehaviour
                                   - (rotation * Vector3.forward * distance) 
                                   + (rotation * Vector3.right * offsetX);
 
-        // GÁN TRỰC TIẾP (BỎ SMOOTHDAMP). 
-        // Do nhân vật đã đi mượt (WASD ok) nên camera bắt cứng vào đây sẽ mượt theo!
+        // camera dí vào chuyển động nhân vật
         transform.position = desiredPosition;
         transform.rotation = rotation;
     }
