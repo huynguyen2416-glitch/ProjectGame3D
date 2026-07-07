@@ -1,10 +1,12 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-	public float walkSpeed = 3f;  // Tốc độ khi đi bộ bình thường
-	public float runSpeed = 7f;   // Tốc độ khi đè phím Shift
+	public float walkSpeed = 3f;
+	public float runSpeed = 7f;
 	public float rotationSpeed = 720f;
+	public float jumpHeight = 1.5f;
 
 	public Animator animator;
 	public Transform mainCamera;
@@ -16,33 +18,74 @@ public class PlayerMovement : MonoBehaviour
 	void Start()
 	{
 		controller = GetComponent<CharacterController>();
-		if (animator == null) animator = GetComponentInChildren<Animator>();
-		if (mainCamera == null) mainCamera = Camera.main.transform;
+
+		if (animator == null)
+			animator = GetComponentInChildren<Animator>();
+
+		if (mainCamera == null && Camera.main != null)
+			mainCamera = Camera.main.transform;
 	}
 
 	void Update()
 	{
+		if (controller == null || !controller.enabled || !controller.gameObject.activeInHierarchy)
+		{
+			Debug.LogError($"[SỬA LỖI] Script PlayerMovement đang chạy trên Object: '{gameObject.name}', nhưng CharacterController bị TẮT hoặc INACTIVE!");
+			return;
+		}
+
 		float horizontal = Input.GetAxisRaw("Horizontal");
 		float vertical = Input.GetAxisRaw("Vertical");
 
-		// KIỂM TRA PHÍM SHIFT: Trả về true nếu đang đè Left Shift
 		bool isRunning = Input.GetKey(KeyCode.LeftShift);
+		bool isJumpPressed = Input.GetButtonDown("Jump");
 
-		// Chọn tốc độ dựa trên việc có đè Shift hay không
+		// THÊM MỚI: Nhận tín hiệu Chuột trái (0 là trái, 1 là phải, 2 là chuột giữa)
+		bool isSlashPressed = Input.GetMouseButtonDown(0);
+
 		float currentSpeed = isRunning ? runSpeed : walkSpeed;
+		Vector3 moveDirection = Vector3.zero;
 
-		Vector3 camForward = mainCamera.forward;
-		Vector3 camRight = mainCamera.right;
-		camForward.y = 0f;
-		camRight.y = 0f;
-		camForward.Normalize();
-		camRight.Normalize();
+		if (mainCamera != null)
+		{
+			Vector3 camForward = mainCamera.forward;
+			Vector3 camRight = mainCamera.right;
+			camForward.y = 0f;
+			camRight.y = 0f;
+			camForward.Normalize();
+			camRight.Normalize();
 
-		Vector3 moveDirection = (camForward * vertical + camRight * horizontal).normalized;
+			moveDirection = (camForward * vertical + camRight * horizontal).normalized;
+		}
+		else
+		{
+			moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
+		}
 
-		if (controller.isGrounded) { velocityY = -0.5f; }
-		else { velocityY += gravity * Time.deltaTime; }
+		if (isSlashPressed)
+		{
+			if (animator != null)
+				animator.SetTrigger("Slash");
+		}
 
+		// Xử lý trọng lực và Nhảy
+		if (controller.isGrounded)
+		{
+			velocityY = -0.5f;
+			if (isJumpPressed)
+			{
+				velocityY = Mathf.Sqrt(jumpHeight * -2f * gravity);
+
+				if (animator != null)
+					animator.SetTrigger("Jumping");
+			}
+		}
+		else
+		{
+			velocityY += gravity * Time.deltaTime;
+		}
+
+		// Xử lý Di chuyển & Xoay
 		if (moveDirection.magnitude >= 0.1f)
 		{
 			Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
@@ -55,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
 			if (animator != null)
 			{
 				animator.SetBool("isMoving", true);
-				animator.SetBool("isRunning", isRunning); // Truyền lệnh chạy sang Animator
+				animator.SetBool("isRunning", isRunning);
 			}
 		}
 		else
@@ -65,8 +108,8 @@ public class PlayerMovement : MonoBehaviour
 
 			if (animator != null)
 			{
-				animator.SetBool("isMoving", false);
-				animator.SetBool("isRunning", false);
+				animator.SetBool("isMoving", moveDirection.magnitude >= 0.1f);
+				animator.SetBool("isRunning", isRunning && moveDirection.magnitude >= 0.1f);
 			}
 		}
 	}

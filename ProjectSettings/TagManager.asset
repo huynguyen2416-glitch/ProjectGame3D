@@ -5,9 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Water
-  - Slot
-  - pickable
-  - QuickSlot
+  - Ground
+  - Enemy
   layers:
   - Default
   - TransparentFX
