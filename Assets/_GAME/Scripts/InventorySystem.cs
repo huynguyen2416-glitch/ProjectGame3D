@@ -41,6 +41,7 @@ public class InventorySystem : MonoBehaviour
         isOpen = false;
         isFull = false;
         PopulateSlotList();
+        Cursor.visible = false;
     }
 
     private void PopulateSlotList()
@@ -111,6 +112,7 @@ public class InventorySystem : MonoBehaviour
 
                     // Truyền displayName (Tiếng Việt) vào Popup thay vì itemName (Tiếng Anh)
                     TriggerPickupPopup(displayName, itemToAdd.GetComponent<Image>().sprite);
+                    ReCalculateList();
                 }
                 else
                 {
@@ -165,6 +167,19 @@ public class InventorySystem : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+    public void ReCalculateList()
+    {
+        itemList.Clear();
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                string originalName = slot.transform.GetChild(0).name;
+                string cleanName = originalName.Replace("(Clone)", "");
+                itemList.Add(cleanName);
+            }
         }
     }
 }

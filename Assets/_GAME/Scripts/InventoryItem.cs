@@ -108,23 +108,18 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     // 1. Khi vừa bấm giữ chuột trái và bắt đầu kéo
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Left) return; // Chỉ cho phép kéo bằng chuột trái
+        if (eventData.button != PointerEventData.InputButton.Left) return;
+        if (item3DPrefab == null) return;
 
-        if (item3DPrefab == null)
-        {
-            return; 
-        }
+        DragDrop.itemBeingDragged = gameObject;
 
-        // Lưu lại vị trí ban đầu trong Balo lỡ kéo sai thì trả về
         originalParent = transform.parent;
         originalSiblingIndex = transform.GetSiblingIndex();
 
-        // Đưa icon nhảy ra ngoài cùng (Canvas) để nó nổi lên trên mọi giao diện khác
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
 
-        // Tắt chặn tia Raycast để lúc thả chuột ra, game soi được vùng bên dưới là UI Balo hay là Môi trường ngoài
-        canvasGroup.blocksRaycasts = false;
+        if (canvasGroup != null) canvasGroup.blocksRaycasts = false;
     }
 
     // 2. Khi đang giữ chuột di chuyển
@@ -143,24 +138,33 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnEndDrag(PointerEventData eventData)
     {
         if (eventData.button != PointerEventData.InputButton.Left) return;
-        if (item3DPrefab == null)
-        {
-            return;
-        }
-        // Bật lại tương tác
-        canvasGroup.blocksRaycasts = true;
+        if (item3DPrefab == null) return;
 
-        // KIỂM TRA ĐIỀU KIỆN VỨT:
-        // pointerCurrentRaycast.gameObject == null nghĩa là bên dưới con trỏ chuột KHÔNG CÓ BẤT KỲ GIAO DIỆN UI NÀO
+        if (canvasGroup != null) canvasGroup.blocksRaycasts = true;
+
+        // Vứt đồ ra ngoài 3D
         if (eventData.pointerCurrentRaycast.gameObject == null)
         {
-            DropItem(); // Thực hiện vứt đồ ra đất
+            DropItem();
         }
         else
         {
-            // Nếu thả nhầm vào trong túi đồ, hoặc thả lên UI khác -> Trả đồ về vị trí cũ
-            transform.SetParent(originalParent);
-            transform.SetSiblingIndex(originalSiblingIndex);
+            // 2. CHỈ ép icon quay về chỗ cũ NẾU nó thả trượt ra ngoài ô vuông
+            // (Nếu nó rơi đúng vào ItemSlot, ItemSlot đã nhận nó làm con rồi, ta không cướp lại nữa)
+            if (transform.parent == transform.root)
+            {
+                transform.SetParent(originalParent);
+                transform.SetSiblingIndex(originalSiblingIndex);
+            }
+        }
+
+        // 3. Dọn dẹp biến tạm
+        DragDrop.itemBeingDragged = null;
+
+        // 4. Đồng bộ lại dữ liệu Balo để tránh lỗi chế tạo đồ
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.ReCalculateList();
         }
     }
 
