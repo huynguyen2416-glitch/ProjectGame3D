@@ -3,14 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// ==========================================
+// BƯỚC 1: TẠO "KHUÔN" CÔNG THỨC CHẾ TẠO
+// ==========================================
+[System.Serializable]
+public class CraftingRecipe
+{
+    public string uiName;           // Tên object trên Hierarchy (VD: "Axe", "Poison")
+    public string resultItemName;   // Tên item sinh ra đưa vào balo (VD: "axe", "poison")
+    public GameObject targetScreen; // UI Tab chứa món này (ToolsScreenUI, MedScreenUI...)
+    public int resultAmount = 1;
+    [Header("Nguyên liệu 1")]
+    public string req1;
+    public int req1Amount;
+
+    [Header("Nguyên liệu 2 (Có hay không đều được)")]
+    public string req2;
+    public int req2Amount;
+}
+
 public class CraftingSystem : MonoBehaviour
 {
+    [Header("UI Screens")]
     public GameObject craftingScreenUI;
     public GameObject toolsScreenUI;
-    public List<string> inventoryItemList = new List<string>();
-    Button toolsBTN;
-    public bool isOpen;
+    public GameObject survivalScreenUI;
+    public GameObject medScreenUI;
 
+    // ==========================================
+    // DANH SÁCH CÔNG THỨC (CÓ THỂ CHỈNH SỬA TRỰC TIẾP TRONG UNITY)
+    // ==========================================
+    [Header("Danh sách Công Thức Chế Tạo")]
+    public List<CraftingRecipe> recipes = new List<CraftingRecipe>();
+
+    public List<string> inventoryItemList = new List<string>();
+
+    Button toolsBTN;
+    Button survivalBTN;
+    Button MedBTN;
+
+    public bool isOpen;
     public static CraftingSystem Instance { get; set; }
 
     private void Awake()
@@ -24,27 +56,43 @@ public class CraftingSystem : MonoBehaviour
         isOpen = false;
 
         toolsBTN = craftingScreenUI.transform.Find("ToolsButton").GetComponent<Button>();
-        toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
+        toolsBTN.onClick.AddListener(delegate { OpenCategory(toolsScreenUI); });
 
+        survivalBTN = craftingScreenUI.transform.Find("SurvivalButton").GetComponent<Button>();
+        survivalBTN.onClick.AddListener(delegate { OpenCategory(survivalScreenUI); });
 
-        // ==========================================================
-        SetupCraftButton("Axe", "axe", "stone", 2, "wood", 1);
-        SetupCraftButton("Pickaxe", "pickaxe", "stone", 3, "wood", 2); //thêm Cuốc
-        // ==========================================================
-    }
+        MedBTN = craftingScreenUI.transform.Find("MedButton").GetComponent<Button>();
+        MedBTN.onClick.AddListener(delegate { OpenCategory(medScreenUI); });
 
-    // Hàm phụ trợ tự động tìm Button trên UI và gán sự kiện CraftItem
-    void SetupCraftButton(string uiName, string itemToCraft, string req1, int amt1, string req2, int amt2)
-    {
-        Transform itemUI = toolsScreenUI.transform.Find(uiName);
-        if (itemUI != null)
+        //  Tự động cài đặt TẤT CẢ các nút chế tạo dựa theo danh sách Recipes
+        foreach (var recipe in recipes)
         {
-            Button btn = itemUI.Find("Button").GetComponent<Button>();
-            btn.onClick.AddListener(delegate { CraftItem(itemToCraft, req1, amt1, req2, amt2); });
+            SetupCraftButton(recipe);
         }
     }
 
-    void OpenToolsCategory() { craftingScreenUI.SetActive(false); toolsScreenUI.SetActive(true); }
+    void SetupCraftButton(CraftingRecipe recipe)
+    {
+        if (recipe.targetScreen == null) return;
+
+        Transform itemUI = recipe.targetScreen.transform.Find(recipe.uiName);
+        if (itemUI != null)
+        {
+            Button btn = itemUI.Find("Button").GetComponent<Button>();
+            btn.onClick.RemoveAllListeners();
+            // Truyền dữ liệu từ recipe vào hàm Craft
+            btn.onClick.AddListener(delegate { CraftItem(recipe); });
+        }
+    }
+
+    void OpenCategory(GameObject screenToOpen)
+    {
+        craftingScreenUI.SetActive(false);
+        toolsScreenUI.SetActive(false);
+        survivalScreenUI.SetActive(false);
+        medScreenUI.SetActive(false);
+        screenToOpen.SetActive(true);
+    }
 
     void Update()
     {
@@ -52,7 +100,13 @@ public class CraftingSystem : MonoBehaviour
         {
             isOpen = !isOpen;
             craftingScreenUI.SetActive(isOpen);
-            if (!isOpen) toolsScreenUI.SetActive(false);
+
+            if (!isOpen)
+            {
+                toolsScreenUI.SetActive(false);
+                survivalScreenUI.SetActive(false);
+                medScreenUI.SetActive(false);
+            }
 
             Cursor.lockState = isOpen ? CursorLockMode.None : (InventorySystem.Instance.isOpen ? CursorLockMode.None : CursorLockMode.Locked);
             Cursor.visible = isOpen;
@@ -61,74 +115,95 @@ public class CraftingSystem : MonoBehaviour
         if (isOpen) RefreshRequirementsUI();
     }
 
-//case ui text
+    // ==========================================
+    // BƯỚC 2: QUÉT QUA DANH SÁCH ĐỂ UPDATE UI (KHÔNG CẦN SWITCH-CASE NỮA)
+    // ==========================================
     void RefreshRequirementsUI()
     {
         inventoryItemList = InventorySystem.Instance.itemList;
 
-        // Quét qua danh sách các item cần quản lý hiển thị
-        string[] allCraftableItems = { "Axe", "Pickaxe" };
-
-        foreach (string itemName in allCraftableItems)
+        foreach (var recipe in recipes)
         {
-            switch (itemName)
+            UpdateRecipeUI(recipe);
+        }
+    }
+
+    void UpdateRecipeUI(CraftingRecipe recipe)
+    {
+        if (recipe.targetScreen == null) return;
+
+        Transform itemUI = recipe.targetScreen.transform.Find(recipe.uiName);
+        if (itemUI == null) return;
+
+        // Xử lý Nguyên liệu 1
+        Text req1Text = itemUI.Find("req1").GetComponent<Text>();
+        int count1 = CountItem(recipe.req1);
+        string vnName1 = GetVNName(recipe.req1);
+        req1Text.text = $"{vnName1}: {count1} / {recipe.req1Amount}";
+        req1Text.color = (count1 >= recipe.req1Amount) ? Color.green : Color.red;
+
+        // Xử lý Nguyên liệu 2
+        Transform req2Transform = itemUI.Find("req2");
+        if (req2Transform != null)
+        {
+            Text req2Text = req2Transform.GetComponent<Text>();
+            if (!string.IsNullOrEmpty(recipe.req2) && recipe.req2Amount > 0)
             {
-                case "Axe":
-                    UpdateRecipeUI("Axe", "stone", 2, "wood", 1);
-                    break;
-
-                case "Pickaxe":
-                    UpdateRecipeUI("Pickaxe", "stone", 3, "wood", 2);
-                    break;
-
-                    // Thêm món mới thì chỉ cần thêm 'case "Tên_Món":' 
-                    //case "   ":
-                    //UpdateRecipeUI("Pickaxe", "stone", 3, "wood", 2);
-                    //break;
+                req2Text.gameObject.SetActive(true);
+                int count2 = CountItem(recipe.req2);
+                string vnName2 = GetVNName(recipe.req2);
+                req2Text.text = $"{vnName2}: {count2} / {recipe.req2Amount}";
+                req2Text.color = (count2 >= recipe.req2Amount) ? Color.green : Color.red;
+            }
+            else
+            {
+                req2Text.gameObject.SetActive(false);
             }
         }
     }
 
-    // Hàm phụ trợ tự động tìm Text "req1", "req2" của món đó và update số lượng, màu sắc
-    void UpdateRecipeUI(string uiName, string req1Name, int req1Amount, string req2Name, int req2Amount)
+    string GetVNName(string engName)
     {
-        Transform itemUI = toolsScreenUI.transform.Find(uiName);
-        if (itemUI == null) return;
-
-        Text req1Text = itemUI.Find("req1").GetComponent<Text>();
-        Text req2Text = itemUI.Find("req2").GetComponent<Text>();
-
-        int count1 = CountItem(req1Name);
-        int count2 = CountItem(req2Name);
-
-        // Đổi ngôn ngữ hiển thị tùy ý bằng tiếng Việt
-        string vnName1 = (req1Name == "stone") ? "Đá" : (req1Name == "wood") ? "Gỗ" : req1Name;
-        string vnName2 = (req2Name == "stone") ? "Đá" : (req2Name == "wood") ? "Gỗ" : req2Name;
-
-        req1Text.text = $"{vnName1}: {count1} / {req1Amount}";
-        req2Text.text = $"{vnName2}: {count2} / {req2Amount}";
-
-        req1Text.color = (count1 >= req1Amount) ? Color.green : Color.red;
-        req2Text.color = (count2 >= req2Amount) ? Color.green : Color.red;
+        if (engName == "stone") return "Đá";
+        if (engName == "wood") return "Gỗ";
+        if (engName == "flower") return "Hoa";
+        return engName; // Thêm từ điển ở đây nếu muốn
     }
 
-
-    // --- CÁC LOGIC CHẾ TẠO, ĐẾM, XÓA ĐỒ CỦA BẠN ĐƯỢC GIỮ NGUYÊN HOÀN TOÀN ---
-
-    void CraftItem(string itemToCraft, string req1Name, int req1Amount, string req2Name, int req2Amount)
+    // ==========================================
+    // BƯỚC 3: HÀM CRAFT MỚI NHẬN VÀO TRỰC TIẾP CLASS RECIPE
+    // ==========================================
+    void CraftItem(CraftingRecipe recipe)
     {
         inventoryItemList = InventorySystem.Instance.itemList;
 
-        if (CountItem(req1Name) >= req1Amount && CountItem(req2Name) >= req2Amount)
+        bool hasReq1 = CountItem(recipe.req1) >= recipe.req1Amount;
+        bool hasReq2 = string.IsNullOrEmpty(recipe.req2) || CountItem(recipe.req2) >= recipe.req2Amount;
+
+        if (hasReq1 && hasReq2)
         {
-            RemoveItem(req1Name, req1Amount);
-            RemoveItem(req2Name, req2Amount);
-            InventorySystem.Instance.AddToInventory(itemToCraft);
-            Debug.Log("Chế tạo thành công: " + itemToCraft);
+            RemoveItem(recipe.req1, recipe.req1Amount);
+
+            if (!string.IsNullOrEmpty(recipe.req2) && recipe.req2Amount > 0)
+            {
+                RemoveItem(recipe.req2, recipe.req2Amount);
+            }
+
+            // logic nhận thêm số lượng đồ crafft
+            for (int i = 0; i < recipe.resultAmount; i++)
+            {
+                InventorySystem.Instance.AddToInventory(recipe.resultItemName);
+            }
+
+            Debug.Log($"Chế tạo thành công: {recipe.resultAmount} {recipe.resultItemName}");
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+            }
         }
         else
         {
-            Debug.Log("Không đủ nguyên liệu!");
+            Debug.Log("Không đủ nguyên liệu cho " + recipe.resultItemName);
         }
     }
 

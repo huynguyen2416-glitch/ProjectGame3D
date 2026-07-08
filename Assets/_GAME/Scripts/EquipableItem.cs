@@ -14,15 +14,10 @@ public class EquipableItem : MonoBehaviour
 
     void Update()
     {
-        // --- ĐOẠN CODE THÊM MỚI BẢO VỆ ĐẦU GAME ---
-        // Kiểm tra nếu hệ thống quản lý vũ khí chưa sẵn sàng, 
-        // hoặc cái Rìu Thật trên tay nhân vật ĐANG BỊ ẨN (chưa nhặt/chưa trang bị)
-        // thì KHÔNG CHO CHẠY tiếp code chặt cây phía dưới.
         if (WeaponHolder.Instance == null || WeaponHolder.Instance.realAxeInHand == null || !WeaponHolder.Instance.realAxeInHand.activeSelf)
         {
             return; // Thoát hàm Update luôn, bấm chuột trái sẽ vô tác dụng
         }
-        // ------------------------------------------
 
         // Chỉ khi có rìu trên tay, đoạn code bấm chuột này mới được chạy:
         if (Input.GetMouseButtonDown(0) && // Click chuột trái
@@ -30,15 +25,51 @@ public class EquipableItem : MonoBehaviour
             CraftingSystem.Instance.isOpen == false &&
             SelectionManager.Instance.handIsVisible == false)
         {
-            GameObject selectedTree = SelectionManager.Instance.selectedTree;
+            // Bắt đầu vung rìu -> Bật animation
+            animator.SetTrigger("hit");
 
-            if (selectedTree != null)
+            bool didHitSomething = false; // Biến cờ đánh dấu xem có chém trúng gì không
+
+            // ==========================================
+            // 1. KIỂM TRA CHẶT CÂY (Dùng selectedTree)
+            // ==========================================
+            GameObject tree = SelectionManager.Instance.selectedTree;
+            if (tree != null)
             {
-                selectedTree.GetComponent<ChoppableTree>().GetHit();
+                tree.GetComponent<ChoppableTree>().GetHit();
+                didHitSomething = true;
             }
 
-            // Kích hoạt animation vung rìu
-            animator.SetTrigger("hit");
+            // ==========================================
+            // 2. KIỂM TRA CHÉM GẤU (Dùng selectedObject)
+            // ==========================================
+            GameObject hitObject = SelectionManager.Instance.selectedObject;
+            if (hitObject != null)
+            {
+                EnemyHealth enemy = hitObject.GetComponent<EnemyHealth>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(25f);
+                    didHitSomething = true;
+                }
+            }
+
+            // ==========================================
+            // 3. PHÁT ÂM THANH DỰA TRÊN KẾT QUẢ CHÉM
+            // ==========================================
+            if (SoundManager.Instance != null)
+            {
+                if (didHitSomething)
+                {
+                    // Chém TRÚNG (Cây hoặc Gấu) -> Kêu tiếng Cộp / Phập
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.chopSound);
+                }
+                else
+                {
+                    // Chém HỤT (Vào không khí) -> Kêu tiếng Vút
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.toolSwingSound);
+                }
+            }
         }
     }
 }

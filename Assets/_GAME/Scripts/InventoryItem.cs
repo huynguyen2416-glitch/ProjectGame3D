@@ -141,7 +141,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (item3DPrefab == null) return;
 
         if (canvasGroup != null) canvasGroup.blocksRaycasts = true;
-
+        
         // Vứt đồ ra ngoài 3D
         if (eventData.pointerCurrentRaycast.gameObject == null)
         {
@@ -155,6 +155,14 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 transform.SetParent(originalParent);
                 transform.SetSiblingIndex(originalSiblingIndex);
+            }
+            else
+            {
+                if (SoundManager.Instance != null)
+                {
+            
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+                }
             }
         }
 
@@ -179,10 +187,21 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private void ConsumeItemWithKey()
     {
         consumingFunction(healthEffect, caloriesEffect, hydrationEffect);
-        RemoveFromInventoryList();
 
-        // Dùng Destroy thay cho DestroyImmediate để game không bị Crash
+        // 1. Báo cho EquipSystem cất vũ khí/đồ vật trên tay (nếu có) trước khi xóa UI
+        if (EquipSystem.Instance != null)
+        {
+            EquipSystem.Instance.UnquipIfDropped(gameObject);
+        }
+
+        RemoveFromInventoryList();
         Destroy(gameObject);
+
+        // 2. Bắt Balo tính toán lại danh sách sau khi xóa đồ (Delay nhẹ để chờ Destroy xong)
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.Invoke("ReCalculateList", 0.1f);
+        }
     }
 
     // --- HÀM VỨT ĐỒ RA THẾ GIỚI 3D --- //
@@ -204,16 +223,22 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 Debug.LogWarning("CHƯA GẮN PREFAB 3D cho vật phẩm: " + thisName);
             }
         }
-        else
-        {
-            Debug.LogError("Không tìm thấy Camera! Hãy chắc chắn Camera của bạn có gắn tag 'MainCamera' ngoài Unity.");
-        }
 
         if (itemInfoUI != null) itemInfoUI.SetActive(false);
         isHovering = false;
+        if (EquipSystem.Instance != null)
+        {
+            EquipSystem.Instance.UnquipIfDropped(gameObject);
+        }
 
         RemoveFromInventoryList();
         Destroy(gameObject);
+
+
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.Invoke("ReCalculateList", 0.1f);
+        }
     }
 
     // Hàm hỗ trợ xóa dữ liệu Inventory

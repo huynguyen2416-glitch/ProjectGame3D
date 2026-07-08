@@ -42,11 +42,11 @@ public class AxeCollision : MonoBehaviour
 		// 3. Xử lý trừ máu khi đã thỏa mãn điều kiện vung rìu
 		if (other.CompareTag("Enemy") && canDealDamage)
 		{
-			EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
+			//EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
 
-			if (enemyHealth != null)
+			//if (enemyHealth != null)
 			{
-				enemyHealth.TakeDamage(damage);
+				//enemyHealth.TakeDamage(damage);
 			}
 
 			if (hitPrefab != null)
