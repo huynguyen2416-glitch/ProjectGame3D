@@ -122,6 +122,6 @@ MonoBehaviour:
     thu\u1ED1c [C]"
   isConsumable: 1
   healthEffect: 10
-  caloriesEffect: 100
-  hydrationEffect: 30
+  caloriesEffect: 3
+  hydrationEffect: 3
   item3DPrefab: {fileID: 0}

@@ -28,8 +28,7 @@ public class WeaponHolder : MonoBehaviour
         // Chuyển hết về chữ thường để so sánh cho dễ
         string fixedName = itemName.ToLower().Trim();
 
-        // FIX LOGIC: Thay vì dùng == "axe", ta dùng .Contains("axe") 
-        // Chỉ cần tên có chứa chữ axe (ví dụ: "axe", "axe_ui", "iron_axe") là đều đúng!
+
         if (fixedName.Contains("axe"))
         {
             if (realAxeInHand != null)

@@ -11,8 +11,9 @@ public class SelectionManager : MonoBehaviour
     public bool onTarget;
     public Image centerDotImage;
     public Image handIcon;
-    private Transform selectedObject;
-
+    
+    // ĐỔI THÀNH PUBLIC GAMEOBJECT ĐỂ CÁC SCRIPT KHÁC GỌI ĐƯỢC
+    public GameObject selectedObject; 
     public GameObject selectedTree;
     public GameObject chopHolder;
 
@@ -38,11 +39,19 @@ public class SelectionManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             var selectionTransform = hit.transform;
+            
+            // GÁN VẬT THỂ MÀ CAMERA ĐANG NHÌN TRÚNG VÀO BIẾN NÀY
+            selectedObject = selectionTransform.gameObject; 
+
             InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>();
             ChoppableTree choppableTree = selectionTransform.GetComponent<ChoppableTree>();
 
             // --- XỬ LÝ CHỌN CÂY ĐỂ CHẶT ---
-            if (choppableTree && choppableTree.playerInRange)
+            bool isUIOpen = false;
+            if (InventorySystem.Instance != null && InventorySystem.Instance.isOpen) isUIOpen = true;
+            if (CraftingSystem.Instance != null && CraftingSystem.Instance.isOpen) isUIOpen = true;
+
+            if (choppableTree && choppableTree.playerInRange && isUIOpen == false)
             {
                 choppableTree.canBeChopped = true;
                 selectedTree = choppableTree.gameObject;
@@ -50,7 +59,6 @@ public class SelectionManager : MonoBehaviour
             }
             else
             {
-                // Nếu đổi hướng nhìn sang vật thể khác, tắt trạng thái chặt cây cũ
                 if (selectedTree != null)
                 {
                     selectedTree.gameObject.GetComponent<ChoppableTree>().canBeChopped = false;
@@ -80,6 +88,10 @@ public class SelectionManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     InventorySystem.Instance.AddToInventory(interactable.GetItemName());
+                    if (SoundManager.Instance != null)
+                    {
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+                    }
                     Destroy(selectionTransform.gameObject);
                     interaction_Info_UI.SetActive(false);
                     onTarget = false;
@@ -95,6 +107,9 @@ public class SelectionManager : MonoBehaviour
         }
         else 
         {
+            // NẾU KHÔNG NHÌN TRÚNG GÌ CẢ -> RESET BIẾN
+            selectedObject = null; 
+            
             onTarget = false;
             interaction_Info_UI.SetActive(false);
             handIcon.gameObject.SetActive(false);
