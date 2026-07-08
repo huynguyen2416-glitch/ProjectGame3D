@@ -138,22 +138,4 @@ public class SelectionManager : MonoBehaviour
         centerDotImage.enabled = true;
         interaction_Info_UI.SetActive(true);
     }
-    public void RotatePlayerTowardsTree()
-    {
-        if (selectedTree != null)
-        {
-            // Tìm GameObject gốc của Người Chơi (thường là Player hoặc transform cha của Camera)
-            // Thay "Player" bằng Tag của nhân vật chính nếu bác đặt khác nhé
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-            if (player != null)
-            {
-                // Lấy vị trí của cây nhưng giữ nguyên chiều cao Y của người chơi để tránh bị ngửa mặt lên trời
-                Vector3 targetPosition = new Vector3(selectedTree.transform.position.x, player.transform.position.y, selectedTree.transform.position.z);
-
-                // Ép nhân vật xoay mặt về hướng đó mượt mà
-                player.transform.LookAt(targetPosition);
-            }
-        }
-    }
 }

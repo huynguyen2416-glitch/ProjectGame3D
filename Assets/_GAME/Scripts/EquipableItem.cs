@@ -25,7 +25,6 @@ public class EquipableItem : MonoBehaviour
             CraftingSystem.Instance.isOpen == false &&
             SelectionManager.Instance.handIsVisible == false)
         {
-            SelectionManager.Instance.RotatePlayerTowardsTree();
             // Bắt đầu vung rìu -> Bật animation
             animator.SetTrigger("hit");
 
