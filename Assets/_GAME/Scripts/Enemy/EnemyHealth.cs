@@ -36,9 +36,8 @@ public class EnemyHealth : MonoBehaviour
             enemyAI.enabled = false;
         }
 
-        // Tắt Collider để không cản đường người chơi nữa
-        Collider coll = GetComponent<Collider>();
-        if (coll != null) coll.enabled = false;
+        //Collider coll = GetComponent<Collider>();
+        //if (coll != null) coll.enabled = false;
 
         // Bật animation chết
         if (enemyAI != null && enemyAI.anim != null)
@@ -52,6 +51,6 @@ public class EnemyHealth : MonoBehaviour
         }
 
         // Dọn dẹp xác gấu sau 4 giây (chờ animation chết chạy xong)
-        Destroy(gameObject, 4f);
+        Destroy(gameObject,60f);
     }
 }

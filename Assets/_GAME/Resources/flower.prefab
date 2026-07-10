@@ -118,8 +118,8 @@ MonoBehaviour:
   isTrashable: 1
   thisName: "B\xF4ng Hoa"
   thisDescription: "M\u1ED9t b\xF4ng hoa nh\u1ECF c\xF3 th\u1EC3 l\xE0m g\xEC \u0111\xF3"
-  thisFunctionality: "C\xF3 th\u1EC3 ti\xEAu th\u1EE5 [E] , C\xF3 th\u1EC3 ch\u1EBF
-    thu\u1ED1c [C]"
+  thisFunctionality: "C\xF3 th\u1EC3 ti\xEAu th\u1EE5 [R-click] , C\xF3 th\u1EC3
+    ch\u1EBF thu\u1ED1c [C]"
   isConsumable: 1
   healthEffect: 10
   caloriesEffect: 3

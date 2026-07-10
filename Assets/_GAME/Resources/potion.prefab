@@ -122,7 +122,7 @@ MonoBehaviour:
     b\xF9 l\u1EA1i l\u01B0\u1EE3ng m\xE1u m\u1EA5t \u0111i \u0111\xE1ng k\u1EC3"
   thisFunctionality: "C\xF3 th\u1EC3 ch\u1EBF thu\u1ED1c"
   isConsumable: 1
-  healthEffect: -10
+  healthEffect: 30
   caloriesEffect: 20
   hydrationEffect: 20
   item3DPrefab: {fileID: 0}
