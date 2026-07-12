@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using UnityEngine;
 
 public class WeaponHolder : MonoBehaviour
@@ -20,26 +22,31 @@ public class WeaponHolder : MonoBehaviour
 
     public void EquipWeapon(string itemName)
     {
-        // 🔍 DÒ LỖI TRỰC TIẾP: Xem hệ thống đang đọc ra tên gì
-        Debug.LogWarning("LOG HỆ THỐNG: Tên vật phẩm nhận được là: [" + itemName + "]");
-
         UnquipAllWeapons();
-
-        // Chuyển hết về chữ thường để so sánh cho dễ
-        string fixedName = itemName.ToLower().Trim();
+        string fixedName = RemoveDiacritics(itemName).ToLower().Replace(" ", "").Trim();
 
 
-        if (fixedName.Contains("axe"))
+        bool isPickaxe = fixedName.Contains("pickaxe") || fixedName.Contains("cuoc");
+        bool isAxe = !isPickaxe && (fixedName.Contains("axe") || fixedName.Contains("riu"));
+
+        if (isPickaxe)
+        {
+            if (realPickaxeInHand != null)
+                realPickaxeInHand.SetActive(true);
+            else
+                Debug.LogError("[WeaponHolder]: realPickaxeInHand chưa được gán trong Inspector!");
+        }
+        else if (isAxe)
         {
             if (realAxeInHand != null)
-            {
                 realAxeInHand.SetActive(true);
-                Debug.Log("🎉 THÀNH CÔNG: Đã kích hoạt rìu trên tay!");
-            }
+            else
+                Debug.LogError("[WeaponHolder]: realAxeInHand chưa được gán trong Inspector!");
         }
-        else if (fixedName.Contains("pickaxe") || fixedName.Contains("cuoc"))
+        else
         {
-            if (realPickaxeInHand != null) realPickaxeInHand.SetActive(true);
+            Debug.LogWarning($"[WeaponHolder]: Không nhận diện được loại vũ khí từ tên '{itemName}'. " +
+                              "Kiểm tra tên prefab/vật phẩm có chứa 'axe'/'riu' hoặc 'pickaxe'/'cuoc' không.");
         }
     }
 
@@ -47,5 +54,23 @@ public class WeaponHolder : MonoBehaviour
     {
         if (realAxeInHand != null) realAxeInHand.SetActive(false);
         if (realPickaxeInHand != null) realPickaxeInHand.SetActive(false);
+    }
+
+    // Bỏ dấu tiếng Việt, VD: "Rìu Sắt" -> "Riu Sat"
+    private static string RemoveDiacritics(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+
+        string normalized = text.Normalize(NormalizationForm.FormD);
+        StringBuilder sb = new StringBuilder();
+
+        foreach (char c in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
+        }
+
+        // "đ"/"Đ" không tách được bằng NFD nên xử lý riêng
+        return sb.ToString().Normalize(NormalizationForm.FormC).Replace('đ', 'd').Replace('Đ', 'D');
     }
 }

@@ -53,7 +53,7 @@ public class EnemyAI : MonoBehaviour
         attackTimer -= Time.deltaTime;
     }
 
-    // -------- PATROL -------- //
+    // TUẦN TRA (PATROL)
     void Patrol()
     {
         if (patrolPoints == null || patrolPoints.Length == 0) return;
@@ -76,7 +76,7 @@ public class EnemyAI : MonoBehaviour
             currentState = State.Chase;
     }
 
-    // -------- CHASE -------- //
+    // TRUY ĐUỔI (CHASE)
     void Chase()
     {
         if (player == null) return;
@@ -96,7 +96,7 @@ public class EnemyAI : MonoBehaviour
         if (dist < attackDistance) currentState = State.Attack;
     }
 
-    // -------- ATTACK -------- //
+    //ĐÒN TẤN CÔNG (ATK)
     void Attack()
     {
         if (player == null) return;
@@ -109,7 +109,6 @@ public class EnemyAI : MonoBehaviour
             anim.SetBool("walk", false);
         }
 
-        // --- FIX LỖI XOAY 360 ĐỘ ---
         // Lấy tọa độ X và Z của người chơi, nhưng giữ nguyên trục Y của gấu (Không cho ngước lên/xuống)
         Vector3 lookPos = new Vector3(player.position.x, transform.position.y, player.position.z);
 
@@ -130,7 +129,7 @@ public class EnemyAI : MonoBehaviour
         if (attackTimer <= 0f) attackTimer = attackCooldown;
     }
 
-    // -------- ANIMATION EVENT (GẤU VẢ NGƯỜI CHƠI) -------- //
+    //ANIMATION EVENT (GẤU VẢ NGƯỜI CHƠI)
     public void ExecuteAttackDamage()
     {
         if (player == null) return;
@@ -147,10 +146,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // -------- HELPER: Khoảng cách ngang (bỏ qua chênh lệch trục Y) -------- //
-    // Dùng hàm này thay vì Vector3.Distance ở mọi nơi so sánh khoảng cách trạng thái,
-    // vì pivot của Bear và Player có thể lệch độ cao (Y), khiến Vector3.Distance
-    // trả về giá trị lớn hơn thực tế => gấu không bao giờ vào được Attack => kẹt ở Chase mãi.
     float HorizontalDistance(Vector3 a, Vector3 b)
     {
         Vector3 flatA = new Vector3(a.x, 0f, a.z);
@@ -158,7 +153,7 @@ public class EnemyAI : MonoBehaviour
         return Vector3.Distance(flatA, flatB);
     }
 
-    // -------- MOVEMENT -------- //
+    //MOVEMENT 
     void MoveTowards(Vector3 target, float speed)
     {
         Vector3 lookPos = new Vector3(target.x, transform.position.y, target.z);

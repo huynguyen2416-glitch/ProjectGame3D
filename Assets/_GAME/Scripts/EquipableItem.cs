@@ -14,59 +14,77 @@ public class EquipableItem : MonoBehaviour
 
     void Update()
     {
-        if (WeaponHolder.Instance == null || WeaponHolder.Instance.realAxeInHand == null || !WeaponHolder.Instance.realAxeInHand.activeSelf)
+        bool axeActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realAxeInHand != null && WeaponHolder.Instance.realAxeInHand.activeSelf;
+        bool pickaxeActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realPickaxeInHand != null && WeaponHolder.Instance.realPickaxeInHand.activeSelf;
+
+        if (!axeActive && !pickaxeActive)
         {
-            return; // Thoát hàm Update luôn, bấm chuột trái sẽ vô tác dụng
+            return; // Không cầm rìu cũng không cầm cuốc -> bấm chuột trái sẽ vô tác dụng
         }
 
-        // Chỉ khi có rìu trên tay, đoạn code bấm chuột này mới được chạy:
+        // Chỉ khi có rìu hoặc cuốc trên tay, đoạn code bấm chuột này mới được chạy:
         if (Input.GetMouseButtonDown(0) && // Click chuột trái
             InventorySystem.Instance.isOpen == false &&
             CraftingSystem.Instance.isOpen == false &&
             SelectionManager.Instance.handIsVisible == false)
         {
-            // Bắt đầu vung rìu -> Bật animation
+            // Bắt đầu vung tay -> Bật animation
             animator.SetTrigger("hit");
 
-            bool didHitSomething = false; // Biến cờ đánh dấu xem có chém trúng gì không
+            bool didHitSomething = false; // Biến cờ đánh dấu xem có chém/đập trúng gì không
 
             // ==========================================
-            // 1. KIỂM TRA CHẶT CÂY (Dùng selectedTree)
+            // CHỈ KHI CẦM RÌU: CHẶT CÂY + CHÉM GẤU
             // ==========================================
-            GameObject tree = SelectionManager.Instance.selectedTree;
-            if (tree != null)
+            if (axeActive)
             {
-                tree.GetComponent<ChoppableTree>().GetHit();
-                didHitSomething = true;
+                // 1. KIỂM TRA CHẶT CÂY (Dùng selectedTree)
+                GameObject tree = SelectionManager.Instance.selectedTree;
+                if (tree != null)
+                {
+                    tree.GetComponent<ChoppableTree>().GetHit();
+                    didHitSomething = true;
+                }
+
+                // 2. KIỂM TRA CHÉM GẤU (Dùng selectedObject)
+                GameObject hitObject = SelectionManager.Instance.selectedObject;
+                if (hitObject != null)
+                {
+                    EnemyHealth enemy = hitObject.GetComponent<EnemyHealth>();
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(25f);
+                        didHitSomething = true;
+                    }
+                }
             }
 
             // ==========================================
-            // 2. KIỂM TRA CHÉM GẤU (Dùng selectedObject)
+            // CHỈ KHI CẦM CUỐC: ĐẬP ĐÁ (Dùng selectedRock)
             // ==========================================
-            GameObject hitObject = SelectionManager.Instance.selectedObject;
-            if (hitObject != null)
+            if (pickaxeActive)
             {
-                EnemyHealth enemy = hitObject.GetComponent<EnemyHealth>();
-                if (enemy != null)
+                GameObject rock = SelectionManager.Instance.selectedRock;
+                if (rock != null)
                 {
-                    enemy.TakeDamage(25f);
+                    rock.GetComponent<MineableRock>().GetHit();
                     didHitSomething = true;
                 }
             }
 
             // ==========================================
-            // 3. PHÁT ÂM THANH DỰA TRÊN KẾT QUẢ CHÉM
+            // PHÁT ÂM THANH DỰA TRÊN KẾT QUẢ CHÉM/ĐẬP
             // ==========================================
             if (SoundManager.Instance != null)
             {
                 if (didHitSomething)
                 {
-                    // Chém TRÚNG (Cây hoặc Gấu) -> Kêu tiếng Cộp / Phập
+                    // Trúng (Cây, Gấu hoặc Đá) -> Kêu tiếng Cộp / Phập
                     SoundManager.Instance.PlaySound(SoundManager.Instance.chopSound);
                 }
                 else
                 {
-                    // Chém HỤT (Vào không khí) -> Kêu tiếng Vút
+                    // Hụt (Vào không khí) -> Kêu tiếng Vút
                     SoundManager.Instance.PlaySound(SoundManager.Instance.toolSwingSound);
                 }
             }
