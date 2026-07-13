@@ -28,7 +28,7 @@ public class EnemyHealthBar : MonoBehaviour
         }
     }
 
-    // Ép thanh máu luôn xoay mặt về phía Camera (Người chơi)
+    // Tùy chọn: Ép thanh máu luôn xoay mặt về phía Camera (Người chơi)
     void LateUpdate()
     {
         if (Camera.main != null)

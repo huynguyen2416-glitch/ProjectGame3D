@@ -10,7 +10,6 @@ TagManager:
   - pickable
   - Slot
   - QuickSlot
-  - Grass
   layers:
   - Default
   - TransparentFX

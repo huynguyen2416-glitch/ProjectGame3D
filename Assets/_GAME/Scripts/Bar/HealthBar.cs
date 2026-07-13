@@ -9,9 +9,10 @@ public class HealthBar : MonoBehaviour
     {
         slider = GetComponent<Slider>();
     }
-
+    
     void Update()
     {
+<<<<<<< HEAD
         // 1. Bảo vệ lỗi rỗng để game không bị đứng nếu nhân vật lỡ bị xóa
         if (PlayerState.Instance == null) return;
 
@@ -26,5 +27,14 @@ public class HealthBar : MonoBehaviour
         {
             healthCounter.text = Mathf.CeilToInt(currentHealth) + "/" + Mathf.RoundToInt(maxHealth);
         }
+=======
+        currentHealth = playerState.GetComponent<PlayerState>().currentHealth;
+        maxHealth = playerState.GetComponent<PlayerState>().maxHealth;
+
+        float fillValue = currentHealth / maxHealth;
+        slider.value = fillValue;
+
+        healthCounter.text = currentHealth + "/" + maxHealth;
+>>>>>>> parent of a57ad63 (tạm thời như v)
     }
 }

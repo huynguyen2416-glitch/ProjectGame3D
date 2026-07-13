@@ -22,20 +22,26 @@ public class EquipableItem : MonoBehaviour
 
     void Update()
     {
-        bool axeActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realAxeInHand != null && WeaponHolder.Instance.realAxeInHand.activeSelf;
-        bool pickaxeActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realPickaxeInHand != null && WeaponHolder.Instance.realPickaxeInHand.activeSelf;
-
-        if (!axeActive && !pickaxeActive)
+        if (WeaponHolder.Instance == null || WeaponHolder.Instance.realAxeInHand == null || !WeaponHolder.Instance.realAxeInHand.activeSelf)
         {
+<<<<<<< HEAD
             return;
         }
 
         if (Input.GetMouseButtonDown(0) &&
             Time.time >= lastAttackTime + attackCooldown &&
+=======
+            return; // Thoát hàm Update luôn, bấm chuột trái sẽ vô tác dụng
+        }
+
+        // Chỉ khi có rìu trên tay, đoạn code bấm chuột này mới được chạy:
+        if (Input.GetMouseButtonDown(0) && // Click chuột trái
+>>>>>>> parent of a57ad63 (tạm thời như v)
             InventorySystem.Instance.isOpen == false &&
             CraftingSystem.Instance.isOpen == false &&
             SelectionManager.Instance.handIsVisible == false)
         {
+<<<<<<< HEAD
             lastAttackTime = Time.time;
 
             // TỰ ĐỘNG XOAY NGƯỜI HƯỚNG VÀO MỤC TIÊU ---
@@ -103,6 +109,52 @@ public class EquipableItem : MonoBehaviour
             else
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.toolSwingSound);
+=======
+            // Bắt đầu vung rìu -> Bật animation
+            animator.SetTrigger("hit");
+
+            bool didHitSomething = false; // Biến cờ đánh dấu xem có chém trúng gì không
+
+            // ==========================================
+            // 1. KIỂM TRA CHẶT CÂY (Dùng selectedTree)
+            // ==========================================
+            GameObject tree = SelectionManager.Instance.selectedTree;
+            if (tree != null)
+            {
+                tree.GetComponent<ChoppableTree>().GetHit();
+                didHitSomething = true;
+            }
+
+            // ==========================================
+            // 2. KIỂM TRA CHÉM GẤU (Dùng selectedObject)
+            // ==========================================
+            GameObject hitObject = SelectionManager.Instance.selectedObject;
+            if (hitObject != null)
+            {
+                EnemyHealth enemy = hitObject.GetComponent<EnemyHealth>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(25f);
+                    didHitSomething = true;
+                }
+            }
+
+            // ==========================================
+            // 3. PHÁT ÂM THANH DỰA TRÊN KẾT QUẢ CHÉM
+            // ==========================================
+            if (SoundManager.Instance != null)
+            {
+                if (didHitSomething)
+                {
+                    // Chém TRÚNG (Cây hoặc Gấu) -> Kêu tiếng Cộp / Phập
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.chopSound);
+                }
+                else
+                {
+                    // Chém HỤT (Vào không khí) -> Kêu tiếng Vút
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.toolSwingSound);
+                }
+>>>>>>> parent of a57ad63 (tạm thời như v)
             }
         }
     }

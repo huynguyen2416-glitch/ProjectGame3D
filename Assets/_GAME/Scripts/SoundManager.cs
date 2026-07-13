@@ -11,7 +11,6 @@ public class SoundManager : MonoBehaviour
     public AudioSource chopSound;
     public AudioSource pickupItemSound;
     public AudioSource grassWalkSound;
-    public AudioSource grassSprintSound;
 
     public AudioSource backgroundMusic;
 

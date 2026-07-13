@@ -11,12 +11,11 @@ public class SelectionManager : MonoBehaviour
     public bool onTarget;
     public Image centerDotImage;
     public Image handIcon;
-
-    public GameObject selectedObject;
+    
+    // ĐỔI THÀNH PUBLIC GAMEOBJECT ĐỂ CÁC SCRIPT KHÁC GỌI ĐƯỢC
+    public GameObject selectedObject; 
     public GameObject selectedTree;
     public GameObject chopHolder;
-    public GameObject selectedRock;
-    public GameObject mineHolder;
 
     // --- PROPERTY HỖ TRỢ ---
     public bool handIsVisible => handIcon != null && handIcon.gameObject.activeSelf;
@@ -37,18 +36,15 @@ public class SelectionManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out hit))
         {
             var selectionTransform = hit.transform;
-
+            
             // GÁN VẬT THỂ MÀ CAMERA ĐANG NHÌN TRÚNG VÀO BIẾN NÀY
-            selectedObject = selectionTransform.gameObject;
+            selectedObject = selectionTransform.gameObject; 
 
-
-            InteractableObject interactable = selectionTransform.GetComponentInParent<InteractableObject>();
-            ChoppableTree choppableTree = selectionTransform.GetComponentInParent<ChoppableTree>();
-            MineableRock mineableRock = selectionTransform.GetComponentInParent<MineableRock>();
+            InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>();
+            ChoppableTree choppableTree = selectionTransform.GetComponent<ChoppableTree>();
 
             // --- XỬ LÝ CHỌN CÂY ĐỂ CHẶT ---
             bool isUIOpen = false;
@@ -57,13 +53,6 @@ public class SelectionManager : MonoBehaviour
 
             if (choppableTree && choppableTree.playerInRange && isUIOpen == false)
             {
-                // Nếu trước đó đang nhìn cây khác, phải tắt cây cũ đi trước khi bật cây mới
-                if (selectedTree != null && selectedTree != choppableTree.gameObject)
-                {
-                    ChoppableTree oldTree = selectedTree.GetComponent<ChoppableTree>();
-                    if (oldTree != null) oldTree.canBeChopped = false;
-                }
-
                 choppableTree.canBeChopped = true;
                 selectedTree = choppableTree.gameObject;
                 if (chopHolder != null) chopHolder.gameObject.SetActive(true);
@@ -75,30 +64,6 @@ public class SelectionManager : MonoBehaviour
                     selectedTree.gameObject.GetComponent<ChoppableTree>().canBeChopped = false;
                     selectedTree = null;
                     if (chopHolder != null) chopHolder.gameObject.SetActive(false);
-                }
-            }
-
-            // --- XỬ LÝ CHỌN ĐÁ ĐỂ ĐẬP ---
-            if (mineableRock && mineableRock.playerInRange && isUIOpen == false)
-            {
-                // Nếu trước đó đang nhìn đá khác, phải tắt đá cũ đi trước khi bật đá mới
-                if (selectedRock != null && selectedRock != mineableRock.gameObject)
-                {
-                    MineableRock oldRock = selectedRock.GetComponent<MineableRock>();
-                    if (oldRock != null) oldRock.canBeMined = false;
-                }
-
-                mineableRock.canBeMined = true;
-                selectedRock = mineableRock.gameObject;
-                if (mineHolder != null) mineHolder.gameObject.SetActive(true);
-            }
-            else
-            {
-                if (selectedRock != null)
-                {
-                    selectedRock.gameObject.GetComponent<MineableRock>().canBeMined = false;
-                    selectedRock = null;
-                    if (mineHolder != null) mineHolder.gameObject.SetActive(false);
                 }
             }
 
@@ -127,7 +92,7 @@ public class SelectionManager : MonoBehaviour
                     {
                         SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
                     }
-                    Destroy(interactable.gameObject);
+                    Destroy(selectionTransform.gameObject);
                     interaction_Info_UI.SetActive(false);
                     onTarget = false;
                 }
@@ -140,11 +105,11 @@ public class SelectionManager : MonoBehaviour
                 centerDotImage.gameObject.SetActive(true);
             }
         }
-        else
+        else 
         {
             // NẾU KHÔNG NHÌN TRÚNG GÌ CẢ -> RESET BIẾN
-            selectedObject = null;
-
+            selectedObject = null; 
+            
             onTarget = false;
             interaction_Info_UI.SetActive(false);
             handIcon.gameObject.SetActive(false);
@@ -155,13 +120,6 @@ public class SelectionManager : MonoBehaviour
                 selectedTree.gameObject.GetComponent<ChoppableTree>().canBeChopped = false;
                 selectedTree = null;
                 if (chopHolder != null) chopHolder.gameObject.SetActive(false);
-            }
-
-            if (selectedRock != null)
-            {
-                selectedRock.gameObject.GetComponent<MineableRock>().canBeMined = false;
-                selectedRock = null;
-                if (mineHolder != null) mineHolder.gameObject.SetActive(false);
             }
         }
     }
