@@ -230,6 +230,8 @@ public class CraftingSystem : MonoBehaviour
                 GameObject itemInSlot = slot.transform.GetChild(0).gameObject;
                 if (itemInSlot.name == itemName || itemInSlot.name == itemName + "(Clone)")
                 {
+                    itemInSlot.transform.SetParent(null);
+
                     Destroy(itemInSlot);
                     removedCount++;
                     if (removedCount >= amountToRemove) break;

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4252531135496491974}
   - component: {fileID: 5397193905332994777}
   m_Layer: 0
-  m_Name: Water
+  m_Name: Ocean
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
