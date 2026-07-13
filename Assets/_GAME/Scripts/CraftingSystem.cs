@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ==========================================
-// BƯỚC 1: TẠO "KHUÔN" CÔNG THỨC CHẾ TẠO
-// ==========================================
+
+//TẠO "KHUÔN" CÔNG THỨC CHẾ TẠO
 [System.Serializable]
 public class CraftingRecipe
 {
@@ -30,9 +29,8 @@ public class CraftingSystem : MonoBehaviour
     public GameObject survivalScreenUI;
     public GameObject medScreenUI;
 
-    // ==========================================
+
     // DANH SÁCH CÔNG THỨC (CÓ THỂ CHỈNH SỬA TRỰC TIẾP TRONG UNITY)
-    // ==========================================
     [Header("Danh sách Công Thức Chế Tạo")]
     public List<CraftingRecipe> recipes = new List<CraftingRecipe>();
 
@@ -115,9 +113,9 @@ public class CraftingSystem : MonoBehaviour
         if (isOpen) RefreshRequirementsUI();
     }
 
-    // ==========================================
-    // BƯỚC 2: QUÉT QUA DANH SÁCH ĐỂ UPDATE UI (KHÔNG CẦN SWITCH-CASE NỮA)
-    // ==========================================
+
+    //QUÉT QUA DANH SÁCH ĐỂ UPDATE UI 
+
     void RefreshRequirementsUI()
     {
         inventoryItemList = InventorySystem.Instance.itemList;
@@ -167,15 +165,9 @@ public class CraftingSystem : MonoBehaviour
         return ItemNameVN.Get(engName);
     }
 
-<<<<<<< HEAD
 
     //HÀM CRAFT MỚI NHẬN VÀO TRỰC TIẾP CLASS RECIPE
 
-=======
-    // ==========================================
-    // BƯỚC 3: HÀM CRAFT MỚI NHẬN VÀO TRỰC TIẾP CLASS RECIPE
-    // ==========================================
->>>>>>> parent of a57ad63 (tạm thời như v)
     void CraftItem(CraftingRecipe recipe)
     {
         inventoryItemList = InventorySystem.Instance.itemList;

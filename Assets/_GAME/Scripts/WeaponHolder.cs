@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using UnityEngine;
 
 public class WeaponHolder : MonoBehaviour
@@ -22,12 +24,8 @@ public class WeaponHolder : MonoBehaviour
 
     public void EquipWeapon(string itemName)
     {
-        // 🔍 DÒ LỖI TRỰC TIẾP: Xem hệ thống đang đọc ra tên gì
-        Debug.LogWarning("LOG HỆ THỐNG: Tên vật phẩm nhận được là: [" + itemName + "]");
-
         UnquipAllWeapons();
 
-<<<<<<< HEAD
         //  Nếu cất vũ khí (chọn ô trống) thì chỉ cần cất đi là xong, không làm gì thêm
         if (string.IsNullOrEmpty(itemName)) return;
 
@@ -45,27 +43,10 @@ public class WeaponHolder : MonoBehaviour
         {
             if (realAxeInHand != null) realAxeInHand.SetActive(true);
             else Debug.LogError("[WeaponHolder]: realAxeInHand chưa được gán trong Inspector!");
-=======
-        // Chuyển hết về chữ thường để so sánh cho dễ
-        string fixedName = itemName.ToLower().Trim();
-
-
-        if (fixedName.Contains("axe"))
-        {
-            if (realAxeInHand != null)
-            {
-                realAxeInHand.SetActive(true);
-                Debug.Log("🎉 THÀNH CÔNG: Đã kích hoạt rìu trên tay!");
-            }
->>>>>>> parent of a57ad63 (tạm thời như v)
         }
-        else if (fixedName.Contains("pickaxe") || fixedName.Contains("cuoc"))
+        else
         {
-<<<<<<< HEAD
             Debug.LogWarning($"[WeaponHolder]: Không nhận diện được vũ khí từ tên '{itemName}'.");
-=======
-            if (realPickaxeInHand != null) realPickaxeInHand.SetActive(true);
->>>>>>> parent of a57ad63 (tạm thời như v)
         }
     }
 
@@ -74,7 +55,6 @@ public class WeaponHolder : MonoBehaviour
         if (realAxeInHand != null) realAxeInHand.SetActive(false);
         if (realPickaxeInHand != null) realPickaxeInHand.SetActive(false);
     }
-<<<<<<< HEAD
 
     private static string RemoveDiacritics(string text)
     {
@@ -88,6 +68,4 @@ public class WeaponHolder : MonoBehaviour
         }
         return sb.ToString().Normalize(NormalizationForm.FormC).Replace('đ', 'd').Replace('Đ', 'D');
     }
-=======
->>>>>>> parent of a57ad63 (tạm thời như v)
 }

@@ -62,14 +62,14 @@ public class InventorySystem : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B) && !isOpen)
+        if (Input.GetKeyDown(KeyCode.C) && !isOpen)
         {
             inventoryScreenUI.SetActive(true);
             isOpen = true;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
-        else if (Input.GetKeyDown(KeyCode.B) && isOpen)
+        else if (Input.GetKeyDown(KeyCode.C) && isOpen)
         {
             inventoryScreenUI.SetActive(false);
             isOpen = false;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// THÊM: IBeginDragHandler, IDragHandler, IEndDragHandler để xử lý kéo thả
+//IBeginDragHandler, IDragHandler, IEndDragHandler để xử lý kéo thả
 public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     // --- Is this item trashable --- //
