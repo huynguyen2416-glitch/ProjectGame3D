@@ -162,15 +162,12 @@ public class CraftingSystem : MonoBehaviour
 
     string GetVNName(string engName)
     {
-        if (engName == "stone") return "Đá";
-        if (engName == "wood") return "Gỗ";
-        if (engName == "flower") return "Hoa";
-        return engName; // Thêm từ điển ở đây nếu muốn
+        return ItemNameVN.Get(engName);
     }
 
-    
+
     //HÀM CRAFT MỚI NHẬN VÀO TRỰC TIẾP CLASS RECIPE
-    
+
     void CraftItem(CraftingRecipe recipe)
     {
         inventoryItemList = InventorySystem.Instance.itemList;

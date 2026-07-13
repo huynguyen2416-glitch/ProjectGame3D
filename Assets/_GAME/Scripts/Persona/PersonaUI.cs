@@ -1,0 +1,284 @@
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PersonaUI : MonoBehaviour
+{
+    [Header("Phím mở bảng")]
+    public KeyCode toggleKey = KeyCode.P;
+
+    [Header("Panel gốc")]
+    public GameObject personaPanel;
+    [Header("Trang Ghi chú mở đầu")]
+    public GameObject introNotePanel;
+    [Header("Nội dung mặc định của Trang Phải")]
+    public GameObject rightPageDefaultContent;
+    [Header("Nút chuyển nhánh")]
+    public Button lyTriTabButton;
+    public Button sinhTonTabButton;
+    public Button closeBookButton;
+
+    [Header("Danh sách nâng cấp trong 1 nhánh (ScrollView Content)")]
+    public Transform upgradeListContent;
+    [Tooltip("Prefab 1 nút nâng cấp: cần có component Button, 1 Text (tên) ở component con, và tuỳ chọn 1 object tên 'Icon' chứa Image")]
+    public GameObject upgradeNodeButtonPrefab;
+
+    [Header("Bảng chi tiết Level")]
+    public GameObject levelDetailPanel;
+    public Text detailTitleText;
+    public Text detailDescriptionText;
+    public Image iconArtImage;
+    public Transform levelRowContent;
+    [Tooltip("Prefab 1 dòng level: cần có object con tên 'LevelLabel' (Text), 'RequirementText' (Text), 'UnlockButton' (Button)")]
+    public GameObject levelRowPrefab;
+
+    [Header("Trang riêng chỉ hiện Level (tách khỏi trang Notes)")]
+    [Tooltip("Object cha gom RibbonTabBar + UpgradeShelf + RightPage + LeftPage — ẩn đi khi mở trang Level riêng")]
+    public GameObject shelfGroup;
+    [Tooltip("Trang mới toàn màn hình chỉ có Level — bật lên khi chọn 1 nâng cấp")]
+    public GameObject levelOnlyPage;
+    public Button backToShelfButton;
+
+    [Header("Thanh Level tượng trưng (vd 2/5)")]
+    [Tooltip("Image kiểu Filled (Fill Method = Horizontal) — đặt trên object ProgressFillImage")]
+    public Image progressFillImage;
+    [Tooltip("Text hiển thị dạng 'currentLevel/maxLevel', vd '2/5'")]
+    public Text levelCounterText;
+
+    private PersonaBranch currentBranch = PersonaBranch.SinhTon;
+    private PersonaUpgradeSO currentSelectedUpgrade;
+
+    private readonly List<GameObject> spawnedNodeButtons = new List<GameObject>();
+    private readonly List<GameObject> spawnedLevelRows = new List<GameObject>();
+
+    private void Start()
+    {
+        if (personaPanel != null) personaPanel.SetActive(false);
+        if (levelDetailPanel != null) levelDetailPanel.SetActive(false);
+
+        if (lyTriTabButton != null) lyTriTabButton.onClick.AddListener(() => ShowBranch(PersonaBranch.LyTri));
+        if (sinhTonTabButton != null) sinhTonTabButton.onClick.AddListener(() => ShowBranch(PersonaBranch.SinhTon));
+        if (closeBookButton != null) closeBookButton.onClick.AddListener(ClosePanel);
+        if (backToShelfButton != null) backToShelfButton.onClick.AddListener(CloseLevelOnlyPage);
+        if (levelOnlyPage != null) levelOnlyPage.SetActive(false);
+    }
+
+    // Đóng trang Level riêng, quay lại kệ sách (UpgradeShelf/LeftPage/RightPage)
+    private void CloseLevelOnlyPage()
+    {
+        if (levelOnlyPage != null) levelOnlyPage.SetActive(false);
+        if (shelfGroup != null) shelfGroup.SetActive(true);
+        currentSelectedUpgrade = null;
+    }
+
+    private void ClosePanel()
+    {
+        if (personaPanel != null) personaPanel.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(toggleKey))
+        {
+            bool willOpen = personaPanel != null && !personaPanel.activeSelf;
+            if (personaPanel != null) personaPanel.SetActive(willOpen);
+
+            Cursor.lockState = willOpen ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = willOpen;
+
+            //Khi vừa mở sách, đưa mọi thứ về trạng thái trống trơn mặc định
+            if (willOpen)
+            {
+                if (levelDetailPanel != null) levelDetailPanel.SetActive(false);
+                if (shelfGroup != null) shelfGroup.SetActive(true);
+
+                // Bật ghi chú lên, TẮT nội dung cũ đi
+                if (introNotePanel != null) introNotePanel.SetActive(true);
+                if (rightPageDefaultContent != null) rightPageDefaultContent.SetActive(false); 
+
+                foreach (var go in spawnedNodeButtons) Destroy(go);
+                spawnedNodeButtons.Clear();
+
+                currentSelectedUpgrade = null;
+            }
+        }
+
+        // Chỉ chạy trình cập nhật thời gian thực khi người chơi đã chọn một nâng cấp cụ thể
+        bool detailIsOpen = levelOnlyPage != null ? levelOnlyPage.activeSelf : (levelDetailPanel != null && levelDetailPanel.activeSelf);
+        if (detailIsOpen && currentSelectedUpgrade != null)
+        {
+            RefreshLevelRows(currentSelectedUpgrade);
+            RefreshLevelProgressBar(currentSelectedUpgrade);
+        }
+    }
+
+    public void ShowBranch(PersonaBranch branch)
+    {
+        currentBranch = branch;
+        if (levelDetailPanel != null) levelDetailPanel.SetActive(false);
+        if (introNotePanel != null) introNotePanel.SetActive(false);
+        if(rightPageDefaultContent != null) rightPageDefaultContent.SetActive(true);
+        foreach (var go in spawnedNodeButtons) Destroy(go);
+        spawnedNodeButtons.Clear();
+
+        if (PersonaManager.Instance == null || upgradeListContent == null || upgradeNodeButtonPrefab == null) return;
+
+        foreach (var upgrade in PersonaManager.Instance.allUpgrades)
+        {
+            if (upgrade == null || upgrade.branch != branch) continue;
+
+            GameObject nodeGO = Instantiate(upgradeNodeButtonPrefab, upgradeListContent);
+            spawnedNodeButtons.Add(nodeGO);
+
+            Text label = nodeGO.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                int lvl = PersonaManager.Instance.GetCurrentLevel(upgrade);
+                label.text = $"{upgrade.upgradeName} (Lv {lvl}/{upgrade.levels.Count})";
+            }
+
+            Transform iconTransform = nodeGO.transform.Find("Icon");
+            if (iconTransform != null && upgrade.icon != null)
+            {
+                Image icon = iconTransform.GetComponent<Image>();
+                if (icon != null) icon.sprite = upgrade.icon;
+            }
+
+            Button btn = nodeGO.GetComponent<Button>();
+            if (btn != null)
+            {
+                PersonaUpgradeSO capturedUpgrade = upgrade; // tránh lỗi tham chiếu vòng lặp closure
+                btn.onClick.AddListener(() => OpenLevelDetail(capturedUpgrade));
+            }
+        }
+    }
+
+    private void OpenLevelDetail(PersonaUpgradeSO upgrade)
+    {
+        currentSelectedUpgrade = upgrade;
+        if (levelDetailPanel != null) levelDetailPanel.SetActive(true);
+
+        // Chuyển từ kệ sách sang trang Level riêng
+        if (shelfGroup != null) shelfGroup.SetActive(false);
+        if (levelOnlyPage != null) levelOnlyPage.SetActive(true);
+
+        if (detailTitleText != null) detailTitleText.text = upgrade.upgradeName;
+        if (detailDescriptionText != null) detailDescriptionText.text = upgrade.description;
+        if (iconArtImage != null && upgrade.icon != null) iconArtImage.sprite = upgrade.icon;
+
+        foreach (var go in spawnedLevelRows) Destroy(go);
+        spawnedLevelRows.Clear();
+
+        RefreshLevelRows(upgrade);
+        RefreshLevelProgressBar(upgrade);
+    }
+
+    // Cập nhật thanh level tượng trưng (fillAmount) và chữ "currentLevel/maxLevel"
+    private void RefreshLevelProgressBar(PersonaUpgradeSO upgrade)
+    {
+        int currentLevel = PersonaManager.Instance.GetCurrentLevel(upgrade);
+        int maxLevel = upgrade.levels.Count;
+
+        if (progressFillImage != null)
+        {
+            progressFillImage.fillAmount = maxLevel > 0 ? (float)currentLevel / maxLevel : 0f;
+        }
+
+        if (levelCounterText != null)
+        {
+            levelCounterText.text = $"{currentLevel}/{maxLevel}";
+        }
+    }
+
+    private void RefreshLevelRows(PersonaUpgradeSO upgrade)
+    {
+        if (levelRowContent == null || levelRowPrefab == null) return;
+
+        // Chỉ dựng lại danh sách dòng nếu số dòng chưa khớp, tránh Instantiate lại mỗi frame
+        if (spawnedLevelRows.Count != upgrade.levels.Count)
+        {
+            foreach (var go in spawnedLevelRows) Destroy(go);
+            spawnedLevelRows.Clear();
+
+            foreach (var _ in upgrade.levels)
+            {
+                spawnedLevelRows.Add(Instantiate(levelRowPrefab, levelRowContent));
+            }
+        }
+
+        int currentLevel = PersonaManager.Instance.GetCurrentLevel(upgrade);
+
+        for (int i = 0; i < upgrade.levels.Count; i++)
+        {
+            PersonaLevelData levelData = upgrade.levels[i];
+            GameObject row = spawnedLevelRows[i];
+
+            Text levelLabel = row.transform.Find("LevelLabel")?.GetComponent<Text>();
+            Text reqText = row.transform.Find("RequirementText")?.GetComponent<Text>();
+            Button unlockBtn = row.transform.Find("UnlockButton")?.GetComponent<Button>();
+
+            bool isUnlocked = levelData.level <= currentLevel;
+            bool isNextLevel = levelData.level == currentLevel + 1;
+
+            if (levelLabel != null)
+            {
+                levelLabel.text = $"Level {levelData.level}" + (isUnlocked ? " (Đã mở)" : "");
+            }
+
+            if (reqText != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var req in levelData.requirements)
+                {
+                    int have = CountItemInInventory(req.itemName);
+                    string vnName = ItemNameVN.Get(req.itemName);
+                    sb.AppendLine($"{vnName}: {have}/{req.amount}");
+                }
+                reqText.text = sb.ToString();
+                reqText.color = isUnlocked
+                    ? Color.grey
+                    : (isNextLevel && PersonaManager.Instance.CanUnlockNextLevel(upgrade) ? Color.green : Color.red);
+            }
+
+            if (unlockBtn != null)
+            {
+                unlockBtn.gameObject.SetActive(isNextLevel);
+                unlockBtn.interactable = isNextLevel && PersonaManager.Instance.CanUnlockNextLevel(upgrade);
+
+                unlockBtn.onClick.RemoveAllListeners();
+                PersonaUpgradeSO capturedUpgrade = upgrade;
+                unlockBtn.onClick.AddListener(() =>
+                {
+                    Debug.Log($"[PersonaUI] Đã bấm Mở khoá cho '{capturedUpgrade.upgradeName}', level hiện tại: {PersonaManager.Instance.GetCurrentLevel(capturedUpgrade)}"); // XOÁ dòng này sau khi debug xong
+
+                    if (PersonaManager.Instance.TryUnlockNextLevel(capturedUpgrade))
+                    {
+                        if (SoundManager.Instance != null)
+                            SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+
+                        ShowBranch(currentBranch);
+                        OpenLevelDetail(capturedUpgrade);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[PersonaUI] TryUnlockNextLevel trả về false — thiếu nguyên liệu hoặc đã max level."); // XOÁ dòng này sau khi debug xong
+                    }
+                });
+            }
+        }
+    }
+
+    private int CountItemInInventory(string itemName)
+    {
+        if (InventorySystem.Instance == null) return 0;
+        int count = 0;
+        foreach (string item in InventorySystem.Instance.itemList)
+        {
+            if (item == itemName) count++;
+        }
+        return count;
+    }
+}

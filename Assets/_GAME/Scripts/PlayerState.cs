@@ -87,7 +87,11 @@ public class PlayerState : MonoBehaviour
         distanceTravelled += frameDistance; //
         lastPosition = playerBody.transform.position; //
 
-        if (distanceTravelled >= 5) //
+        // Nhánh Persona (Sinh tồn) có thể làm chậm tốc độ đốt calo qua calorieBurnRateReduction (vd 0.2 = -20%)
+        float calorieBurnReduction = PersonaManager.Instance != null ? PersonaManager.Instance.calorieBurnRateReduction : 0f;
+        float calorieDistanceThreshold = 5f / Mathf.Max(0.1f, 1f - calorieBurnReduction);
+
+        if (distanceTravelled >= calorieDistanceThreshold) //
         {
             distanceTravelled = 0; //
             currentCalories -= 1; //
@@ -120,18 +124,20 @@ public class PlayerState : MonoBehaviour
             setHealth(currentHealth - 10); //
         }
     }
-
-    // NÂNG CẤP HÀM SET HEALTH: Để tự động kiểm tra xem khi nào máu về 0 và kích hoạt chết
+    // NÂNG CẤP HÀM SET HEALTH: Tự động kiểm tra chết và chặn vượt giới hạn
     public void setHealth(float amount)
     {
         if (isDead) return;
 
-        currentHealth = amount; //
+        currentHealth = amount;
 
-        // Giới hạn máu không bị âm xuống dưới 0
+        // Giới hạn dưới: Không cho máu bị âm
         if (currentHealth < 0) currentHealth = 0;
 
-        // Nếu máu thực sự bằng 0 -> Kích hoạt hàm Chết ngay lập tức!
+        // Giới hạn trên: Không cho máu vượt qua giới hạn maxHealth
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+
+        // Nếu máu thực sự bằng 0 thì Kích hoạt chết
         if (currentHealth <= 0)
         {
             Die();
@@ -141,13 +147,13 @@ public class PlayerState : MonoBehaviour
     // Tối ưu hàm set Calo & Nước để tránh lỗi chỉ số hiển thị bị âm
     public void setCalories(float amount)
     {
-        currentCalories = amount; //
+        currentCalories = amount; 
         if (currentCalories < 0) currentCalories = 0;
     }
 
     public void setHydration(float amount)
     {
-        currentHydrationPercent = amount; //
+        currentHydrationPercent = amount; 
         if (currentHydrationPercent < 0) currentHydrationPercent = 0;
     }
 

@@ -17,11 +17,11 @@ public class InteractableObject : MonoBehaviour
     // Trả về Tên có dấu để in ra UI
     public string GetDisplayName()
     {
-        if (string.IsNullOrEmpty(displayItemName))
+        if (!string.IsNullOrEmpty(displayItemName))
         {
-            return itemName;
+            return displayItemName; // Ưu tiên tên đã điền tay riêng cho object này
         }
-        return displayItemName;
+        return ItemNameVN.Get(itemName); // Không có thì tự tra bảng tên chung
     }
 
     private void OnTriggerEnter(Collider other)

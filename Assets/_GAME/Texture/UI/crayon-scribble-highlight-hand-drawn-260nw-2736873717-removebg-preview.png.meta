@@ -1,0 +1,717 @@
+fileFormatVersion: 2
+guid: 77c806f55e4411148a25193166da7d43
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_0
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 202
+        width: 55
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 422db39378f891542a82a61b566eb41b
+      internalID: 962437364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_1
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 203
+        width: 50
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3cd010cd60ad4e4bbaeeeddc04ae78e
+      internalID: -609029153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_2
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 231
+        width: 224
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d463ce4c7d592f4d9f960909833d191
+      internalID: -850400563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_3
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 205
+        width: 153
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a922a5675ee2afe4f8afaa16f10f7058
+      internalID: 197084395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_4
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 144
+        width: 109
+        height: 112
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49049e0a79a28ec418cfa14afd6764fb
+      internalID: 529473441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_5
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 146
+        width: 118
+        height: 49
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2441de1096d76d9448a059e1e1382272
+      internalID: -1446801175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_6
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 177
+        width: 45
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d3ae4627b76cf9449f55914434b5077
+      internalID: -1542830394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_7
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 162
+        width: 164
+        height: 67
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cb1447b8507da8488e649cc9e001fa3
+      internalID: 1118349367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_8
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 127
+        width: 158
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2564a52c2317eb645853c9dd2df28859
+      internalID: -1034963253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_9
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 179
+        width: 151
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec1ac8fd047951a478f51769f63c55d4
+      internalID: 1333199370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_10
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 121
+        width: 114
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72e8d0397cd90c743aa7d9c4f80afafb
+      internalID: 861369452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_11
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 96
+        width: 111
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50c7fa8bb7063c34d86232e5957f62ed
+      internalID: -164356310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_12
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 45
+        width: 62
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3733ac13044b6f043bbee18d6a59d64b
+      internalID: -1838135906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_13
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 97
+        width: 68
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f702951bc97a62247aca96c30af14cf3
+      internalID: 999153684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_14
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 121
+        width: 98
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e7400923b242474f8401d648998a0f8
+      internalID: 913500778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_15
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 84
+        width: 51
+        height: 58
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97c5fd5bd8200d14cba6479b32b91c31
+      internalID: 2046972679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_17
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 81
+        width: 68
+        height: 62
+      alignment: 9
+      pivot: {x: 0.47745737, y: 0.44786227}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f16aad99b5627b42a1a9438dc662d3e
+      internalID: -1463670514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_18
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 75
+        width: 110
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13daabd64c750ab4cb9b0ae13985aec4
+      internalID: 203736598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_19
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 45
+        width: 74
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd8c9c7e2a8fee84dba98314980ce9ae
+      internalID: 1096310899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_20
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 74
+        width: 172
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e66f96c6c5d1de40b2a7109ace848ea
+      internalID: -656631164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_21
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 66
+        width: 55
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6edb2ce6dd4e4c84ebb0dffdb2206089
+      internalID: -1141753986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_22
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 58
+        width: 117
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f8c567252b4c594b90bcf4e01409006
+      internalID: 2146598478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_23
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 45
+        width: 110
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a54cb4254b2b5b41a055e336c21d0e7
+      internalID: -271551469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_24
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 45
+        width: 192
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f51ea7f067b517e44b2048d740779139
+      internalID: -294311083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_25
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 45
+        width: 160
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbf111a629332a349ab03ff4c645ef91
+      internalID: 1625832536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 1363e4ce7e1a09b418a6ae2b8137a76f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":1,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_0: 962437364
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_1: -609029153
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_10: 861369452
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_11: -164356310
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_12: -1838135906
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_13: 999153684
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_14: 913500778
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_15: 2046972679
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_16: 1234953811
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_17: -1463670514
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_18: 203736598
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_19: 1096310899
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_2: -850400563
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_20: -656631164
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_21: -1141753986
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_22: 2146598478
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_23: -271551469
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_24: -294311083
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_25: 1625832536
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_26: 842572438
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_27: -1781022350
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_28: -1026394463
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_29: 1143263534
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_3: 197084395
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_30: -668126585
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_31: -235327970
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_32: 531353518
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_33: -1843064745
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_34: -1179064508
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_4: 529473441
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_5: -1446801175
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_6: -1542830394
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_7: 1118349367
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_8: -1034963253
+      crayon-scribble-highlight-hand-drawn-260nw-2736873717-removebg-preview_9: 1333199370
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
