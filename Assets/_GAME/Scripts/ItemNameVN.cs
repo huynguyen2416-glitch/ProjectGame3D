@@ -10,7 +10,8 @@ public static class ItemNameVN
         { "mushroom", "Nấm" },
         { "axe", "Rìu" },
         { "pickaxe", "Cuốc" },
-        { "poison", "Thuốc độc" },
+        { "potion", "Độc dược" },
+
     };
 
     public static string Get(string englishName)

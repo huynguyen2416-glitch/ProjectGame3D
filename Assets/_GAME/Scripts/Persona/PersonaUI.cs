@@ -19,25 +19,29 @@ public class PersonaUI : MonoBehaviour
     public Button sinhTonTabButton;
     public Button closeBookButton;
 
-    [Header("Danh sách nâng cấp trong 1 nhánh (ScrollView Content)")]
+    [Header("Danh sách nâng cấp trong 1 nhánh (ScrollView Content, thường ở Trang Trái)")]
     public Transform upgradeListContent;
     [Tooltip("Prefab 1 nút nâng cấp: cần có component Button, 1 Text (tên) ở component con, và tuỳ chọn 1 object tên 'Icon' chứa Image")]
     public GameObject upgradeNodeButtonPrefab;
 
-    [Header("Bảng chi tiết Level")]
+    [Header("Shelf (Tab bar + danh sách node ở Trang Trái) - ĐÓNG lại khi đang xem chi tiết 1 Level")]
+    [Tooltip("Kéo object cha gom RibbonTabBar + LeftPage (danh sách node) vào đây. Ẩn đi khi mở Level Detail, hiện lại khi bấm Back hoặc chọn nhánh mới")]
+    public GameObject shelfGroup;
+
+    [Header("Bảng chi tiết Level (ĐẶT NGAY TRONG RIGHT PAGE, cùng cấp với Right Page Default Content)")]
+    [Tooltip("Panel này giờ hiển thị NGAY BÊN TRONG Right Page, thay thế Right Page Default Content khi đang chọn 1 nâng cấp - không còn là trang riêng toàn màn hình nữa")]
     public GameObject levelDetailPanel;
     public Text detailTitleText;
     public Text detailDescriptionText;
+    [Tooltip("Hiển thị hiệu ứng của Level hiện đang sở hữu (effectDescription của level đã mở khoá cao nhất)")]
+    public Text effectText;
     public Image iconArtImage;
     public Transform levelRowContent;
-    [Tooltip("Prefab 1 dòng level: cần có object con tên 'LevelLabel' (Text), 'RequirementText' (Text), 'UnlockButton' (Button)")]
+    [Tooltip("Prefab 1 dòng level - NÊN style giống hệt upgradeNodeButtonPrefab (cùng màu nền/khung/font) để đồng bộ giao diện. Cần có object con tên 'LevelLabel' (Text), 'RequirementText' (Text), 'UnlockButton' (Button)")]
     public GameObject levelRowPrefab;
 
-    [Header("Trang riêng chỉ hiện Level (tách khỏi trang Notes)")]
-    [Tooltip("Object cha gom RibbonTabBar + UpgradeShelf + RightPage + LeftPage — ẩn đi khi mở trang Level riêng")]
-    public GameObject shelfGroup;
-    [Tooltip("Trang mới toàn màn hình chỉ có Level — bật lên khi chọn 1 nâng cấp")]
-    public GameObject levelOnlyPage;
+    [Header("Nút quay lại Right Page mặc định")]
+    [Tooltip("Bấm để đóng chi tiết Level, quay về nội dung mặc định của Right Page (không đóng cả cuốn sách)")]
     public Button backToShelfButton;
 
     [Header("Thanh Level tượng trưng (vd 2/5)")]
@@ -60,14 +64,15 @@ public class PersonaUI : MonoBehaviour
         if (lyTriTabButton != null) lyTriTabButton.onClick.AddListener(() => ShowBranch(PersonaBranch.LyTri));
         if (sinhTonTabButton != null) sinhTonTabButton.onClick.AddListener(() => ShowBranch(PersonaBranch.SinhTon));
         if (closeBookButton != null) closeBookButton.onClick.AddListener(ClosePanel);
-        if (backToShelfButton != null) backToShelfButton.onClick.AddListener(CloseLevelOnlyPage);
-        if (levelOnlyPage != null) levelOnlyPage.SetActive(false);
+        if (backToShelfButton != null) backToShelfButton.onClick.AddListener(CloseLevelDetail);
     }
 
-    // Đóng trang Level riêng, quay lại kệ sách (UpgradeShelf/LeftPage/RightPage)
-    private void CloseLevelOnlyPage()
+    // Đóng phần chi tiết Level, quay lại nội dung mặc định của Right Page, MỞ LẠI shelf (tab bar +
+    // danh sách node ở Trang Trái). KHÔNG đóng cả cuốn sách.
+    private void CloseLevelDetail()
     {
-        if (levelOnlyPage != null) levelOnlyPage.SetActive(false);
+        if (levelDetailPanel != null) levelDetailPanel.SetActive(false);
+        if (rightPageDefaultContent != null) rightPageDefaultContent.SetActive(true);
         if (shelfGroup != null) shelfGroup.SetActive(true);
         currentSelectedUpgrade = null;
     }
@@ -97,7 +102,7 @@ public class PersonaUI : MonoBehaviour
 
                 // Bật ghi chú lên, TẮT nội dung cũ đi
                 if (introNotePanel != null) introNotePanel.SetActive(true);
-                if (rightPageDefaultContent != null) rightPageDefaultContent.SetActive(false); 
+                if (rightPageDefaultContent != null) rightPageDefaultContent.SetActive(false);
 
                 foreach (var go in spawnedNodeButtons) Destroy(go);
                 spawnedNodeButtons.Clear();
@@ -107,11 +112,12 @@ public class PersonaUI : MonoBehaviour
         }
 
         // Chỉ chạy trình cập nhật thời gian thực khi người chơi đã chọn một nâng cấp cụ thể
-        bool detailIsOpen = levelOnlyPage != null ? levelOnlyPage.activeSelf : (levelDetailPanel != null && levelDetailPanel.activeSelf);
+        bool detailIsOpen = levelDetailPanel != null && levelDetailPanel.activeSelf;
         if (detailIsOpen && currentSelectedUpgrade != null)
         {
             RefreshLevelRows(currentSelectedUpgrade);
             RefreshLevelProgressBar(currentSelectedUpgrade);
+            RefreshEffectText(currentSelectedUpgrade);
         }
     }
 
@@ -120,7 +126,8 @@ public class PersonaUI : MonoBehaviour
         currentBranch = branch;
         if (levelDetailPanel != null) levelDetailPanel.SetActive(false);
         if (introNotePanel != null) introNotePanel.SetActive(false);
-        if(rightPageDefaultContent != null) rightPageDefaultContent.SetActive(true);
+        if (rightPageDefaultContent != null) rightPageDefaultContent.SetActive(true);
+        if (shelfGroup != null) shelfGroup.SetActive(true);
         foreach (var go in spawnedNodeButtons) Destroy(go);
         spawnedNodeButtons.Clear();
 
@@ -156,14 +163,16 @@ public class PersonaUI : MonoBehaviour
         }
     }
 
+    // Mở chi tiết Level NGAY TRONG Right Page: ẩn Right Page Default Content, hiện Level Detail Panel,
+    // ĐÓNG shelf (tab bar + danh sách node ở Trang Trái) lại để tập trung vào chi tiết.
     private void OpenLevelDetail(PersonaUpgradeSO upgrade)
     {
         currentSelectedUpgrade = upgrade;
-        if (levelDetailPanel != null) levelDetailPanel.SetActive(true);
 
-        // Chuyển từ kệ sách sang trang Level riêng
+        if (introNotePanel != null) introNotePanel.SetActive(false);
+        if (rightPageDefaultContent != null) rightPageDefaultContent.SetActive(false);
         if (shelfGroup != null) shelfGroup.SetActive(false);
-        if (levelOnlyPage != null) levelOnlyPage.SetActive(true);
+        if (levelDetailPanel != null) levelDetailPanel.SetActive(true);
 
         if (detailTitleText != null) detailTitleText.text = upgrade.upgradeName;
         if (detailDescriptionText != null) detailDescriptionText.text = upgrade.description;
@@ -174,6 +183,26 @@ public class PersonaUI : MonoBehaviour
 
         RefreshLevelRows(upgrade);
         RefreshLevelProgressBar(upgrade);
+        RefreshEffectText(upgrade);
+    }
+
+    // Hiển thị hiệu ứng của level ĐÃ MỞ KHOÁ cao nhất hiện tại (level 0 = chưa có hiệu ứng nào)
+    private void RefreshEffectText(PersonaUpgradeSO upgrade)
+    {
+        if (effectText == null || PersonaManager.Instance == null) return;
+
+        int currentLevel = PersonaManager.Instance.GetCurrentLevel(upgrade);
+
+        if (currentLevel <= 0)
+        {
+            effectText.text = "Chưa mở khoá hiệu ứng nào.";
+            return;
+        }
+
+        PersonaLevelData currentLevelData = upgrade.levels.Find(l => l.level == currentLevel);
+        effectText.text = currentLevelData != null
+            ? $"Hiệu ứng hiện tại: {currentLevelData.effectDescription}"
+            : "";
     }
 
     // Cập nhật thanh level tượng trưng (fillAmount) và chữ "currentLevel/maxLevel"
@@ -219,6 +248,7 @@ public class PersonaUI : MonoBehaviour
             Text levelLabel = row.transform.Find("LevelLabel")?.GetComponent<Text>();
             Text reqText = row.transform.Find("RequirementText")?.GetComponent<Text>();
             Button unlockBtn = row.transform.Find("UnlockButton")?.GetComponent<Button>();
+            Text rowEffectText = row.transform.Find("EffectText")?.GetComponent<Text>();
 
             bool isUnlocked = levelData.level <= currentLevel;
             bool isNextLevel = levelData.level == currentLevel + 1;
@@ -226,6 +256,18 @@ public class PersonaUI : MonoBehaviour
             if (levelLabel != null)
             {
                 levelLabel.text = $"Level {levelData.level}" + (isUnlocked ? " (Đã mở)" : "");
+            }
+
+            // Mỗi dòng tự hiển thị hiệu ứng CỦA RIÊNG level đó (không phải chỉ level hiện tại)
+            if (rowEffectText != null)
+            {
+                rowEffectText.text = levelData.effectDescription;
+                rowEffectText.color = isUnlocked ? Color.white : Color.grey;
+            }
+            else
+            {
+                // LOG TẠM THỜI ĐỂ DÒ LỖI - xoá dòng này sau khi tìm ra nguyên nhân
+                Debug.LogWarning($"[PersonaUI] KHÔNG tìm thấy child 'EffectText' trong row Level {levelData.level} (prefab gốc: '{row.name}'). Kiểm tra lại tên GameObject/vị trí lồng trong LevelRowPrefab.");
             }
 
             if (reqText != null)
@@ -252,8 +294,6 @@ public class PersonaUI : MonoBehaviour
                 PersonaUpgradeSO capturedUpgrade = upgrade;
                 unlockBtn.onClick.AddListener(() =>
                 {
-                    Debug.Log($"[PersonaUI] Đã bấm Mở khoá cho '{capturedUpgrade.upgradeName}', level hiện tại: {PersonaManager.Instance.GetCurrentLevel(capturedUpgrade)}"); // XOÁ dòng này sau khi debug xong
-
                     if (PersonaManager.Instance.TryUnlockNextLevel(capturedUpgrade))
                     {
                         if (SoundManager.Instance != null)
@@ -264,7 +304,7 @@ public class PersonaUI : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning("[PersonaUI] TryUnlockNextLevel trả về false — thiếu nguyên liệu hoặc đã max level."); // XOÁ dòng này sau khi debug xong
+                        Debug.LogWarning("[PersonaUI] TryUnlockNextLevel trả về false — thiếu nguyên liệu hoặc đã max level.");
                     }
                 });
             }

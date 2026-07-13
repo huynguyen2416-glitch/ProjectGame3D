@@ -16,7 +16,8 @@ public enum PersonaEffectType
     StaminaDrainReduction,  // giảm staminaDrainPerSecond khi sprint
     DropRateBonus,          // % tăng tỉ lệ rớt thêm vật phẩm (cộng dồn, đọc ở PersonaManager.dropRateBonus)
     HarvestSpeedBonus,      // % giảm thời gian giữa mỗi nhát chặt/đập (cộng dồn, đọc ở PersonaManager.harvestSpeedBonus)
-    CalorieBurnRateReduction // % giảm tốc độ đốt calo khi di chuyển (cộng dồn, đọc ở PersonaManager.calorieBurnRateReduction)
+    CalorieBurnRateReduction, // % giảm tốc độ đốt calo khi di chuyển (cộng dồn, đọc ở PersonaManager.calorieBurnRateReduction)
+    MoveSpeedBonus          // % tăng tốc độ di chuyển (đi bộ + chạy), cộng dồn, đọc ở PersonaManager.moveSpeedBonus
 }
 
 [System.Serializable]
@@ -31,7 +32,7 @@ public class PersonaRequirement
 public class PersonaEffect
 {
     public PersonaEffectType type;
-    [Tooltip("Giá trị CỘNG THÊM khi đạt tới level này (không phải tổng dồn)")]
+    [Tooltip("Giá trị CỘNG THÊM khi đạt tới level này (không phải tổng dồn). Với các loại %/tỉ lệ (DropRateBonus, HarvestSpeedBonus, CalorieBurnRateReduction, MoveSpeedBonus) thì nhập dạng thập phân, VD 0.05 = +5%.")]
     public float value;
 }
 

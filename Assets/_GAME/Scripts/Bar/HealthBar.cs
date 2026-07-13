@@ -1,13 +1,10 @@
 using UnityEngine;
-using UnityEngine.Playables;
 using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
     private Slider slider;
     public Text healthCounter;
-    public GameObject playerState;
-    private float currentHealth, maxHealth;
     private void Awake()
     {
         slider = GetComponent<Slider>();
@@ -15,11 +12,19 @@ public class HealthBar : MonoBehaviour
 
     void Update()
     {
-        currentHealth = playerState.GetComponent<PlayerState>().currentHealth;
-        maxHealth = playerState.GetComponent<PlayerState>().maxHealth;
+        // 1. Bảo vệ lỗi rỗng để game không bị đứng nếu nhân vật lỡ bị xóa
+        if (PlayerState.Instance == null) return;
+
+        // 2. Lấy dữ liệu trực tiếp từ Singleton (Siêu nhẹ, không dùng GetComponent)
+        float currentHealth = PlayerState.Instance.currentHealth;
+        float maxHealth = PlayerState.Instance.maxHealth;
+        // 3. Cập nhật UI
         float fillValue = currentHealth / maxHealth;
         slider.value = fillValue;
 
-        healthCounter.text = Mathf.CeilToInt(currentHealth) + "/" + Mathf.RoundToInt(maxHealth);
+        if (healthCounter != null)
+        {
+            healthCounter.text = Mathf.CeilToInt(currentHealth) + "/" + Mathf.RoundToInt(maxHealth);
+        }
     }
 }

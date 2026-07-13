@@ -15,6 +15,7 @@ public class PersonaManager : MonoBehaviour
     public float dropRateBonus { get; private set; }
     public float harvestSpeedBonus { get; private set; }
     public float calorieBurnRateReduction { get; private set; } // 0.2 = -20% tốc độ đốt calo
+    public float moveSpeedBonus { get; private set; } // 0.1 = +10% tốc độ di chuyển (đi bộ + chạy), đọc ở PlayerMovement
 
     private void Awake()
     {
@@ -148,6 +149,10 @@ public class PersonaManager : MonoBehaviour
 
                 case PersonaEffectType.CalorieBurnRateReduction:
                     calorieBurnRateReduction = Mathf.Clamp01(calorieBurnRateReduction + effect.value);
+                    break;
+
+                case PersonaEffectType.MoveSpeedBonus:
+                    moveSpeedBonus += effect.value;
                     break;
             }
         }

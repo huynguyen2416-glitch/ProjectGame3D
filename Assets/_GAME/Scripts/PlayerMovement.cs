@@ -57,6 +57,11 @@ public class PlayerMovement : MonoBehaviour
         bool isSlashPressed = Input.GetMouseButtonDown(0);
 
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
+
+        // Persona (MoveSpeedBonus): % cộng dồn từ các PersonaUpgradeSO đã mở khoá, áp dụng cho cả đi bộ lẫn chạy
+        float moveSpeedMultiplier = 1f + (PersonaManager.Instance != null ? PersonaManager.Instance.moveSpeedBonus : 0f);
+        currentSpeed *= moveSpeedMultiplier;
+
         Vector3 moveDirection = Vector3.zero;
 
         if (mainCamera != null)
@@ -132,15 +137,17 @@ public class PlayerMovement : MonoBehaviour
 
 
 
+
         // ÂM THANH BƯỚC CHÂN
-        // Chỉ tính bước chân khi: đang chạm đất VÀ đang thực sự di chuyển (không tính lúc nhảy/rơi tự do)
         if (controller.isGrounded && isActuallyMoving)
         {
             footstepTimer -= Time.deltaTime;
             if (footstepTimer <= 0f)
             {
-                // Truyền trạng thái chạy/đi bộ vào hàm
-                PlayFootstepSound(isRunning);
+                // Gọi hàm phát âm thanh (không cần truyền biến isRunning nữa)
+                PlayFootstepSound();
+
+                // Nhịp độ sẽ tự động nhanh hơn khi isRunning = true
                 footstepTimer = isRunning ? footstepIntervalRun : footstepIntervalWalk;
             }
         }
@@ -150,8 +157,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Raycast từ chân nhân vật xuống dưới để biết đang đứng trên bề mặt gì (dựa theo Tag của mặt đất)
-    void PlayFootstepSound(bool isRunning)
+    void PlayFootstepSound()
     {
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
 
@@ -159,16 +165,8 @@ public class PlayerMovement : MonoBehaviour
         {
             if (hit.collider.CompareTag("Grass") && SoundManager.Instance != null)
             {
-                if (isRunning)
-                {
-                    // Phát tiếng chạy
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.grassSprintSound);
-                }
-                else
-                {
-                    // Phát tiếng đi bộ
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.grassWalkSound);
-                }
+                // Luôn phát tiếng bước chân đi bộ
+                SoundManager.Instance.PlaySound(SoundManager.Instance.grassWalkSound);
             }
             // Sau này làm thêm tiếng bước trên đá, gỗ... thì cứ:
             // else if (hit.collider.CompareTag("Stone")) { ... } 
