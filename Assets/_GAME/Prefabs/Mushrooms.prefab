@@ -94,8 +94,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.36, y: 1.37, z: 3.29}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 3.36, y: 0.47, z: 3.29}
+  m_Center: {x: 0, y: 0.17, z: 0}
 --- !u!114 &5793608781762094664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
   itemName: mushroom
   displayItemName: "N\u1EA5m"
   itemIcon: {fileID: 0}
-  playerInRange: 1
+  playerInRange: 0
 --- !u!65 &7596822640908805758
 BoxCollider:
   m_ObjectHideFlags: 0

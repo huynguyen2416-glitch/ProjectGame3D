@@ -16,16 +16,22 @@ public class LightingManager : MonoBehaviour
     [Header("Win Condition: Survival Mode")]
     public int daysSurvived = 0;
     public int daysToWin = 10;
-    [Tooltip("Kéo Panel màn hình Chiến Thắng vào đây")]
-    public GameObject winScreenUI;
 
-    // Biến lưu thời gian frame trước để tính lúc qua ngày mới
+    [Tooltip("Kéo Panel hiệu ứng 'Đêm thứ X' (gắn DayTransitionUI.cs) vào đây")]
+    public DayTransitionUI dayTransitionUI;
+
     private float previousTime = 0f;
     private bool hasWon = false;
 
+    // ================= SỬA TẠI ĐÂY: KHÔI PHỤC NGÀY & GIỜ KHI LOAD GAME ================= //
     private void Start()
     {
-        if (winScreenUI != null) winScreenUI.SetActive(false);
+        if (GameController.PendingLoad != null)
+        {
+            daysSurvived = GameController.PendingLoad.daysSurvived;
+            TimeOfDay = GameController.PendingLoad.timeOfDay;
+            Debug.Log($"[LightingManager]: Đã khôi phục thành công ngày {daysSurvived}, lúc {TimeOfDay}h từ file save!");
+        }
     }
 
     private void Update()
@@ -35,19 +41,30 @@ public class LightingManager : MonoBehaviour
 
         if (Application.isPlaying)
         {
-            if (hasWon) return; // Nếu đã thắng thì dừng đếm thời gian
+            if (hasWon) return;
 
             previousTime = TimeOfDay;
             TimeOfDay += Time.deltaTime;
-
-            // Ép thời gian quay vòng theo 1 ngày (VD: hết 48 thì reset về 0)
             TimeOfDay %= dayLength;
 
-            // LOGIC ĐẾM NGÀY: Nếu thời gian hiện tại nhỏ hơn thời gian frame trước => Đã nhảy sang ngày mới
             if (TimeOfDay < previousTime)
             {
                 daysSurvived++;
                 Debug.Log($"Trời đã sáng! Bạn đã sống sót được: {daysSurvived}/{daysToWin} đêm.");
+
+                if (dayTransitionUI != null)
+                {
+                    dayTransitionUI.ShowDay(daysSurvived);
+                }
+
+                if (GameController.Instance != null)
+                {
+                    GameController.Instance.PerformAutosave(daysSurvived, TimeOfDay);
+                }
+                else
+                {
+                    Debug.LogWarning("[LightingManager]: Không tìm thấy GameController.Instance, KHÔNG THỂ autosave ngày mới!");
+                }
 
                 if (daysSurvived >= daysToWin)
                 {
@@ -59,47 +76,37 @@ public class LightingManager : MonoBehaviour
         }
         else
         {
-            // Cho phép xem trước ánh sáng trong Editor
             UpdateLighting(TimeOfDay / dayLength);
         }
     }
 
-    // KÍCH HOẠT CHIẾN THẮNG
     private void TriggerWinCondition()
     {
         hasWon = true;
-        Debug.Log("CHÚC MỪNG! BẠN ĐÃ SỐNG SÓT ĐỦ 10 ĐÊM!");
+        Debug.Log("CHÚC MỪNG! BẠN ĐÃ SỐNG SÓT ĐỦ SỐ ĐÊM QUY ĐỊNH!");
 
-        if (winScreenUI != null)
+        if (GameController.Instance != null)
         {
-            winScreenUI.SetActive(true);
-
-            // Giải phóng chuột để người chơi bấm nút "Chơi lại" hoặc "Thoát"
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            // Dừng hẳn game lại
-            Time.timeScale = 0f;
+            GameController.Instance.TriggerWin();
+        }
+        else
+        {
+            Debug.LogError("[LightingManager]: Không tìm thấy GameController.Instance! Bạn phải chạy game từ StartScene.");
         }
     }
 
     private void UpdateLighting(float timePercent)
     {
-        // Set ambient and fog
         RenderSettings.ambientLight = Preset.AmbientColor.Evaluate(timePercent);
         RenderSettings.fogColor = Preset.FogColor.Evaluate(timePercent);
 
         if (DirectionalLight != null)
         {
-            // Set color based on gradient
             DirectionalLight.color = Preset.DirectionalColor.Evaluate(timePercent);
-
-            // Quay góc mặt trời
             DirectionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
         }
     }
 
-    // Tự động tìm Directional Light nếu chưa gán
     private void OnValidate()
     {
         if (DirectionalLight != null)
