@@ -56,7 +56,7 @@ public class PauseMenuUI : MonoBehaviour
 
     public void OnClickSaveAndMainMenu()
     {
-        LightingManager lighting = FindObjectOfType<LightingManager>();
+        LightingManager lighting = FindAnyObjectByType<LightingManager>();
         if (lighting != null && GameController.Instance != null)
         {
             GameController.Instance.PerformAutosave(lighting.daysSurvived, lighting.TimeOfDay);

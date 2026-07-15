@@ -111,6 +111,8 @@ public class PlayerState : MonoBehaviour
         maxHydrationPercent = data.maxHydrationPercent;
         currentStamina = data.currentStamina;
         maxStamina = data.maxStamina;
+        staminaDrainPerSecond = data.staminaDrainPerSecond;
+        staminaRegenPerSecond = data.staminaRegenPerSecond;
 
         isDead = false; // Đảm bảo gỡ trạng thái chết
         Debug.Log("[PlayerState]: Đã spawn an toàn tại vị trí đã lưu và khôi phục chỉ số.");
@@ -128,6 +130,8 @@ public class PlayerState : MonoBehaviour
         data.maxHydrationPercent = maxHydrationPercent;
         data.currentStamina = currentStamina;
         data.maxStamina = maxStamina;
+        data.staminaDrainPerSecond = staminaDrainPerSecond;
+        data.staminaRegenPerSecond = staminaRegenPerSecond;
 
         if (playerBody != null)
         {
@@ -158,17 +162,17 @@ public class PlayerState : MonoBehaviour
         float frameDistance = Vector3.Distance(playerBody.transform.position, lastPosition);
         bool isMovingThisFrame = frameDistance > 0.001f;
 
-        distanceTravelled += frameDistance; //
-        lastPosition = playerBody.transform.position; //
+        distanceTravelled += frameDistance; // khoảng cách di chuyển
+        lastPosition = playerBody.transform.position; //vị trí đứng kết thúc
 
         // Nhánh Persona (Sinh tồn) có thể làm chậm tốc độ đốt calo qua calorieBurnRateReduction (vd 0.2 = -20%)
         float calorieBurnReduction = PersonaManager.Instance != null ? PersonaManager.Instance.calorieBurnRateReduction : 0f;
         float calorieDistanceThreshold = 5f / Mathf.Max(0.1f, 1f - calorieBurnReduction);
-
-        if (distanceTravelled >= calorieDistanceThreshold) //
+        float healthBurnReduction = PersonaManager.Instance != null ? PersonaManager.Instance.healthBurnRateReduction : 0f;
+        if (distanceTravelled >= calorieDistanceThreshold)
         {
-            distanceTravelled = 0; //
-            currentCalories -= 1; //
+            distanceTravelled = 0;
+            currentCalories -= 1;
             if (currentCalories < 0) currentCalories = 0;
         }
 
@@ -176,7 +180,9 @@ public class PlayerState : MonoBehaviour
         // Nếu Calo chạm đáy HOẶC Nước chạm đáy (bằng 0) thì người chơi mất máu dần dần theo thời gian
         if (currentCalories <= 0 || currentHydrationPercent <= 0)
         {
-            float damage = starvationDamageRate * Time.deltaTime;
+            // Trước đây healthBurnReduction được tính ra nhưng KHÔNG dùng ở đây - persona
+            // "giảm đốt máu" hoàn toàn không có tác dụng gì. Giờ nhân vào công thức thật.
+            float damage = starvationDamageRate * Time.deltaTime * 2 * (1f - healthBurnReduction);
             setHealth(currentHealth - damage);
         }
 

@@ -80,11 +80,6 @@ public class PlayerMovement : MonoBehaviour
             moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
         }
 
-        //if (isSlashPressed)
-        {
-            //if (animator != null)
-            //	animator.SetTrigger("Slash");
-        }
 
         // Xử lý trọng lực và Nhảy
         if (controller.isGrounded)

@@ -31,6 +31,7 @@ public class OutroController : MonoBehaviour
     [Header("Thời lượng từng đoạn (giây)")]
     public float sitDuration = 4f;
     public float sunsetTransitionDuration = 3f;
+
     public float waveDuration = 2.5f;
     public float fadeDuration = 2f;
     public float delayBeforeReturnToMenu = 1f;
@@ -64,8 +65,8 @@ public class OutroController : MonoBehaviour
         if (playerAnimator != null && !string.IsNullOrEmpty(sitTrigger))
             playerAnimator.SetTrigger(sitTrigger);
         yield return new WaitForSeconds(sitDuration);
-
-        // BƯỚC 2: Hoàng hôn + Thuyền xuất hiện
+        yield return StartCoroutine(TransitionToSunset());
+        // BƯỚC 2 Thuyền xuất hiện
         if (boatObject != null)
         {
             if (boatStartPoint != null)
@@ -75,7 +76,7 @@ public class OutroController : MonoBehaviour
             }
             boatObject.SetActive(true);
         }
-        yield return StartCoroutine(TransitionToSunset());
+        
 
         // BƯỚC 3: Đứng dậy + Thuyền vào bờ + Chạy ra đón
         if (playerAnimator != null && !string.IsNullOrEmpty(standTrigger))

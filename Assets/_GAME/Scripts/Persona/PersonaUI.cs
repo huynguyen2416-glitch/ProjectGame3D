@@ -330,7 +330,7 @@ public class PersonaUI : MonoBehaviour
                     if (PersonaManager.Instance.TryUnlockNextLevel(capturedUpgrade))
                     {
                         if (SoundManager.Instance != null)
-                            SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+                            SoundManager.Instance.PlaySound(SoundManager.Instance.personaSound);
 
                         RefreshLevelRows(capturedUpgrade);
                         RefreshLevelProgressBar(capturedUpgrade);

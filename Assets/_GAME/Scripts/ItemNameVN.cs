@@ -11,6 +11,7 @@ public static class ItemNameVN
         { "axe", "Rìu" },
         { "pickaxe", "Cuốc" },
         { "potion", "Độc dược" },
+        {"meat", "Thịt" }
 
     };
 

@@ -17,15 +17,26 @@ public class PersonaManager : MonoBehaviour
     public float calorieBurnRateReduction { get; private set; } // 0.2 = -20% tốc độ đốt calo
     public float moveSpeedBonus { get; private set; } // 0.1 = +10% tốc độ di chuyển (đi bộ + chạy), đọc ở PlayerMovement
 
+    public float healthBurnRateReduction { get; private set; }// 0.3 -20% tốc độ đốt HP
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
 
-        foreach (var upgrade in allUpgrades)
+        // Nếu đang Continue/Restart-from-death, nạp lại toàn bộ level + % bonus từ save.
+        // Đọc trực tiếp GameController.PendingLoad (giống PlayerState/LightingManager đang làm),
+        // không để GameController "đẩy" vào, tránh phụ thuộc thứ tự Awake/Start giữa các script.
+        if (GameController.PendingLoad != null)
         {
-            if (upgrade != null && !currentLevels.ContainsKey(upgrade))
-                currentLevels[upgrade] = 0;
+            ApplySaveData(GameController.PendingLoad);
+        }
+        else
+        {
+            foreach (var upgrade in allUpgrades)
+            {
+                if (upgrade != null && !currentLevels.ContainsKey(upgrade))
+                    currentLevels[upgrade] = 0;
+            }
         }
     }
 
@@ -85,7 +96,7 @@ public class PersonaManager : MonoBehaviour
                 }
             }
 
-            // 2. Xóa Object trên UI (ĐÃ SỬA LỖI DELAY)
+            // 2. Xóa Object trên UI 
             removed = 0;
             foreach (GameObject slot in InventorySystem.Instance.slotList)
             {
@@ -139,6 +150,11 @@ public class PersonaManager : MonoBehaviour
                         PlayerState.Instance.staminaDrainPerSecond = Mathf.Max(0f, PlayerState.Instance.staminaDrainPerSecond - effect.value);
                     break;
 
+                case PersonaEffectType.StaminaRegenBonus:
+                    if (PlayerState.Instance != null)
+                        PlayerState.Instance.staminaRegenPerSecond += effect.value;
+                    break;
+
                 case PersonaEffectType.DropRateBonus:
                     dropRateBonus += effect.value;
                     break;
@@ -154,8 +170,84 @@ public class PersonaManager : MonoBehaviour
                 case PersonaEffectType.MoveSpeedBonus:
                     moveSpeedBonus += effect.value;
                     break;
+                case PersonaEffectType.HealthBurnRateReduction:
+                    healthBurnRateReduction = Mathf.Clamp01(healthBurnRateReduction + effect.value);
+                    break;
             }
         }
+    }
+
+    // ================= LƯU TRẠNG THÁI PERSONA VÀO SaveData ================= //
+
+    public void FillSaveData(SaveData data)
+    {
+        data.personaUpgradeNames = new List<string>();
+        data.personaUpgradeLevels = new List<int>();
+
+        foreach (var kvp in currentLevels)
+        {
+            if (kvp.Key == null) continue; // Phòng trường hợp asset SO bị xoá sau khi đã có trong dictionary
+
+            if (string.IsNullOrEmpty(kvp.Key.upgradeName))
+            {
+                Debug.LogError($"[PersonaManager]: Asset '{kvp.Key.name}' đang có 'Upgrade Name' RỖNG trong Inspector - " +
+                                "field này dùng làm khoá lưu file, để trống sẽ khiến nhiều nhánh cùng lưu chung 1 khoá '' " +
+                                "và lúc nạp lại chỉ khớp được nhánh ĐẦU TIÊN tìm thấy, các nhánh khác coi như MẤT.");
+            }
+
+            data.personaUpgradeNames.Add(kvp.Key.upgradeName);
+            data.personaUpgradeLevels.Add(kvp.Value);
+            Debug.Log($"[PersonaManager]: Đang lưu nhánh '{kvp.Key.upgradeName}' -> level {kvp.Value}");
+        }
+
+        // Lưu thẳng % bonus cộng dồn hiện tại, không lưu lại bằng cách tính toán từ effects
+        data.personaDropRateBonus = dropRateBonus;
+        data.personaHarvestSpeedBonus = harvestSpeedBonus;
+        data.personaCalorieBurnRateReduction = calorieBurnRateReduction;
+        data.personaMoveSpeedBonus = moveSpeedBonus;
+        data.personaHealthBurnRateReduction = healthBurnRateReduction;
+    }
+
+    // ================= NẠP LẠI TRẠNG THÁI PERSONA TỪ SaveData ================= //
+    public void ApplySaveData(SaveData data)
+    {
+        currentLevels.Clear();
+
+        // Khởi tạo lại về 0 cho MỌI nhánh trước, giống hệt nhánh "game mới" trong Awake()
+        foreach (var upgrade in allUpgrades)
+        {
+            if (upgrade != null) currentLevels[upgrade] = 0;
+        }
+
+        if (data.personaUpgradeNames != null && data.personaUpgradeLevels != null)
+        {
+            int count = Mathf.Min(data.personaUpgradeNames.Count, data.personaUpgradeLevels.Count);
+            Debug.Log($"[PersonaManager]: Đang nạp lại Persona từ save - số nhánh có trong file: {count}");
+
+            for (int i = 0; i < count; i++)
+            {
+                PersonaUpgradeSO match = allUpgrades.Find(u => u != null && u.upgradeName == data.personaUpgradeNames[i]);
+                if (match != null)
+                {
+                    currentLevels[match] = data.personaUpgradeLevels[i];
+                    Debug.Log($"[PersonaManager]: Đã khôi phục nhánh '{data.personaUpgradeNames[i]}' -> level {data.personaUpgradeLevels[i]}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[PersonaManager]: Save có nhánh '{data.personaUpgradeNames[i]}' nhưng không tìm thấy PersonaUpgradeSO nào khớp tên trong 'allUpgrades' hiện tại - có thể đã đổi tên hoặc xoá asset sau khi lưu.");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[PersonaManager]: Save không có dữ liệu Persona nào (personaUpgradeNames null) - có thể save này được tạo TRƯỚC KHI tính năng lưu Persona được thêm vào.");
+        }
+
+        dropRateBonus = data.personaDropRateBonus;
+        harvestSpeedBonus = data.personaHarvestSpeedBonus;
+        calorieBurnRateReduction = data.personaCalorieBurnRateReduction;
+        moveSpeedBonus = data.personaMoveSpeedBonus;
+        healthBurnRateReduction = data.personaHealthBurnRateReduction;
     }
 
     // Gọi hàm này từ nút "Mở khoá" trên UI

@@ -14,10 +14,12 @@ public enum PersonaEffectType
     MaxHydration,
     MaxCalories,
     StaminaDrainReduction,  // giảm staminaDrainPerSecond khi sprint
+    StaminaRegenBonus,      // tăng staminaRegenPerSecond, đọc/áp thẳng vào PlayerState.staminaRegenPerSecond
     DropRateBonus,          // % tăng tỉ lệ rớt thêm vật phẩm (cộng dồn, đọc ở PersonaManager.dropRateBonus)
     HarvestSpeedBonus,      // % giảm thời gian giữa mỗi nhát chặt/đập (cộng dồn, đọc ở PersonaManager.harvestSpeedBonus)
     CalorieBurnRateReduction, // % giảm tốc độ đốt calo khi di chuyển (cộng dồn, đọc ở PersonaManager.calorieBurnRateReduction)
-    MoveSpeedBonus          // % tăng tốc độ di chuyển (đi bộ + chạy), cộng dồn, đọc ở PersonaManager.moveSpeedBonus
+    MoveSpeedBonus,        // % tăng tốc độ di chuyển (đi bộ + chạy), cộng dồn, đọc ở PersonaManager.moveSpeedBonus
+    HealthBurnRateReduction// % giảm đốt máu khi hết calo và nước ,cộng dồn, đọc ở PersonaManager.healthBurnRateReduction
 }
 
 [System.Serializable]

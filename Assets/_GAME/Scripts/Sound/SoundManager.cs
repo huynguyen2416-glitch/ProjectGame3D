@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class SoundManager : MonoBehaviour
@@ -13,14 +14,12 @@ public class SoundManager : MonoBehaviour
     public AudioSource pickupItemSound;
     public AudioSource grassWalkSound;
     public AudioSource grassSprintSound;
-
-    [Header("--- Nhạc và Âm thanh Môi trường ---")]
-    public AudioSource backgroundMusic;
-
-    [Tooltip("Nhạc nền lúc chạy Cutscene kết game")]
-    public AudioSource outroMusic;
-    [Tooltip("Tiếng sóng biển rì rào vỗ bờ")]
-    public AudioSource waveSound;
+    public AudioSource backgroundMusic; //Canh1
+    public AudioSource outroMusic;  //Outro
+    public AudioSource waveSound;  //Outro
+    public AudioSource introSound; //Intro
+    public AudioSource creditsSound; //Credit
+    public AudioSource personaSound;
 
     private void Awake()
     {
@@ -32,9 +31,66 @@ public class SoundManager : MonoBehaviour
         }
 
         Instance = this;
-
         DontDestroyOnLoad(gameObject);
+
+        if (gameObject.scene.name != "StartScene")
+        {
+            Debug.LogWarning($"[SoundManager]: SoundManager đang được tạo LẦN ĐẦU ở scene '{gameObject.scene.name}', không phải 'StartScene'. " +
+                              "Theo đúng kiến trúc (giống GameController), object này nên đặt DUY NHẤT trong StartScene - nếu để ở scene khác " +
+                              "(VD: Canh1), mọi AudioSource không phải con trực tiếp của nó sẽ bị Destroy mỗi khi scene đó unload, " +
+                              "gây mất âm thanh từ lần chơi thứ 2 trở đi.");
+        }
     }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StopSound(backgroundMusic);
+        StopSound(outroMusic);
+        StopSound(waveSound);
+        StopSound(introSound);
+        StopSound(creditsSound);
+
+        switch (scene.name)
+        {
+            case "StartScene":
+                PlaySound(introSound);
+                break;
+
+            case "Canh1":
+                // Vào chính thức gameplay: phát nhạc nền Canh1 từ đầu.
+                if (backgroundMusic != null)
+                {
+                    backgroundMusic.time = 0f;
+                    backgroundMusic.Play();
+                }
+                break;
+
+            case "CreditsScene":
+                PlaySound(creditsSound);
+                break;
+
+            case "OutroScene":
+                PlaySound(waveSound);
+                PlaySound(outroMusic);
+                break;
+            case "DeathScene":
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
 
     public void PlaySound(AudioSource soundToPlay)
     {

@@ -1,10 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-// ⚠️ QUAN TRỌNG: Tên FILE này (MineableRock.cs) PHẢI trùng tên CLASS bên dưới.
-// Đây là lý do đập đá không mất máu trước đây: file cũ tên "MineralRock.cs"
-// nhưng class là "MineableRock" -> Unity không gắn được script vào GameObject
-// -> GetComponent<MineableRock>() luôn null -> GetHit() không bao giờ chạy.
+
 [RequireComponent(typeof(BoxCollider))]
 public class MineableRock : MonoBehaviour
 {
@@ -14,6 +11,12 @@ public class MineableRock : MonoBehaviour
     public float rockMaxHealth;
     public float rockHealth;
 
+    [Tooltip("Thời gian chờ giữa mỗi nhát đập (giây) TRƯỚC KHI áp bonus tốc độ đập từ Persona")]
+    public float baseHitDelay = 0.6f;
+
+    [Header("Hierarchy - thống nhất cấu trúc: RockParent > Prefab > RockBase (script này)")]
+    [Tooltip("Kéo transform GỐC của cả cụm đá (RockParent, cấp cao nhất trong prefab) vào đây. " +
+             "Nếu để trống, script sẽ tự dò 2 cấp cha như code cũ (có cảnh báo log).")]
     public Transform rootToDestroy;
 
     [Tooltip("Tên prefab mảnh đá vỡ trong thư mục Resources, mặc định 'BrokenRock'")]
@@ -57,7 +60,12 @@ public class MineableRock : MonoBehaviour
     {
         isBeingHit = true;
 
-        yield return new WaitForSeconds(0.6f);
+        // Trước đây hard-code 0.6f, khiến harvestSpeedBonus của Persona hoàn toàn không có
+        // tác dụng khi đập đá (dù có tác dụng khi chặt cây nếu code 2 bên không đồng bộ).
+        float harvestSpeedBonus = PersonaManager.Instance != null ? PersonaManager.Instance.harvestSpeedBonus : 0f;
+        float actualDelay = Mathf.Max(0.05f, baseHitDelay * (1f - harvestSpeedBonus));
+
+        yield return new WaitForSeconds(actualDelay);
 
         rockHealth -= 1;
 
@@ -74,7 +82,11 @@ public class MineableRock : MonoBehaviour
 
     private void SyncGlobalState()
     {
-        if (GlobalState.Instance == null) return;
+        if (GlobalState.Instance == null)
+        {
+            Debug.LogWarning("[MineableRock]: GlobalState.Instance đang null - máu đá có giảm thật (biến rockHealth) nhưng KHÔNG hiển thị lên thanh máu. Kiểm tra scene có object nào gắn script GlobalState.cs không.");
+            return;
+        }
         GlobalState.Instance.resourceHealth = rockHealth;
         GlobalState.Instance.resourceMaxHealth = rockMaxHealth;
     }
@@ -93,6 +105,9 @@ public class MineableRock : MonoBehaviour
         }
         else
         {
+            Debug.LogWarning("[MineableRock]: 'Root To Destroy' chưa được gán trong Inspector, " +
+                              "đang fallback về transform.parent.parent (dễ sai nếu cấu trúc prefab khác). " +
+                              "Nên kéo object cha gốc của cụm đá vào field 'Root To Destroy'.");
             objectToDestroy = transform.parent != null && transform.parent.parent != null
                 ? transform.parent.parent.gameObject
                 : gameObject;
