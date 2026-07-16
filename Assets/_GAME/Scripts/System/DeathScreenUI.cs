@@ -15,7 +15,20 @@ public class DeathScreenUI : MonoBehaviour
         }
     }
 
-    //  Gắn vào Button "Về Menu" nếu bạn muốn có thêm lựa chọn này ở DeathScene
+    // Gắn vào Button "Quay lại" (load lại Canh1 HOÀN TOÀN MỚI, không còn save để rollback)
+    public void OnClickRestart()
+    {
+        if (GameController.Instance != null)
+        {
+            GameController.Instance.RestartGame();
+        }
+        else
+        {
+            Debug.LogWarning("[DeathScreenUI]: Không tìm thấy GameController.Instance!");
+        }
+    }
+
+    //  Gắn vào Button "Về Menu" 
     public void OnClickMainMenu()
     {
         if (GameController.Instance != null)

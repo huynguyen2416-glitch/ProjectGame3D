@@ -10,7 +10,7 @@ public class PauseMenuUI : MonoBehaviour
 
     [Header("Buttons")]
     public Button continueButton;
-    public Button saveAndMainMenuButton;
+    public Button mainMenuButton;
     public Button quitGameButton;
 
     private bool isPaused = false;
@@ -21,6 +21,7 @@ public class PauseMenuUI : MonoBehaviour
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
 
         if (continueButton != null) continueButton.onClick.AddListener(ResumeGame);
+        if (mainMenuButton != null) mainMenuButton.onClick.AddListener(OnClickMainMenu);
         if (quitGameButton != null) quitGameButton.onClick.AddListener(OnClickQuit);
     }
 
@@ -53,7 +54,14 @@ public class PauseMenuUI : MonoBehaviour
         Cursor.visible = false;
     }
 
-
+    public void OnClickMainMenu()
+    {
+        //tiến trình chơi hiện tại sẽ mất khi về Menu.
+        if (GameController.Instance != null)
+        {
+            GameController.Instance.GoToMainMenu();
+        }
+    }
 
     public void OnClickQuit()
     {

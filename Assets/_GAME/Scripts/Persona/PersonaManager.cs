@@ -13,7 +13,7 @@ public class PersonaManager : MonoBehaviour
 
     // Hiệu ứng không map thẳng vào PlayerState, đọc giá trị này ở nơi khác (vd ChoppableTree/MineableRock)
     public float dropRateBonus { get; private set; }
-    public float harvestSpeedBonus { get; private set; }
+    public float harvestSpeedBonus { get; private set; } 
     public float calorieBurnRateReduction { get; private set; } // 0.2 = -20% tốc độ đốt calo
     public float moveSpeedBonus { get; private set; } // 0.1 = +10% tốc độ di chuyển (đi bộ + chạy), đọc ở PlayerMovement
 
@@ -22,6 +22,12 @@ public class PersonaManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        foreach (var upgrade in allUpgrades)
+        {
+            if (upgrade != null && !currentLevels.ContainsKey(upgrade))
+                currentLevels[upgrade] = 0;
+        }
     }
 
     public int GetCurrentLevel(PersonaUpgradeSO upgrade)
@@ -89,7 +95,7 @@ public class PersonaManager : MonoBehaviour
                 GameObject itemInSlot = slot.transform.GetChild(0).gameObject;
                 if (itemInSlot.name == req.itemName || itemInSlot.name == req.itemName + "(Clone)")
                 {
-                    // THÊM DÒNG NÀY: Cắt đứt quan hệ cha-con ngay lập tức để ReCalculateList không quét trúng nữa
+                    //Cắt đứt quan hệ cha-con ngay lập tức để ReCalculateList không quét trúng nữa
                     itemInSlot.transform.SetParent(null);
 
                     Destroy(itemInSlot);
@@ -161,9 +167,7 @@ public class PersonaManager : MonoBehaviour
         }
     }
 
-    // ================= LƯU TRẠNG THÁI PERSONA VÀO SaveData ================= //
-
-    
+    // Gọi hàm này từ nút "Mở khoá" trên UI
     public bool TryUnlockNextLevel(PersonaUpgradeSO upgrade)
     {
         if (!CanUnlockNextLevel(upgrade)) return false;

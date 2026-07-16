@@ -1,10 +1,16 @@
 using UnityEngine;
 
-// Gắn script này lên CHÍNH model 3D của rìu/cuốc (object con nằm trong tay nhân vật),
-// không gắn lên tay hay lên Player. Object này cần có Collider (BoxCollider) — script tự bật Is Trigger.
+
 [RequireComponent(typeof(Collider))]
 public class WeaponHitbox : MonoBehaviour
 {
+    //Tạo danh sách phân loại để chọn trong Inspector
+    public enum ToolType { Axe, Pickaxe }
+
+    [Header("Phân loại dụng cụ")]
+    [Tooltip("Chọn đúng loại cho prefab vũ khí (Rìu chọn Axe, Cuốc chọn Pickaxe)")]
+    public ToolType toolType;
+
     [Tooltip("Sát thương gây cho quái khi lưỡi rìu/cuốc chạm trúng")]
     public float damage = 25f;
 
@@ -36,6 +42,7 @@ public class WeaponHitbox : MonoBehaviour
         // Chưa trong lúc vung, hoặc nhát này đã tính 1 lần chạm rồi -> bỏ qua
         if (!isSwinging || hasHitThisSwing) return;
 
+        // 1. CẢ RÌU VÀ CUỐC ĐỀU ĐÁNH ĐƯỢC QUÁI (Giữ nguyên logic của bác)
         EnemyHealth enemy = other.GetComponentInParent<EnemyHealth>();
         if (enemy != null)
         {
@@ -44,20 +51,28 @@ public class WeaponHitbox : MonoBehaviour
             return;
         }
 
-        ChoppableTree tree = other.GetComponentInParent<ChoppableTree>();
-        if (tree != null)
+        // 2. CHỈ RÌU (AXE) MỚI ĐƯỢC PHÉP CHẶT CÂY
+        if (toolType == ToolType.Axe)
         {
-            tree.GetHit();
-            hasHitThisSwing = true;
-            return;
+            ChoppableTree tree = other.GetComponentInParent<ChoppableTree>(); 
+            if (tree != null)
+            {
+                tree.GetHit(); 
+                hasHitThisSwing = true;
+                return;
+            }
         }
 
-        MineableRock rock = other.GetComponentInParent<MineableRock>();
-        if (rock != null)
+        // 3. CHỈ CUỐC (PICKAXE) MỚI ĐƯỢC PHÉP ĐẬP ĐÁ
+        if (toolType == ToolType.Pickaxe)
         {
-            rock.GetHit();
-            hasHitThisSwing = true;
-            return;
+            MineableRock rock = other.GetComponentInParent<MineableRock>();
+            if (rock != null)
+            {
+                rock.GetHit();
+                hasHitThisSwing = true;
+                return;
+            }
         }
     }
 }

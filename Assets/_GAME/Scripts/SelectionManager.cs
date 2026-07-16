@@ -120,7 +120,7 @@ public class SelectionManager : MonoBehaviour
                     centerDotImage.gameObject.SetActive(true);
                 }
 
-                if (Input.GetKeyDown(KeyCode.F))
+                if (Input.GetKeyDown(KeyCode.F) || Input.GetMouseButton(0))
                 {
                     InventorySystem.Instance.AddToInventory(interactable.GetItemName());
                     if (SoundManager.Instance != null)

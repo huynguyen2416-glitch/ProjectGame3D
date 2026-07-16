@@ -9,9 +9,9 @@ public class LightingManager : MonoBehaviour
 
     [Header("Time Settings")]
     [Tooltip("Thời gian hiện tại trong ngày")]
-    [SerializeField, Range(0, 48)] public float TimeOfDay;
-    [Tooltip("Độ dài của 1 ngày (Mặc định: 48)")]
-    [SerializeField] private float dayLength = 48f;
+    [SerializeField, Range(0, 96)] public float TimeOfDay;
+    [Tooltip("Độ dài của 1 ngày (Mặc định: 96)")]
+    [SerializeField] private float dayLength = 96f;
 
     [Header("Win Condition: Survival Mode")]
     public int daysSurvived = 0;
@@ -22,12 +22,6 @@ public class LightingManager : MonoBehaviour
 
     private float previousTime = 0f;
     private bool hasWon = false;
-
-
-    private void Start()
-    {
-
-    }
 
     private void Update()
     {
@@ -51,7 +45,6 @@ public class LightingManager : MonoBehaviour
                 {
                     dayTransitionUI.ShowDay(daysSurvived);
                 }
-
 
                 if (daysSurvived >= daysToWin)
                 {

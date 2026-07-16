@@ -50,19 +50,19 @@ public class PlayerState : MonoBehaviour
 
     private void Start()
     {
-            currentHealth = maxHealth;
-            currentCalories = maxCalories;
-            currentHydrationPercent = maxHydrationPercent;
-            currentStamina = maxStamina;
+        // khởi tạo chỉ số đầy đủ mỗi lần vào scene.
+        currentHealth = maxHealth;
+        currentCalories = maxCalories;
+        currentHydrationPercent = maxHydrationPercent;
+        currentStamina = maxStamina;
 
         // Đảm bảo ẩn bảng chết lúc mới vào game
         if (deathPanel != null) deathPanel.SetActive(false);
-        if (playerBody != null) lastPosition = playerBody.transform.position;
 
+        // Khởi tạo lastPosition ngay từ đầu, tránh frame đầu tiên tính nhầm 1 quãng đường "ảo" bằng khoảng cách từ gốc toạ độ (0,0,0) tới vị trí spawn thật của người chơi.
+        if (playerBody != null) lastPosition = playerBody.transform.position;
         StartCoroutine(decreaseHydration()); // Khởi chạy Coroutine giảm nước
     }
-
-
 
     // Coroutine đếm thời gian trừ nước mỗi 2 giây
     IEnumerator decreaseHydration()
@@ -74,7 +74,7 @@ public class PlayerState : MonoBehaviour
                 currentHydrationPercent -= 1;
                 if (currentHydrationPercent < 0) currentHydrationPercent = 0;
             }
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(3);
         }
     }
 
@@ -177,7 +177,7 @@ public class PlayerState : MonoBehaviour
 
 
     // ================= HÀM XỬ LÝ KHI NGƯỜI CHƠI CHẾT ================= //
-    void Die()
+    public void Die()
     {
         isDead = true;
         Debug.Log("Người chơi đã cạn kiệt sinh lực và chết!");
@@ -262,7 +262,12 @@ public class PlayerState : MonoBehaviour
     // ================= HÀM XỬ LÝ KHI BẤM NÚT "QUAY LẠI / HỒI SINH" ================= //
     public void OnRespawnButtonClick()
     {
-
+        //luôn load lại Canh1 hoàn toàn mới.
+        if (GameController.Instance != null)
+        {
+            GameController.Instance.RestartGame();
+            return;
+        }
 
         // Fallback: chưa gắn GameController -> tải lại chính Scene hiện tại (reset sạch từ đầu).
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
