@@ -43,46 +43,6 @@ public class InventorySystem : MonoBehaviour
         PopulateSlotList();
         Cursor.visible = false;
 
-        // Khôi phục lại balo từ save (nếu Continue/RestartFromLastSave có PendingLoad).
-        RestoreFromSave(GameController.PendingLoad);
-    }
-
-    // ================= LƯU / KHÔI PHỤC BALO ================= //
-
-    // Gọi từ GameController.PerformAutosave() lúc tự động lưu game
-    public void FillSaveData(SaveData data)
-    {
-        data.inventoryItems = new List<string>(itemList);
-    }
-
-    private void RestoreFromSave(SaveData data)
-    {
-        if (data == null || data.inventoryItems == null) return;
-
-        Dictionary<string, int> reservedInQuickSlots = new Dictionary<string, int>();
-        if (data.quickSlotItems != null)
-        {
-            foreach (string quickItem in data.quickSlotItems)
-            {
-                if (string.IsNullOrEmpty(quickItem)) continue;
-                reservedInQuickSlots.TryGetValue(quickItem, out int count);
-                reservedInQuickSlots[quickItem] = count + 1;
-            }
-        }
-
-        foreach (string itemName in data.inventoryItems)
-        {
-            if (string.IsNullOrEmpty(itemName)) continue;
-
-            if (reservedInQuickSlots.TryGetValue(itemName, out int remaining) && remaining > 0)
-            {
-                reservedInQuickSlots[itemName] = remaining - 1;
-                Debug.LogWarning($"[InventorySystem]: Bỏ qua khôi phục '{itemName}' vào Balo vì item này đang được tính là đang cầm trên tay (Quick Slot) - tránh hiện trùng 2 bản.");
-                continue;
-            }
-
-            AddToInventory(itemName);
-        }
     }
 
     private void PopulateSlotList()

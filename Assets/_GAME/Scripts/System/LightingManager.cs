@@ -23,15 +23,10 @@ public class LightingManager : MonoBehaviour
     private float previousTime = 0f;
     private bool hasWon = false;
 
-    // ================= SỬA TẠI ĐÂY: KHÔI PHỤC NGÀY & GIỜ KHI LOAD GAME ================= //
+
     private void Start()
     {
-        if (GameController.PendingLoad != null)
-        {
-            daysSurvived = GameController.PendingLoad.daysSurvived;
-            TimeOfDay = GameController.PendingLoad.timeOfDay;
-            Debug.Log($"[LightingManager]: Đã khôi phục thành công ngày {daysSurvived}, lúc {TimeOfDay}h từ file save!");
-        }
+
     }
 
     private void Update()
@@ -57,14 +52,6 @@ public class LightingManager : MonoBehaviour
                     dayTransitionUI.ShowDay(daysSurvived);
                 }
 
-                if (GameController.Instance != null)
-                {
-                    GameController.Instance.PerformAutosave(daysSurvived, TimeOfDay);
-                }
-                else
-                {
-                    Debug.LogWarning("[LightingManager]: Không tìm thấy GameController.Instance, KHÔNG THỂ autosave ngày mới!");
-                }
 
                 if (daysSurvived >= daysToWin)
                 {

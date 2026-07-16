@@ -19,7 +19,6 @@ public class GameController : MonoBehaviour
     public string startSceneName = "StartScene";
     [Tooltip("Scene chạy Credits cuối game")]
     public string creditSceneName = "CreditsScene";
-    public static SaveData PendingLoad { get; private set; }
     public static Texture2D LastDeathScreenshot { get; private set; }
 
     public static void SetLastDeathScreenshot(Texture2D texture)
@@ -45,106 +44,14 @@ public class GameController : MonoBehaviour
     }
 
     // ================= GOI TU LightingManager MOI KHI SANG NGAY MOI ================= //
-    public void PerformAutosave(int daysSurvived, float timeOfDay)
-    {
-        if (PlayerState.Instance == null)
-        {
-            Debug.LogWarning("[GameController]: Khong the autosave vi PlayerState.Instance dang null.");
-            return;
-        }
-
-        SaveData data = new SaveData
-        {
-            daysSurvived = daysSurvived,
-            timeOfDay = timeOfDay
-        };
-
-        // PlayerState tu dien phan du lieu cua no (mau/calo/nuoc/stamina/vi tri) vao data.
-        PlayerState.Instance.FillSaveData(data);
-
-        // PersonaManager tu dien level/bonus cua no vao data (neu co gan trong scene)
-        if (PersonaManager.Instance != null)
-        {
-            PersonaManager.Instance.FillSaveData(data);
-            Debug.Log($"[GameController]: Autosave co Persona - so nhanh dang luu: {data.personaUpgradeNames.Count}");
-        }
-        else
-        {
-            Debug.LogWarning("[GameController]: PersonaManager.Instance dang NULL luc autosave - cac nhanh Persona da mo khoa se KHONG duoc luu lan nay!");
-        }
-
-        // InventorySystem tu dien danh sach item trong balo vao data
-        if (InventorySystem.Instance != null)
-        {
-            InventorySystem.Instance.FillSaveData(data);
-            Debug.Log($"[GameController]: Autosave co Balo - so item dang luu: {data.inventoryItems.Count}");
-        }
-        else
-        {
-            Debug.LogWarning("[GameController]: InventorySystem.Instance dang NULL luc autosave - Balo se KHONG duoc luu lan nay!");
-        }
-
-        // EquipSystem tu dien danh sach Quick Slot + o dang cam tren tay vao data
-        if (EquipSystem.Instance != null)
-        {
-            EquipSystem.Instance.FillSaveData(data);
-            Debug.Log($"[GameController]: Autosave co Quick Slot - dang cam o so {data.activeQuickSlotIndex + 1}");
-        }
-        else
-        {
-            Debug.LogWarning("[GameController]: EquipSystem.Instance dang NULL luc autosave - Quick Slot se KHONG duoc luu lan nay!");
-        }
-
-        // WorldStateManager tu dien danh sach vat the (cay/da/item) da bi pha huy/nhat vao data
-        if (WorldStateManager.Instance != null)
-        {
-            WorldStateManager.Instance.FillSaveData(data);
-            Debug.Log($"[GameController]: Autosave co World State - so vat the da xoa: {data.destroyedWorldObjectIds.Count}");
-        }
-        else
-        {
-            Debug.LogWarning("[GameController]: WorldStateManager.Instance dang NULL luc autosave - cay/da/item da nhat se KHONG duoc luu, se hien lai luc Continue!");
-        }
-
-        SaveSystem.SaveGame(data);
-    }
-
-    // ================= GAN VAO NUT "BAT DAU CHOI MOI" TRONG StartScene ================= //
+    
     public void NewGame()
     {
-        SaveSystem.DeleteSave(); // Xóa save cũ - tránh Continue sau này vô tình load lại tiến trình của lần chơi trước
-        PendingLoad = null; // Khong ap du lieu gi -> PlayerState/LightingManager tu khoi tao mac dinh
         Time.timeScale = 1f;
         LoadSceneSafely(gameplaySceneName);
     }
 
-    // ================= GAN VAO NUT "CONTINUE" TRONG StartScene ================= //
-    public void ContinueGame()
-    {
-        SaveData data = SaveSystem.LoadGame();
 
-        if (data == null)
-        {
-            Debug.LogWarning("[GameController]: Khong co save de Continue, chuyen sang New Game.");
-            NewGame();
-            return;
-        }
-
-        PendingLoad = data;
-        Time.timeScale = 1f;
-        LoadSceneSafely(gameplaySceneName);
-    }
-
-    // ================= GAN VAO NUT "QUAY LAI" TRONG DeathScene ================= //
-    // Load lai save gan nhat (tuc la dau ngay hom truoc, vi autosave chay ngam moi khi sang ngay moi).
-    public void RestartFromLastSave()
-    {
-        // Anh chup luc chet khong can dung nua khi da quay lai gameplay, giai phong ngay cho gon bo nho.
-        SetLastDeathScreenshot(null);
-        ContinueGame();
-    }
-
-    // ================= DUOC GOI TU LightingManager KHI SONG DU SO DEM ================= //
     public void TriggerWin()
     {
         PrepareForUIScene();

@@ -31,52 +31,10 @@ public class EquipSystem : MonoBehaviour
     private void Start()
     {
         PopulateSlotList();
-
-        // Khôi phục lại Quick Slot + vũ khí đang cầm trên tay từ save (nếu có PendingLoad).
-        RestoreFromSave(GameController.PendingLoad);
     }
 
-    // ================= LƯU / KHÔI PHỤC QUICK SLOT ================= //
 
-    // Gọi từ GameController.PerformAutosave() lúc tự động lưu game
-    public void FillSaveData(SaveData data)
-    {
-        data.quickSlotItems = new List<string>();
-
-        foreach (GameObject slot in quickSlotsList)
-        {
-            if (slot.transform.childCount > 0)
-            {
-                string cleanName = slot.transform.GetChild(0).gameObject.name.Replace("(Clone)", "");
-                data.quickSlotItems.Add(cleanName);
-            }
-            else
-            {
-                data.quickSlotItems.Add("");
-            }
-        }
-
-        data.activeQuickSlotIndex = activeSlotIndex;
-    }
-
-    private void RestoreFromSave(SaveData data)
-    {
-        if (data == null || data.quickSlotItems == null) return;
-
-        for (int i = 0; i < data.quickSlotItems.Count && i < quickSlotsList.Count; i++)
-        {
-            SetQuickSlotItem(i, data.quickSlotItems[i]);
-        }
-
-        // Trang bị lại đúng vũ khí đang cầm trên tay lúc save (nếu có)
-        if (data.activeQuickSlotIndex >= 0)
-        {
-            SelectQuickSlot(data.activeQuickSlotIndex);
-        }
-    }
-
-    // Đặt thẳng 1 item vào đúng ô Quick Slot chỉ định, dùng lúc khôi phục save (khác với
-    // AddToQuickSlots vốn luôn tìm ô TRỐNG TIẾP THEO - lúc restore cần đúng thứ tự cũ, không phải ô trống bất kỳ)
+    
     public void SetQuickSlotItem(int slotIndex, string itemName)
     {
         if (string.IsNullOrEmpty(itemName)) return;

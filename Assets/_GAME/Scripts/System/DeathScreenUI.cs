@@ -15,19 +15,6 @@ public class DeathScreenUI : MonoBehaviour
         }
     }
 
-    // Gắn vào Button "Quay lại" (load lại save gần nhất = đầu ngày hôm trước lúc chết)
-    public void OnClickRestart()
-    {
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.RestartFromLastSave();
-        }
-        else
-        {
-            Debug.LogWarning("[DeathScreenUI]: Không tìm thấy GameController.Instance!");
-        }
-    }
-
     //  Gắn vào Button "Về Menu" nếu bạn muốn có thêm lựa chọn này ở DeathScene
     public void OnClickMainMenu()
     {

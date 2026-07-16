@@ -22,11 +22,6 @@ public class ChoppableTree : MonoBehaviour
 
     [Tooltip("Tên prefab cây gãy trong thư mục Resources, mặc định 'ChoppedTree'")]
     public string brokenPrefabName = "ChoppedTree";
-
-    [Tooltip("Kéo component WorldObjectID (thường nằm trên rootToDestroy) vào đây để cây này " +
-             "được NHỚ đã bị chặt qua các lần Save/Load. Để trống nếu không cần tính năng này.")]
-    public WorldObjectID worldObjectID;
-
     private bool isBeingHit; // Chặn nhiều coroutine hit() chạy chồng nhau
     private bool isDead;     // Chặn TreeIssDead() bị gọi 2 lần
 
@@ -53,8 +48,6 @@ public class ChoppableTree : MonoBehaviour
 
     public void GetHit()
     {
-        // Nếu đang có 1 nhát chặt "trong quá trình xử lý" (chưa hết 0.6s) thì bỏ qua,
-        // tránh nhiều coroutine hit() chạy song song rồi cùng trừ máu 1 lượt.
         if (isDead || isBeingHit) return;
 
         StartCoroutine(hit());
@@ -63,10 +56,6 @@ public class ChoppableTree : MonoBehaviour
     public IEnumerator hit()
     {
         isBeingHit = true;
-
-        // Trước đây hard-code 0.6f, khiến harvestSpeedBonus của Persona (giảm % thời gian chờ
-        // giữa mỗi nhát) hoàn toàn không có tác dụng. Giờ trừ thêm % bonus vào, có clamp tối
-        // thiểu 0.05s để tránh chặt liên tục không nghỉ nếu bonus cộng dồn quá cao.
         float harvestSpeedBonus = PersonaManager.Instance != null ? PersonaManager.Instance.harvestSpeedBonus : 0f;
         float actualDelay = Mathf.Max(0.05f, baseHitDelay * (1f - harvestSpeedBonus));
 
@@ -126,11 +115,6 @@ public class ChoppableTree : MonoBehaviour
                 SelectionManager.Instance.chopHolder.gameObject.SetActive(false);
         }
 
-        // Ghi nhớ cây này đã bị chặt, để lần Continue/Restart sau nó không hiện lại y như mới
-        if (worldObjectID != null && WorldStateManager.Instance != null)
-        {
-            WorldStateManager.Instance.MarkDestroyed(worldObjectID.id);
-        }
 
         Destroy(objectToDestroy);
 

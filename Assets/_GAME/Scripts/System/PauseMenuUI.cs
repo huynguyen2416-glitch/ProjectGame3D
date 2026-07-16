@@ -21,7 +21,6 @@ public class PauseMenuUI : MonoBehaviour
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
 
         if (continueButton != null) continueButton.onClick.AddListener(ResumeGame);
-        if (saveAndMainMenuButton != null) saveAndMainMenuButton.onClick.AddListener(OnClickSaveAndMainMenu);
         if (quitGameButton != null) quitGameButton.onClick.AddListener(OnClickQuit);
     }
 
@@ -54,23 +53,7 @@ public class PauseMenuUI : MonoBehaviour
         Cursor.visible = false;
     }
 
-    public void OnClickSaveAndMainMenu()
-    {
-        LightingManager lighting = FindAnyObjectByType<LightingManager>();
-        if (lighting != null && GameController.Instance != null)
-        {
-            GameController.Instance.PerformAutosave(lighting.daysSurvived, lighting.TimeOfDay);
-        }
-        else
-        {
-            Debug.LogWarning("[PauseMenuUI]: Không tìm thấy LightingManager hoặc GameController.Instance, KHÔNG THỂ lưu game!");
-        }
 
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.GoToMainMenu();
-        }
-    }
 
     public void OnClickQuit()
     {

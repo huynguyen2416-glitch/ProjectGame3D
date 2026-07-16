@@ -50,99 +50,19 @@ public class PlayerState : MonoBehaviour
 
     private void Start()
     {
-        // Nếu đang Continue/Restart-from-death, nạp lại toàn bộ chỉ số + vị trí từ save.
-        if (GameController.PendingLoad != null)
-        {
-            ApplySaveData(GameController.PendingLoad);
-        }
-        else
-        {
             currentHealth = maxHealth;
             currentCalories = maxCalories;
             currentHydrationPercent = maxHydrationPercent;
             currentStamina = maxStamina;
-        }
 
         // Đảm bảo ẩn bảng chết lúc mới vào game
         if (deathPanel != null) deathPanel.SetActive(false);
-
-        // Khởi tạo lastPosition ngay từ đầu, tránh frame đầu tiên tính nhầm 1 quãng đường
-        // "ảo" bằng khoảng cách từ gốc toạ độ (0,0,0) tới vị trí spawn thật của người chơi.
         if (playerBody != null) lastPosition = playerBody.transform.position;
 
         StartCoroutine(decreaseHydration()); // Khởi chạy Coroutine giảm nước
     }
 
-    // ================= NẠP LẠI TOÀN BỘ CHỈ SỐ + VỊ TRÍ TỪ SAVE ================= //
-    public void ApplySaveData(SaveData data)
-    {
-        if (playerBody != null)
-        {
-            // 1. Tắt tạm CharacterController (tránh lỗi xung đột tọa độ của Unity)
-            CharacterController cc = playerBody.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
 
-            // 2. Kiểm tra xem có dùng NavMeshAgent không (phòng trường hợp bác thêm tính năng auto-move)
-            UnityEngine.AI.NavMeshAgent agent = playerBody.GetComponent<UnityEngine.AI.NavMeshAgent>();
-            Vector3 targetPos = data.GetPosition();
-
-            if (agent != null && agent.enabled)
-            {
-                agent.Warp(targetPos);
-            }
-            else
-            {
-                playerBody.transform.position = targetPos;
-            }
-
-            // Khôi phục hướng xoay lúc save - nếu không có dòng này, mỗi lần Continue nhân vật
-            // sẽ luôn quay về hướng mặc định của điểm spawn, không đúng hướng lúc save.
-            playerBody.transform.rotation = data.playerRotation;
-
-            // 3. KHẮC PHỤC LỖI RƠI XUYÊN ĐẤT: Ép Unity đồng bộ vật lý ngay lập tức
-            Physics.SyncTransforms();
-
-            // 4. Bật lại CharacterController
-            if (cc != null) cc.enabled = true;
-        }
-
-        // 5. Khôi phục các chỉ số sinh tồn
-        currentHealth = data.currentHealth;
-        maxHealth = data.maxHealth;
-        currentCalories = data.currentCalories;
-        maxCalories = data.maxCalories;
-        currentHydrationPercent = data.currentHydrationPercent;
-        maxHydrationPercent = data.maxHydrationPercent;
-        currentStamina = data.currentStamina;
-        maxStamina = data.maxStamina;
-        staminaDrainPerSecond = data.staminaDrainPerSecond;
-        staminaRegenPerSecond = data.staminaRegenPerSecond;
-
-        isDead = false; // Đảm bảo gỡ trạng thái chết
-        Debug.Log("[PlayerState]: Đã spawn an toàn tại vị trí đã lưu và khôi phục chỉ số.");
-    }
-
-    // ================= ĐIỀN CHỈ SỐ + VỊ TRÍ HIỆN TẠI VÀO 1 SaveData ĐỂ GHI FILE ================= //
-    // Được GameController.PerformAutosave() gọi mỗi khi sang ngày mới.
-    public void FillSaveData(SaveData data)
-    {
-        data.currentHealth = currentHealth;
-        data.maxHealth = maxHealth;
-        data.currentCalories = currentCalories;
-        data.maxCalories = maxCalories;
-        data.currentHydrationPercent = currentHydrationPercent;
-        data.maxHydrationPercent = maxHydrationPercent;
-        data.currentStamina = currentStamina;
-        data.maxStamina = maxStamina;
-        data.staminaDrainPerSecond = staminaDrainPerSecond;
-        data.staminaRegenPerSecond = staminaRegenPerSecond;
-
-        if (playerBody != null)
-        {
-            data.SetPosition(playerBody.transform.position);
-            data.playerRotation = playerBody.transform.rotation;
-        }
-    }
 
     // Coroutine đếm thời gian trừ nước mỗi 2 giây
     IEnumerator decreaseHydration()
@@ -342,12 +262,7 @@ public class PlayerState : MonoBehaviour
     // ================= HÀM XỬ LÝ KHI BẤM NÚT "QUAY LẠI / HỒI SINH" ================= //
     public void OnRespawnButtonClick()
     {
-        // Ưu tiên: nếu có GameController, load lại save gần nhất (đầu ngày hôm trước lúc chết).
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.RestartFromLastSave();
-            return;
-        }
+
 
         // Fallback: chưa gắn GameController -> tải lại chính Scene hiện tại (reset sạch từ đầu).
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
