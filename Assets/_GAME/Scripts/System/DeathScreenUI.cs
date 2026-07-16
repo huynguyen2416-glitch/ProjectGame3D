@@ -1,12 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Gắn script này lên 1 GameObject bất kỳ TRONG DeathScene (vd: Canvas).
-// Vì GameController là singleton DontDestroyOnLoad được tạo từ StartScene, bạn KHÔNG THỂ
-// kéo-thả trực tiếp GameObject GameController vào OnClick của Button trong DeathScene (nó chưa
-// tồn tại lúc bạn đang edit scene này). Thay vào đó: kéo GameObject có gắn script NÀY vào
-// OnClick của Button, và trỏ tới các hàm public bên dưới - script này gọi GameController.Instance
-// bằng code lúc runtime.
+
 public class DeathScreenUI : MonoBehaviour
 {
     [Tooltip("Kéo 1 RawImage phủ toàn màn hình vào đây để làm nền mờ lúc chết")]
@@ -33,7 +28,7 @@ public class DeathScreenUI : MonoBehaviour
         }
     }
 
-    // (Tùy chọn) Gắn vào Button "Về Menu" nếu bạn muốn có thêm lựa chọn này ở DeathScene
+    //  Gắn vào Button "Về Menu" nếu bạn muốn có thêm lựa chọn này ở DeathScene
     public void OnClickMainMenu()
     {
         if (GameController.Instance != null)

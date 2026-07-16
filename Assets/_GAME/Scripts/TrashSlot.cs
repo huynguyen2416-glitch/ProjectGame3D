@@ -89,8 +89,6 @@ public class TrashSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     {
         imageComponent.sprite = trash_closed;
         DestroyImmediate(itemToBeDeleted.gameObject);
-        //InventorySystem.Instance.ReCalculeList();
-        //CraftingSystem.Instance.RefreshNeededItems();
         trashAlertUI.SetActive(false);
     }
 

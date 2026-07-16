@@ -89,7 +89,6 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     // --logic tiêu thụ đồ ăn--//
     public void OnPointerDown(PointerEventData eventData)
     {
-        // Bỏ trống để tránh bug giữ chuột cộng máu vô hạn
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -150,7 +149,6 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         else
         {
             // 2. CHỈ ép icon quay về chỗ cũ NẾU nó thả trượt ra ngoài ô vuông
-            // (Nếu nó rơi đúng vào ItemSlot, ItemSlot đã nhận nó làm con rồi, ta không cướp lại nữa)
             if (transform.parent == transform.root)
             {
                 transform.SetParent(originalParent);

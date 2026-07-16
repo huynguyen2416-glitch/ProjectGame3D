@@ -127,6 +127,14 @@ public class SelectionManager : MonoBehaviour
                     {
                         SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
                     }
+
+                    // Ghi nhớ item này đã bị nhặt, để lần Continue/Restart sau nó không hiện lại trên map
+                    WorldObjectID worldObjectID = interactable.GetComponent<WorldObjectID>();
+                    if (worldObjectID != null && WorldStateManager.Instance != null)
+                    {
+                        WorldStateManager.Instance.MarkDestroyed(worldObjectID.id);
+                    }
+
                     Destroy(interactable.gameObject);
                     interaction_Info_UI.SetActive(false);
                     onTarget = false;

@@ -2,9 +2,6 @@ using System;
 using System.IO;
 using UnityEngine;
 
-// Lớp tĩnh (static) chịu trách nhiệm đọc/ghi file save dạng JSON.
-// Chỉ dùng 1 file save duy nhất (1 "slot") theo đúng mô hình bạn chọn:
-// autosave ngầm lúc sang ngày mới, ghi đè lên save cũ mỗi lần.
 public static class SaveSystem
 {
     private const string SaveFileName = "savegame.json";

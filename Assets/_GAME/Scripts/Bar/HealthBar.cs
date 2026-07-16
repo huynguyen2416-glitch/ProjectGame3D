@@ -14,8 +14,7 @@ public class HealthBar : MonoBehaviour
     {
         // 1. Bảo vệ lỗi rỗng để game không bị đứng nếu nhân vật lỡ bị xóa
         if (PlayerState.Instance == null) return;
-
-        // 2. Lấy dữ liệu trực tiếp từ Singleton (Siêu nhẹ, không dùng GetComponent)
+        // 2. Lấy dữ liệu trực tiếp từ Singleton 
         float currentHealth = PlayerState.Instance.currentHealth;
         float maxHealth = PlayerState.Instance.maxHealth;
         // 3. Cập nhật UI

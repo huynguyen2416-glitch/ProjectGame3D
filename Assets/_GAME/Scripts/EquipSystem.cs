@@ -31,6 +31,83 @@ public class EquipSystem : MonoBehaviour
     private void Start()
     {
         PopulateSlotList();
+
+        // Khôi phục lại Quick Slot + vũ khí đang cầm trên tay từ save (nếu có PendingLoad).
+        RestoreFromSave(GameController.PendingLoad);
+    }
+
+    // ================= LƯU / KHÔI PHỤC QUICK SLOT ================= //
+
+    // Gọi từ GameController.PerformAutosave() lúc tự động lưu game
+    public void FillSaveData(SaveData data)
+    {
+        data.quickSlotItems = new List<string>();
+
+        foreach (GameObject slot in quickSlotsList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                string cleanName = slot.transform.GetChild(0).gameObject.name.Replace("(Clone)", "");
+                data.quickSlotItems.Add(cleanName);
+            }
+            else
+            {
+                data.quickSlotItems.Add("");
+            }
+        }
+
+        data.activeQuickSlotIndex = activeSlotIndex;
+    }
+
+    private void RestoreFromSave(SaveData data)
+    {
+        if (data == null || data.quickSlotItems == null) return;
+
+        for (int i = 0; i < data.quickSlotItems.Count && i < quickSlotsList.Count; i++)
+        {
+            SetQuickSlotItem(i, data.quickSlotItems[i]);
+        }
+
+        // Trang bị lại đúng vũ khí đang cầm trên tay lúc save (nếu có)
+        if (data.activeQuickSlotIndex >= 0)
+        {
+            SelectQuickSlot(data.activeQuickSlotIndex);
+        }
+    }
+
+    // Đặt thẳng 1 item vào đúng ô Quick Slot chỉ định, dùng lúc khôi phục save (khác với
+    // AddToQuickSlots vốn luôn tìm ô TRỐNG TIẾP THEO - lúc restore cần đúng thứ tự cũ, không phải ô trống bất kỳ)
+    public void SetQuickSlotItem(int slotIndex, string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName)) return;
+        if (slotIndex < 0 || slotIndex >= quickSlotsList.Count) return;
+
+        GameObject prefab = Resources.Load<GameObject>(itemName);
+        if (prefab == null)
+        {
+            Debug.LogError($"[EquipSystem]: Không tìm thấy prefab '{itemName}' trong Resources để khôi phục Quick Slot {slotIndex + 1}!");
+            return;
+        }
+
+        GameObject slot = quickSlotsList[slotIndex];
+        GameObject instance = Instantiate(prefab, slot.transform);
+        instance.name = prefab.name;
+
+        RectTransform rect = instance.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.anchoredPosition = Vector2.zero;
+            rect.localRotation = Quaternion.identity;
+            rect.localScale = Vector3.one; // Trước đây THIẾU dòng này -> icon dễ bị sai kích thước
+        }
+        else
+        {
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localRotation = Quaternion.identity;
+            instance.transform.localScale = Vector3.one;
+        }
+
+        itemList.Add(itemName);
     }
 
     private void Update()
@@ -71,6 +148,10 @@ public class EquipSystem : MonoBehaviour
             {
                 WeaponHolder.Instance.EquipWeapon(cleanName);
                 Debug.Log($"[EquipSystem]: Đã bấm phím số {slotIndex + 1} -> Trang bị: {cleanName}");
+            }
+            else
+            {
+                Debug.LogWarning($"[EquipSystem]: WeaponHolder.Instance đang NULL - không thể hiện vũ khí 3D '{cleanName}' trên tay. Kiểm tra WeaponHolder đã có trong scene chưa.");
             }
         }
         else

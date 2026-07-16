@@ -13,14 +13,13 @@ public class SaveData
 
     // ---- Vị trí người chơi ---- //
     public float posX, posY, posZ;
+    public Quaternion playerRotation = Quaternion.identity;
 
     // ---- Chỉ số người chơi ---- //
     public float currentHealth, maxHealth;
     public float currentCalories, maxCalories;
     public float currentHydrationPercent, maxHydrationPercent;
     public float currentStamina, maxStamina;
-    // Persona (StaminaDrainReduction/StaminaRegenBonus) sửa thẳng 2 giá trị này lúc mở khoá -
-    // phải lưu lại, nếu không thì Continue/hồi sinh sẽ mất hiệu ứng, quay về mặc định Inspector.
     public float staminaDrainPerSecond, staminaRegenPerSecond;
 
     // ---- Persona (nhánh nâng cấp) ---- //
@@ -28,14 +27,25 @@ public class SaveData
     // vì JsonUtility không serialize được Dictionary trực tiếp - tách thành 2 list song song.
     public List<string> personaUpgradeNames = new List<string>();
     public List<int> personaUpgradeLevels = new List<int>();
-
-    // % bonus cộng dồn hiện tại của Persona, lưu THẲNG giá trị cuối cùng (không lưu lại bằng
-    // cách replay từng effect) để lúc load chỉ cần gán lại, không cần tính toán gì thêm.
     public float personaDropRateBonus;
     public float personaHarvestSpeedBonus;
     public float personaCalorieBurnRateReduction;
     public float personaMoveSpeedBonus;
     public float personaHealthBurnRateReduction;
+
+    // ---- Balo (Inventory) ---- //
+
+    public List<string> inventoryItems = new List<string>();
+
+    // ---- Quick Slot (vũ khí/công cụ đang trang bị) ---- //
+    // 1 phần tử / 1 ô quick slot, chuỗi rỗng "" nghĩa là ô đó đang trống.
+    public List<string> quickSlotItems = new List<string>();
+    // Ô quick slot đang được CẦM TRÊN TAY lúc save (-1 = không cầm gì cả)
+    public int activeQuickSlotIndex = -1;
+
+    // ---- World State (cây/đá/item đã bị chặt/đập/nhặt) ---- //
+
+    public List<string> destroyedWorldObjectIds = new List<string>();
 
     // ---- Thời điểm save (để debug / hiển thị nếu cần) ---- //
     public string savedAtIso;

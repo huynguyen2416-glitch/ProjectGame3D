@@ -95,6 +95,10 @@ public class PlayerState : MonoBehaviour
                 playerBody.transform.position = targetPos;
             }
 
+            // Khôi phục hướng xoay lúc save - nếu không có dòng này, mỗi lần Continue nhân vật
+            // sẽ luôn quay về hướng mặc định của điểm spawn, không đúng hướng lúc save.
+            playerBody.transform.rotation = data.playerRotation;
+
             // 3. KHẮC PHỤC LỖI RƠI XUYÊN ĐẤT: Ép Unity đồng bộ vật lý ngay lập tức
             Physics.SyncTransforms();
 
@@ -136,6 +140,7 @@ public class PlayerState : MonoBehaviour
         if (playerBody != null)
         {
             data.SetPosition(playerBody.transform.position);
+            data.playerRotation = playerBody.transform.rotation;
         }
     }
 

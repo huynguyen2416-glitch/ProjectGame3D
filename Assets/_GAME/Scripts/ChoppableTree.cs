@@ -23,6 +23,10 @@ public class ChoppableTree : MonoBehaviour
     [Tooltip("Tên prefab cây gãy trong thư mục Resources, mặc định 'ChoppedTree'")]
     public string brokenPrefabName = "ChoppedTree";
 
+    [Tooltip("Kéo component WorldObjectID (thường nằm trên rootToDestroy) vào đây để cây này " +
+             "được NHỚ đã bị chặt qua các lần Save/Load. Để trống nếu không cần tính năng này.")]
+    public WorldObjectID worldObjectID;
+
     private bool isBeingHit; // Chặn nhiều coroutine hit() chạy chồng nhau
     private bool isDead;     // Chặn TreeIssDead() bị gọi 2 lần
 
@@ -120,6 +124,12 @@ public class ChoppableTree : MonoBehaviour
             SelectionManager.Instance.selectedTree = null;
             if (SelectionManager.Instance.chopHolder != null)
                 SelectionManager.Instance.chopHolder.gameObject.SetActive(false);
+        }
+
+        // Ghi nhớ cây này đã bị chặt, để lần Continue/Restart sau nó không hiện lại y như mới
+        if (worldObjectID != null && WorldStateManager.Instance != null)
+        {
+            WorldStateManager.Instance.MarkDestroyed(worldObjectID.id);
         }
 
         Destroy(objectToDestroy);

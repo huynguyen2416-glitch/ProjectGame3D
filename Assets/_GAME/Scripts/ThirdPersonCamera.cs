@@ -13,7 +13,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     [Header("Giới hạn góc nhìn")]
     public float minY = -15f;
-    public float maxY = 60f;
+    public float maxY = 80f;
 
     private float rotationX = 0f;
     private float rotationY = 0f;

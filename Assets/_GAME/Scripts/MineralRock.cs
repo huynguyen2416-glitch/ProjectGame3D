@@ -22,6 +22,10 @@ public class MineableRock : MonoBehaviour
     [Tooltip("Tên prefab mảnh đá vỡ trong thư mục Resources, mặc định 'BrokenRock'")]
     public string brokenPrefabName = "BrokenRock";
 
+    [Tooltip("Kéo component WorldObjectID (thường nằm trên rootToDestroy) vào đây để tảng đá này " +
+             "được NHỚ đã bị đập vỡ qua các lần Save/Load. Để trống nếu không cần tính năng này.")]
+    public WorldObjectID worldObjectID;
+
     private bool isBeingHit; // Chặn nhiều coroutine hit() chạy chồng nhau
     private bool isDead;     // Chặn RockIsDead() bị gọi 2 lần
 
@@ -60,8 +64,7 @@ public class MineableRock : MonoBehaviour
     {
         isBeingHit = true;
 
-        // Trước đây hard-code 0.6f, khiến harvestSpeedBonus của Persona hoàn toàn không có
-        // tác dụng khi đập đá (dù có tác dụng khi chặt cây nếu code 2 bên không đồng bộ).
+
         float harvestSpeedBonus = PersonaManager.Instance != null ? PersonaManager.Instance.harvestSpeedBonus : 0f;
         float actualDelay = Mathf.Max(0.05f, baseHitDelay * (1f - harvestSpeedBonus));
 
@@ -119,6 +122,12 @@ public class MineableRock : MonoBehaviour
             SelectionManager.Instance.selectedRock = null;
             if (SelectionManager.Instance.mineHolder != null)
                 SelectionManager.Instance.mineHolder.gameObject.SetActive(false);
+        }
+
+        // Ghi nhớ tảng đá này đã bị đập vỡ, để lần Continue/Restart sau nó không hiện lại y như mới
+        if (worldObjectID != null && WorldStateManager.Instance != null)
+        {
+            WorldStateManager.Instance.MarkDestroyed(worldObjectID.id);
         }
 
         Destroy(objectToDestroy);

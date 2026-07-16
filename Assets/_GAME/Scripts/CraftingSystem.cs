@@ -21,6 +21,12 @@ public class CraftingRecipe
     public int req2Amount;
 }
 
+public class CraftingRecipeUIRefs
+{
+    public Text req1Text;
+    public Text req2Text;
+}
+
 public class CraftingSystem : MonoBehaviour
 {
     [Header("UI Screens")]
@@ -42,6 +48,14 @@ public class CraftingSystem : MonoBehaviour
 
     public bool isOpen;
     public static CraftingSystem Instance { get; set; }
+
+    [Tooltip("Số lần cập nhật số lượng nguyên liệu mỗi giây khi màn Crafting đang mở - không cần " +
+             "60 lần/giây (mỗi frame), mắt người không đọc kịp nhanh vậy. 5 là đủ mượt.")]
+    public float refreshRatePerSecond = 5f;
+
+    // Cache Text refs theo từng recipe - tìm 1 LẦN DUY NHẤT lúc Start(), không Find() mỗi frame nữa
+    private readonly Dictionary<CraftingRecipe, CraftingRecipeUIRefs> uiRefsCache = new Dictionary<CraftingRecipe, CraftingRecipeUIRefs>();
+    private float refreshTimer = 0f;
 
     private void Awake()
     {
@@ -66,7 +80,31 @@ public class CraftingSystem : MonoBehaviour
         foreach (var recipe in recipes)
         {
             SetupCraftButton(recipe);
+            CacheRecipeUIRefs(recipe);
         }
+    }
+
+
+    void CacheRecipeUIRefs(CraftingRecipe recipe)
+    {
+        if (recipe.targetScreen == null) return;
+
+        Transform itemUI = recipe.targetScreen.transform.Find(recipe.uiName);
+        if (itemUI == null)
+        {
+            Debug.LogWarning($"[CraftingSystem]: Không tìm thấy UI '{recipe.uiName}' trong '{recipe.targetScreen.name}' - công thức '{recipe.resultItemName}' sẽ không hiện được số lượng nguyên liệu.");
+            return;
+        }
+
+        CraftingRecipeUIRefs refs = new CraftingRecipeUIRefs();
+
+        Transform req1Transform = itemUI.Find("req1");
+        if (req1Transform != null) refs.req1Text = req1Transform.GetComponent<Text>();
+
+        Transform req2Transform = itemUI.Find("req2");
+        if (req2Transform != null) refs.req2Text = req2Transform.GetComponent<Text>();
+
+        uiRefsCache[recipe] = refs;
     }
 
     void SetupCraftButton(CraftingRecipe recipe)
@@ -108,9 +146,24 @@ public class CraftingSystem : MonoBehaviour
 
             Cursor.lockState = isOpen ? CursorLockMode.None : (InventorySystem.Instance.isOpen ? CursorLockMode.None : CursorLockMode.Locked);
             Cursor.visible = isOpen;
+
+            if (isOpen)
+            {
+                RefreshRequirementsUI(); // Refresh ngay lúc vừa mở, không đợi tick đầu tiên
+                refreshTimer = 0f;
+            }
         }
 
-        if (isOpen) RefreshRequirementsUI();
+        if (isOpen)
+        {
+            refreshTimer += Time.deltaTime;
+            float interval = 1f / Mathf.Max(1f, refreshRatePerSecond);
+            if (refreshTimer >= interval)
+            {
+                RefreshRequirementsUI();
+                refreshTimer = 0f;
+            }
+        }
     }
 
 
@@ -128,34 +181,31 @@ public class CraftingSystem : MonoBehaviour
 
     void UpdateRecipeUI(CraftingRecipe recipe)
     {
-        if (recipe.targetScreen == null) return;
-
-        Transform itemUI = recipe.targetScreen.transform.Find(recipe.uiName);
-        if (itemUI == null) return;
+        if (!uiRefsCache.TryGetValue(recipe, out CraftingRecipeUIRefs refs)) return;
 
         // Xử lý Nguyên liệu 1
-        Text req1Text = itemUI.Find("req1").GetComponent<Text>();
-        int count1 = CountItem(recipe.req1);
-        string vnName1 = GetVNName(recipe.req1);
-        req1Text.text = $"{vnName1}: {count1} / {recipe.req1Amount}";
-        req1Text.color = (count1 >= recipe.req1Amount) ? Color.green : Color.red;
+        if (refs.req1Text != null)
+        {
+            int count1 = CountItem(recipe.req1);
+            string vnName1 = GetVNName(recipe.req1);
+            refs.req1Text.text = $"{vnName1}: {count1} / {recipe.req1Amount}";
+            refs.req1Text.color = (count1 >= recipe.req1Amount) ? Color.green : Color.red;
+        }
 
         // Xử lý Nguyên liệu 2
-        Transform req2Transform = itemUI.Find("req2");
-        if (req2Transform != null)
+        if (refs.req2Text != null)
         {
-            Text req2Text = req2Transform.GetComponent<Text>();
             if (!string.IsNullOrEmpty(recipe.req2) && recipe.req2Amount > 0)
             {
-                req2Text.gameObject.SetActive(true);
+                refs.req2Text.gameObject.SetActive(true);
                 int count2 = CountItem(recipe.req2);
                 string vnName2 = GetVNName(recipe.req2);
-                req2Text.text = $"{vnName2}: {count2} / {recipe.req2Amount}";
-                req2Text.color = (count2 >= recipe.req2Amount) ? Color.green : Color.red;
+                refs.req2Text.text = $"{vnName2}: {count2} / {recipe.req2Amount}";
+                refs.req2Text.color = (count2 >= recipe.req2Amount) ? Color.green : Color.red;
             }
             else
             {
-                req2Text.gameObject.SetActive(false);
+                refs.req2Text.gameObject.SetActive(false);
             }
         }
     }

@@ -2,9 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Gắn script này lên 1 Panel PHỦ KÍN màn hình có component CanvasGroup, bên trong chứa 1 Text.
-// Panel này giữ nguyên activeSelf = true xuyên suốt (KHÔNG SetActive tắt/bật), toàn bộ hiệu ứng
-// ẩn/hiện chỉ điều khiển qua CanvasGroup.alpha - nhờ vậy coroutine không bị huỷ giữa chừng.
+
 public class DayTransitionUI : MonoBehaviour
 {
     [Tooltip("CanvasGroup của Panel chứa chữ 'Đêm thứ...' - dùng để fade in/out")]

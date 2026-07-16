@@ -32,14 +32,6 @@ public class SoundManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        if (gameObject.scene.name != "StartScene")
-        {
-            Debug.LogWarning($"[SoundManager]: SoundManager đang được tạo LẦN ĐẦU ở scene '{gameObject.scene.name}', không phải 'StartScene'. " +
-                              "Theo đúng kiến trúc (giống GameController), object này nên đặt DUY NHẤT trong StartScene - nếu để ở scene khác " +
-                              "(VD: Canh1), mọi AudioSource không phải con trực tiếp của nó sẽ bị Destroy mỗi khi scene đó unload, " +
-                              "gây mất âm thanh từ lần chơi thứ 2 trở đi.");
-        }
     }
     private void OnEnable()
     {

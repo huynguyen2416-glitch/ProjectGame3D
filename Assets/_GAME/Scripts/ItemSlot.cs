@@ -25,6 +25,8 @@ public class ItemSlot : MonoBehaviour, IDropHandler
     {
         Debug.Log("OnDrop");
 
+        if (DragDrop.itemBeingDragged == null) return; // Phòng trường hợp OnDrop bị gọi mà không có gì đang kéo
+
         //if there is not item already then set our item.
         if (!Item)
         {

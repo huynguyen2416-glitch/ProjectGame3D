@@ -588,7 +588,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 1920}
+  m_AnchoredPosition: {x: 0, y: 983}
   m_SizeDelta: {x: 1309.8817, y: 4498.8125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1239153928
@@ -646,55 +646,42 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "THE NEVERLAND\n\nCH\u01AF\u01A0NG CU\u1ED0I\n\nTi\u1EBFng c\xF2i t\xE0u
-    r\u1EC1n vang x\xE9 to\u1EA1c s\u1EF1 t\u0129nh l\u1EB7ng c\u1EE7a h\xF2n \u0111\u1EA3o,
-    m\u0169i con thuy\u1EC1n c\u1EE9u h\u1ED9 d\u0169ng m\xE3nh r\u1EBD s\xF3ng,
-    khu\u1EA5y tan l\u1EDBp s\u01B0\u01A1ng m\xF9 d\xE0y \u0111\u1EB7c \u0111ang
-    bao ph\u1EE7 ngo\xE0i kh\u01A1i xa.\n\nD\u01B0\u1EDBi \xE1nh ho\xE0ng h\xF4n
-    \u0111ang d\u1EA7n bu\xF4ng xu\u1ED1ng, Gi\xE1o s\u01B0 Arthur ng\u01B0\u1EDBc
-    nh\xECn v\u1EC1 ph\xEDa \u0111\u01B0\u1EDDng ch\xE2n tr\u1EDDi. Kh\xF3e m\u1EAFt
-    \xF4ng r\u01B0ng r\u01B0ng, \u0111\xF4i b\xE0n tay chai s\u1EA7n \u0111\u01B0a
-    l\xEAn cao, v\u1EABy m\u1EA1nh li\xEAn t\u1EE5c trong ni\u1EC1m x\xFAc \u0111\u1ED9ng
-    t\u1ED9t c\xF9ng. Cu\u1ED1i c\xF9ng th\xEC ng\xE0y n\xE0y c\u0169ng \u0111\u1EBFn.\n\n\xD4ng
-    v\u1EABn kh\xF4ng th\u1EC3 nh\u1EDB tr\u1ECDn v\u1EB9n m\xECnh t\u1EEBng l\xE0
-    ai tr\u01B0\u1EDBc khi t\u1EC9nh d\u1EADy tr\xEAn b\xE3i c\xE1t l\u1EA1nh l\u1EBDo
-    \u1EA5y. Ng\xE0y \u0111\xF3, h\xE0nh trang duy nh\u1EA5t c\u1EE7a \xF4ng ch\u1EC9
-    l\xE0 m\u1ED9t chi\u1EBFc la b\xE0n c\u0169 k\u1EF9 \u0111\xE3 s\u1EDDn tr\xF3c,
-    c\xF9ng b\u1EA3n n\u0103ng khao kh\xE1t s\u1ED1ng m\xE3nh li\u1EC7t c\u1EE7a
-    m\u1ED9t con ng\u01B0\u1EDDi b\u1ECB th\u1EBF gi\u1EDBi b\u1ECF l\u1EA1i ph\xEDa
-    sau.\n\nH\xF2n \u0111\u1EA3o hoang vu v\xE0 t\xE0n nh\u1EABn n\xE0y \u0111\xE3
-    l\u1EA5y \u0111i k\xFD \u1EE9c c\u1EE7a \xF4ng, th\u1EED th\xE1ch s\u1EE9c ch\u1ECBu
-    \u0111\u1EF1ng v\xE0 v\u1EAFt ki\u1EC7t sinh l\u1EF1c c\u1EE7a \xF4ng qua v\xF4
-    s\u1ED1 \u0111\xEAm \u0111en t\u0129nh m\u1ECBch. Nh\u01B0ng c\u0169ng ch\xEDnh
-    n\u01A1i \u0111\xE2y \u0111\xE3 d\u1EA1y \xF4ng c\xE1ch g\u01B0\u1EE3ng d\u1EADy
-    sau nh\u1EEFng v\u1EA5p ng\xE3, c\xE1ch nh\xF3m l\xEAn ng\u1ECDn l\u1EEDa hy
-    v\u1ECDng t\u1EEB nh\u1EEFng c\xE0nh c\u1EE7i kh\xF4, c\xE1ch ch\u1EBF t\u1EA1o,
-    chi\u1EBFn \u0111\u1EA5u v\u1EDBi hi\u1EC3m nguy v\xE0 ki\xEAn c\u01B0\u1EDDng
-    s\u1ED1ng s\xF3t.\n\nKhi con thuy\u1EC1n c\u1EE9u h\u1ED9 d\u1EA7n th\u1EA3 neo
-    c\u1EADp b\u1EDD, Arthur ch\u1EADm r\xE3i b\u01B0\u1EDBc ra kh\u1ECFi b\xF3ng
-    t\u1ED1i c\u1EE7a r\u1EEBng s\xE2u l\u1EA7n cu\u1ED1i c\xF9ng. \xD4ng \u0111\u1EC3
-    l\u1EA1i ph\xEDa sau nh\u1EEFng ng\xE0y th\xE1ng c\xF4 \u0111\u1ED9c, mang theo
-    b\u01B0\u1EDBc ch\xE2n l\xEAn boong t\xE0u kh\xF4ng ph\u1EA3i l\xE0 nh\u1EEFng
-    m\u1EA3nh v\u1EE1 k\xFD \u1EE9c \u0111\xE3 m\u1EA5t, m\xE0 l\xE0 m\u1ED9t c\xE2u
-    chuy\u1EC7n m\u1EDBi, m\u1ED9t \xFD ch\xED m\u1EDBi - c\u1EE7a ri\xEAng \xF4ng.\n\nH\xE0nh
-    tr\xECnh sinh t\u1ED3n \u0111\u01A1n \u0111\u1ED9c tr\xEAn h\xF2n \u0111\u1EA3o
-    b\u1ECB l\xE3ng qu\xEAn \u0111\xE3 ch\xEDnh th\u1EE9c kh\xE9p l\u1EA1i.\n\nC\u1EA2M
-    \u01A0N B\u1EA0N \u0110\xC3 CH\u01A0I\n\nC\u1EA3m \u01A1n b\u1EA1n \u0111\xE3
-    c\xF9ng Gi\xE1o s\u01B0 Arthur \u0111i qua t\u1EEBng c\u01A1n b\xE3o,\nt\u1EEBng
-    \u0111\xEAm d\xE0i th\u1EA5p th\u1ECFm b\xEAn \u0111\u1ED1m l\u1EEDa nh\u1ECF,\nv\xE0
-    t\u1EEBng b\u01B0\u1EDBc ch\xE2n run r\u1EA9y nh\u01B0ng ki\xEAn \u0111\u1ECBnh
-    v\xE0o n\u01A1i s\xE2u nh\u1EA5t c\u1EE7a h\xF2n \u0111\u1EA3o.\n\nThe Neverland
-    \u0111\u01B0\u1EE3c t\u1EA1o n\xEAn b\u1EDFi ni\u1EC1m tin r\u1EB1ng:\n\"Sinh
-    t\u1ED3n l\xE0 ch\xECa kh\xF3a \u0111\u1EC3 chi\u1EBFn th\u1EAFng.\"\n\nN\u1EBFu
-    b\u1EA1n \u0111\xE3 s\u1ED1ng s\xF3t \u0111\u1EBFn \u0111\u01B0\u1EE3c kho\u1EA3nh
-    kh\u1EAFc n\xE0y - b\u1EA1n ch\xEDnh l\xE0 l\xFD do c\xE2u chuy\u1EC7n c\u1EE7a
-    ch\xFAng t\xF4i c\xF3 \xFD ngh\u0129a.\n\n\u0110\u1ED8I NG\u0168 PH\xC1T TRI\u1EC2N\n\nNh\xF3m
-    04 - H\u1ECDc vi\u1EC7n H\xE0ng kh\xF4ng Vi\u1EC7t Nam\nKhoa C\xF4ng ngh\u1EC7
-    Th\xF4ng tin\n\nNh\xF3m tr\u01B0\u1EDFng\nNguy\u1EC5n Th\u1EBF Huy\n\nTh\xE0nh
-    vi\xEAn\nV\xF5 H\u1EEFu Ph\u01B0\u1EDBc\nTr\u1EA7n Ho\xE0ng Ph\xFAc\nL\u01B0u
-    Th\u1ECB Kim Ng\xE2n\nNguy\u1EC5n T\u01B0\u1EDDng Vy\n\nC\u1EA2M \u01A0N \u0110\u1EB6C
-    BI\u1EC6T\n\nGi\u1EA3ng vi\xEAn h\u01B0\u1EDBng d\u1EABn\nThS. Hu\u1EF3nh Thanh
-    S\u01A1n\n"
+  m_Text: "THE NEVERLAND\nCH\u01AF\u01A0NG CU\u1ED0I: \u0110\u01AF\u1EDCNG V\u1EC0\nTi\u1EBFng
+    c\xF2i t\xE0u c\u1EE9u h\u1ED9 vang l\xEAn, r\u1EBD s\u01B0\u01A1ng m\xF9 ti\u1EBFn
+    v\xE0o kh\u01A1i xa.\n\nD\u01B0\u1EDBi \xE1nh ho\xE0ng h\xF4n bu\xF4ng xu\u1ED1ng,
+    Gi\xE1o s\u01B0 Arthur h\u01B0\u1EDBng m\u1EAFt v\u1EC1 \u0111\u01B0\u1EDDng
+    ch\xE2n tr\u1EDDi. Kh\xF3e m\u1EAFt \xF4ng r\u01B0ng r\u01B0ng, b\xE0n tay chai
+    s\u1EA7n v\u1EABy m\u1EA1nh li\xEAn t\u1EE5c. Ng\xE0y tr\u1EDF v\u1EC1 cu\u1ED1i
+    c\xF9ng \u0111\xE3 \u0111\u1EBFn.\n\nArthur v\u1EABn kh\xF4ng th\u1EC3 nh\u1EDB
+    m\xECnh l\xE0 ai tr\u01B0\u1EDBc khi t\u1EC9nh d\u1EADy tr\xEAn b\xE3i c\xE1t
+    l\u1EA1nh n\u0103m \u1EA5y. Khi \u0111\xF3, h\xE0nh trang duy nh\u1EA5t c\u1EE7a
+    \xF4ng ch\u1EC9 l\xE0 chi\u1EBFc la b\xE0n c\u0169 c\xF9ng b\u1EA3n n\u0103ng
+    sinh t\u1ED3n m\xE3nh li\u1EC7t c\u1EE7a m\u1ED9t k\u1EBB b\u1ECB b\u1ECF l\u1EA1i.\n\nH\xF2n
+    \u0111\u1EA3o t\xE0n nh\u1EABn \u0111\xE3 l\u1EA5y \u0111i k\xFD \u1EE9c v\xE0
+    v\u1EAFt ki\u1EC7t sinh l\u1EF1c \xF4ng qua nh\u1EEFng \u0111\xEAm \u0111en c\xF4
+    \u0111\u1ED9c. Nh\u01B0ng c\u0169ng ch\xEDnh n\u01A1i \u0111\xE2y \u0111\xE3
+    d\u1EA1y \xF4ng c\xE1ch \u0111\u1EE9ng l\xEAn, c\xE1ch nh\xF3m hy v\u1ECDng t\u1EEB
+    t\xE0n tro, c\xE1ch ch\u1EBF t\u1EA1o, chi\u1EBFn \u0111\u1EA5u v\xE0 ki\xEAn
+    c\u01B0\u1EDDng s\u1ED1ng s\xF3t, \u0111i l\xEAn t\u1EEB con s\u1ED1 0\n\nB\u01B0\u1EDBc
+    ra kh\u1ECFi b\xF3ng t\u1ED1i r\u1EEBng s\xE2u, Arthur \u0111\u1EB7t ch\xE2n
+    l\xEAn boong t\xE0u. Th\u1EE9 \xF4ng mang theo kh\xF4ng ph\u1EA3i l\xE0 nh\u1EEFng
+    m\u1EA3nh v\u1EE1 k\xFD \u1EE9c \u0111\xE3 m\u1EA5t, m\xE0 l\xE0 m\u1ED9t \xFD
+    ch\xED ki\xEAn c\u01B0\u1EDDng m\u1EDBi.\n\nH\xE0nh tr\xECnh sinh t\u1ED3n tr\xEAn
+    h\xF2n \u0111\u1EA3o b\u1ECB l\xE3ng qu\xEAn ch\xEDnh th\u1EE9c kh\xE9p l\u1EA1i.\n\nC\u1EA2M
+    \u01A0N B\u1EA0N \u0110\xC3 CH\u01A0I!\nC\u1EA3m \u01A1n b\u1EA1n \u0111\xE3
+    \u0111\u1ED3ng h\xE0nh c\xF9ng Gi\xE1o s\u01B0 Arthur qua nh\u1EEFng gi\xF4ng
+    b\xE3o, nh\u1EEFng \u0111\xEAm d\xE0i l\u1EA1nh l\u1EBDo b\xEAn \u0111\u1ED1m
+    l\u1EEDa nh\u1ECF, v\xE0 nh\u1EEFng b\u01B0\u1EDBc ch\xE2n ki\xEAn \u0111\u1ECBnh
+    kh\xE1m ph\xE1 h\xF2n \u0111\u1EA3o hoang.\n\nThe Neverland \u0111\u01B0\u1EE3c
+    t\u1EA1o n\xEAn b\u1EDFi ni\u1EC1m tin:\n\"Sinh t\u1ED3n l\xE0 ch\xECa kh\xF3a
+    \u0111\u1EC3 chi\u1EBFn th\u1EAFng.\"\n\nS\u1EF1 s\u1ED1ng s\xF3t c\u1EE7a b\u1EA1n
+    h\xF4m nay ch\xEDnh l\xE0 \xFD ngh\u0129a l\u1EDBn nh\u1EA5t c\u1EE7a tr\xF2
+    ch\u01A1i n\xE0y.\n\n\u0110\u1ED8I NG\u0168 PH\xC1T TRI\u1EC2N\nNh\xF3m 04 |
+    Khoa C\xF4ng ngh\u1EC7 Th\xF4ng tin\nH\u1ECDc vi\u1EC7n H\xE0ng kh\xF4ng Vi\u1EC7t
+    Nam\n\nNh\xF3m tr\u01B0\u1EDFng: Nguy\u1EC5n Th\u1EBF Huy\n\nTh\xE0nh vi\xEAn:\n\nV\xF5
+    H\u1EEFu Ph\u01B0\u1EDBc\n\nTr\u1EA7n Ho\xE0ng Ph\xFAc\n\nL\u01B0u Th\u1ECB Kim
+    Ng\xE2n\n\nNguy\u1EC5n T\u01B0\u1EDDng Vy\n\nC\u1EA2M \u01A0N \u0110\u1EB6C BI\u1EC6T\nGi\u1EA3ng
+    vi\xEAn h\u01B0\u1EDBng d\u1EABn: ThS. Hu\u1EF3nh Thanh S\u01A1n"
 --- !u!222 &1239153930
 CanvasRenderer:
   m_ObjectHideFlags: 0

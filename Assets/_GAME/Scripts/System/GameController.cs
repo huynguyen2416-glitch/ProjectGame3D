@@ -19,16 +19,7 @@ public class GameController : MonoBehaviour
     public string startSceneName = "StartScene";
     [Tooltip("Scene chạy Credits cuối game")]
     public string creditSceneName = "CreditsScene";
-
-    // Du lieu save dang cho duoc PlayerState/LightingManager TU DOC trong Start() cua chinh no
-    // (khong de GameController chu dong "day" vao, vi thu tu Awake/Start giua cac script khac
-    // scene co the khong dam bao, de moi script tu doc se an toan hon).
-    // null nghia la "bat dau game moi hoan toan", khong ap gi ca.
     public static SaveData PendingLoad { get; private set; }
-
-    // Anh chup man hinh da lam mo luc chet gan nhat, duoc PlayerState set truoc khi goi TriggerDeath().
-    // DeathScene doc field nay de lam nen. Khong dung DontDestroyOnLoad vi Texture2D khong phai scene
-    // object - no la 1 C# object binh thuong, giu song duoc qua scene chi can co reference toi no.
     public static Texture2D LastDeathScreenshot { get; private set; }
 
     public static void SetLastDeathScreenshot(Texture2D texture)
@@ -82,12 +73,46 @@ public class GameController : MonoBehaviour
             Debug.LogWarning("[GameController]: PersonaManager.Instance dang NULL luc autosave - cac nhanh Persona da mo khoa se KHONG duoc luu lan nay!");
         }
 
+        // InventorySystem tu dien danh sach item trong balo vao data
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.FillSaveData(data);
+            Debug.Log($"[GameController]: Autosave co Balo - so item dang luu: {data.inventoryItems.Count}");
+        }
+        else
+        {
+            Debug.LogWarning("[GameController]: InventorySystem.Instance dang NULL luc autosave - Balo se KHONG duoc luu lan nay!");
+        }
+
+        // EquipSystem tu dien danh sach Quick Slot + o dang cam tren tay vao data
+        if (EquipSystem.Instance != null)
+        {
+            EquipSystem.Instance.FillSaveData(data);
+            Debug.Log($"[GameController]: Autosave co Quick Slot - dang cam o so {data.activeQuickSlotIndex + 1}");
+        }
+        else
+        {
+            Debug.LogWarning("[GameController]: EquipSystem.Instance dang NULL luc autosave - Quick Slot se KHONG duoc luu lan nay!");
+        }
+
+        // WorldStateManager tu dien danh sach vat the (cay/da/item) da bi pha huy/nhat vao data
+        if (WorldStateManager.Instance != null)
+        {
+            WorldStateManager.Instance.FillSaveData(data);
+            Debug.Log($"[GameController]: Autosave co World State - so vat the da xoa: {data.destroyedWorldObjectIds.Count}");
+        }
+        else
+        {
+            Debug.LogWarning("[GameController]: WorldStateManager.Instance dang NULL luc autosave - cay/da/item da nhat se KHONG duoc luu, se hien lai luc Continue!");
+        }
+
         SaveSystem.SaveGame(data);
     }
 
     // ================= GAN VAO NUT "BAT DAU CHOI MOI" TRONG StartScene ================= //
     public void NewGame()
     {
+        SaveSystem.DeleteSave(); // Xóa save cũ - tránh Continue sau này vô tình load lại tiến trình của lần chơi trước
         PendingLoad = null; // Khong ap du lieu gi -> PlayerState/LightingManager tu khoi tao mac dinh
         Time.timeScale = 1f;
         LoadSceneSafely(gameplaySceneName);
@@ -150,10 +175,12 @@ public class GameController : MonoBehaviour
         }
 
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         LoadSceneSafely(startSceneName);
     }
 
-    // ================= GAN VAO NUT "THOAT GAME" (neu co) ================= //
+    // ================= GAN VAO NUT "THOAT GAME" ================= //
     public void QuitGame()
     {
         Debug.Log("[GameController]: Thoat game.");
@@ -192,9 +219,7 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    // Log lai chinh xac scene NAO va DUONG DAN file NAO vua thuc su duoc load, de doi chieu
-    // voi scene ban dang mo truc tiep de test - neu 2 cai khac path nhau, chinh la nguyen nhan
-    // PersonaManager (hay bat ky script nao khac) hien du lieu khac nhau giua 2 cach chay.
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += LogSceneLoaded;
