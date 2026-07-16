@@ -3,6 +3,8 @@ using UnityEngine;
 [ExecuteAlways]
 public class LightingManager : MonoBehaviour
 {
+    public static LightingManager Instance { get; private set; } // THÊM MỚI: Để các script khác gọi đến
+
     [Header("Scene References")]
     [SerializeField] private Light DirectionalLight;
     [SerializeField] private LightingPreset Preset;
@@ -22,6 +24,26 @@ public class LightingManager : MonoBehaviour
 
     private float previousTime = 0f;
     private bool hasWon = false;
+
+    private void Awake()
+    {
+        // THÊM MỚI: Khởi tạo Singleton
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    // THÊM MỚI: Hàm kiểm tra xem trời có đang là ban đêm không
+    public bool IsNight()
+    {
+        if (dayLength <= 0) return false;
+        float percent = TimeOfDay / dayLength;
+        // Mặc định: Trước 25% (Sáng sớm) và Sau 70% (Chiều tối) được tính là Đêm lạnh
+        return percent < 0.25f || percent > 0.70f;
+    }
 
     private void Update()
     {

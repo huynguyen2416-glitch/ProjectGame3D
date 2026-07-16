@@ -102,11 +102,11 @@ GameObject:
   m_Component:
   - component: {fileID: 509012724210636800}
   - component: {fileID: 4397688316290632341}
-  - component: {fileID: 4716659939595918223}
   - component: {fileID: 2393852292049054313}
   - component: {fileID: 2183526067844555590}
+  - component: {fileID: 7782979482609562656}
   m_Layer: 0
-  m_Name: Flower
+  m_Name: oaihuong
   m_TagString: pickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,28 +163,6 @@ LODGroup:
     - renderer: {fileID: 1848490253464167573}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
---- !u!64 &4716659939595918223
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2501010988829315879}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -439356785465359677, guid: 46ceee1e0f8fec547ad8c36842afe15f, type: 3}
 --- !u!65 &2393852292049054313
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -204,7 +182,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.18, y: 2.46, z: 3.18}
+  m_Size: {x: 4, y: 3, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2183526067844555590
 MonoBehaviour:
@@ -218,10 +196,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c490a046d797a42bc033c785ef6c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
-  itemName: flower
-  displayItemName: Hoa
+  itemName: oaihuong
+  displayItemName: "O\u1EA3i h\u01B0\u01A1ng t\xEDm"
   itemIcon: {fileID: 0}
   playerInRange: 0
+--- !u!65 &7782979482609562656
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2501010988829315879}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.4, y: 1.25, z: 0.4}
+  m_Center: {x: 0, y: 0.28, z: 0}
 --- !u!1 &3147240064290245847
 GameObject:
   m_ObjectHideFlags: 0

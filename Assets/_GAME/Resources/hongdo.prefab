@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8980964958922569047}
   - component: {fileID: -401380473336856997}
   m_Layer: 0
-  m_Name: flower
+  m_Name: hongdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3c68282cb9f1a0441afb2faae77497be, type: 3}
+  m_Sprite: {fileID: -214401875, guid: a21e5bc4a41296e4ea9ec08431115292, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -116,12 +116,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
   isTrashable: 1
-  thisName: "B\xF4ng Hoa"
-  thisDescription: "M\u1ED9t b\xF4ng hoa nh\u1ECF c\xF3 th\u1EC3 l\xE0m g\xEC \u0111\xF3"
+  thisName: "H\u1ED3ng \u0110\u1ECF"
+  thisDescription: "T\u01B0\u1EE3ng tr\u01B0ng cho sinh l\u1EF1c v\xE0 s\u1EF1 r\u1EF1c
+    r\u1EE1. Chi\u1EBFt xu\u1EA5t t\u1EEB c\xE1nh h\u1ED3ng \u0111\u1ECF ch\u1EE9a
+    ngu\u1ED3n n\u0103ng l\u01B0\u1EE3ng d\u1ED3i d\xE0o, gi\xFAp k\xEDch th\xEDch
+    t\xE1i t\u1EA1o t\u1EBF b\xE0o si\xEAu t\u1ED1c"
   thisFunctionality: "C\xF3 th\u1EC3 ti\xEAu th\u1EE5 [R-click] , C\xF3 th\u1EC3
     ch\u1EBF thu\u1ED1c [C]"
   isConsumable: 1
-  healthEffect: 10
-  caloriesEffect: 3
+  healthEffect: 5
+  caloriesEffect: 0
   hydrationEffect: 3
   item3DPrefab: {fileID: 0}

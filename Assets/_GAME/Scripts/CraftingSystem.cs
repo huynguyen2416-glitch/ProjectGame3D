@@ -3,28 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 1. TẠO CLASS NGUYÊN LIỆU ĐỘNG
+[System.Serializable]
+public class CraftingIngredient
+{
+    public string itemName;  // Tên nguyên liệu (VD: "sm_rose_red")
+    public int amount;       // Số lượng cần thiết
+}
 
-//TẠO "KHUÔN" CÔNG THỨC CHẾ TẠO
+// 2. CẬP NHẬT LẠI KHUÔN CÔNG THỨC CHẾ TẠO
 [System.Serializable]
 public class CraftingRecipe
 {
-    public string uiName;           // Tên object trên Hierarchy (VD: "Axe", "Poison")
-    public string resultItemName;   // Tên item sinh ra đưa vào balo (VD: "axe", "poison")
-    public GameObject targetScreen; // UI Tab chứa món này (ToolsScreenUI, MedScreenUI...)
+    public string uiName;
+    public string resultItemName;
+    public GameObject targetScreen;
     public int resultAmount = 1;
-    [Header("Nguyên liệu 1")]
-    public string req1;
-    public int req1Amount;
 
-    [Header("Nguyên liệu 2 (Có hay không đều được)")]
-    public string req2;
-    public int req2Amount;
+    [Header("Danh sách Nguyên liệu cần thiết")]
+    public List<CraftingIngredient> ingredients = new List<CraftingIngredient>();
 }
 
+// 3. CACHE LẠI UI ĐỂ KHÔNG BỊ GIỚI HẠN SỐ LƯỢNG TEXT
 public class CraftingRecipeUIRefs
 {
-    public Text req1Text;
-    public Text req2Text;
+    public List<Text> reqTexts = new List<Text>();
 }
 
 public class CraftingSystem : MonoBehaviour
@@ -35,8 +38,6 @@ public class CraftingSystem : MonoBehaviour
     public GameObject survivalScreenUI;
     public GameObject medScreenUI;
 
-
-    // DANH SÁCH CÔNG THỨC (CÓ THỂ CHỈNH SỬA TRỰC TIẾP TRONG UNITY)
     [Header("Danh sách Công Thức Chế Tạo")]
     public List<CraftingRecipe> recipes = new List<CraftingRecipe>();
 
@@ -49,11 +50,9 @@ public class CraftingSystem : MonoBehaviour
     public bool isOpen;
     public static CraftingSystem Instance { get; set; }
 
-    [Tooltip("Số lần cập nhật số lượng nguyên liệu mỗi giây khi màn Crafting đang mở - không cần " +
-             "60 lần/giây (mỗi frame), mắt người không đọc kịp nhanh vậy. 5 là đủ mượt.")]
+    [Tooltip("Số lần cập nhật UI mỗi giây")]
     public float refreshRatePerSecond = 5f;
 
-    // Cache Text refs theo từng recipe - tìm 1 LẦN DUY NHẤT lúc Start(), không Find() mỗi frame nữa
     private readonly Dictionary<CraftingRecipe, CraftingRecipeUIRefs> uiRefsCache = new Dictionary<CraftingRecipe, CraftingRecipeUIRefs>();
     private float refreshTimer = 0f;
 
@@ -67,6 +66,7 @@ public class CraftingSystem : MonoBehaviour
     {
         isOpen = false;
 
+        // Setup các nút chuyển tab bằng UI hierarchy[cite: 6]
         toolsBTN = craftingScreenUI.transform.Find("ToolsButton").GetComponent<Button>();
         toolsBTN.onClick.AddListener(delegate { OpenCategory(toolsScreenUI); });
 
@@ -76,7 +76,6 @@ public class CraftingSystem : MonoBehaviour
         MedBTN = craftingScreenUI.transform.Find("MedButton").GetComponent<Button>();
         MedBTN.onClick.AddListener(delegate { OpenCategory(medScreenUI); });
 
-        //  Tự động cài đặt TẤT CẢ các nút chế tạo dựa theo danh sách Recipes
         foreach (var recipe in recipes)
         {
             SetupCraftButton(recipe);
@@ -84,26 +83,24 @@ public class CraftingSystem : MonoBehaviour
         }
     }
 
-
     void CacheRecipeUIRefs(CraftingRecipe recipe)
     {
         if (recipe.targetScreen == null) return;
 
         Transform itemUI = recipe.targetScreen.transform.Find(recipe.uiName);
-        if (itemUI == null)
-        {
-            Debug.LogWarning($"[CraftingSystem]: Không tìm thấy UI '{recipe.uiName}' trong '{recipe.targetScreen.name}' - công thức '{recipe.resultItemName}' sẽ không hiện được số lượng nguyên liệu.");
-            return;
-        }
+        if (itemUI == null) return;
 
         CraftingRecipeUIRefs refs = new CraftingRecipeUIRefs();
 
-        Transform req1Transform = itemUI.Find("req1");
-        if (req1Transform != null) refs.req1Text = req1Transform.GetComponent<Text>();
-
-        Transform req2Transform = itemUI.Find("req2");
-        if (req2Transform != null) refs.req2Text = req2Transform.GetComponent<Text>();
-
+        // Tự động tìm tất cả các Text có tên "req1", "req2", "req3"... theo số lượng nguyên liệu
+        for (int i = 0; i < recipe.ingredients.Count; i++)
+        {
+            Transform reqTransform = itemUI.Find("req" + (i + 1));
+            if (reqTransform != null)
+            {
+                refs.reqTexts.Add(reqTransform.GetComponent<Text>());
+            }
+        }
         uiRefsCache[recipe] = refs;
     }
 
@@ -116,7 +113,6 @@ public class CraftingSystem : MonoBehaviour
         {
             Button btn = itemUI.Find("Button").GetComponent<Button>();
             btn.onClick.RemoveAllListeners();
-            // Truyền dữ liệu từ recipe vào hàm Craft
             btn.onClick.AddListener(delegate { CraftItem(recipe); });
         }
     }
@@ -149,7 +145,7 @@ public class CraftingSystem : MonoBehaviour
 
             if (isOpen)
             {
-                RefreshRequirementsUI(); // Refresh ngay lúc vừa mở, không đợi tick đầu tiên
+                RefreshRequirementsUI();
                 refreshTimer = 0f;
             }
         }
@@ -166,9 +162,6 @@ public class CraftingSystem : MonoBehaviour
         }
     }
 
-
-    //QUÉT QUA DANH SÁCH ĐỂ UPDATE UI 
-
     void RefreshRequirementsUI()
     {
         inventoryItemList = InventorySystem.Instance.itemList;
@@ -183,58 +176,53 @@ public class CraftingSystem : MonoBehaviour
     {
         if (!uiRefsCache.TryGetValue(recipe, out CraftingRecipeUIRefs refs)) return;
 
-        // Xử lý Nguyên liệu 1
-        if (refs.req1Text != null)
+        // Quét qua danh sách nguyên liệu và cập nhật màu sắc/số lượng
+        for (int i = 0; i < recipe.ingredients.Count; i++)
         {
-            int count1 = CountItem(recipe.req1);
-            string vnName1 = GetVNName(recipe.req1);
-            refs.req1Text.text = $"{vnName1}: {count1} / {recipe.req1Amount}";
-            refs.req1Text.color = (count1 >= recipe.req1Amount) ? Color.green : Color.red;
-        }
+            if (i < refs.reqTexts.Count && refs.reqTexts[i] != null)
+            {
+                refs.reqTexts[i].gameObject.SetActive(true);
+                CraftingIngredient ingredient = recipe.ingredients[i];
 
-        // Xử lý Nguyên liệu 2
-        if (refs.req2Text != null)
-        {
-            if (!string.IsNullOrEmpty(recipe.req2) && recipe.req2Amount > 0)
-            {
-                refs.req2Text.gameObject.SetActive(true);
-                int count2 = CountItem(recipe.req2);
-                string vnName2 = GetVNName(recipe.req2);
-                refs.req2Text.text = $"{vnName2}: {count2} / {recipe.req2Amount}";
-                refs.req2Text.color = (count2 >= recipe.req2Amount) ? Color.green : Color.red;
-            }
-            else
-            {
-                refs.req2Text.gameObject.SetActive(false);
+                int count = CountItem(ingredient.itemName);
+                string vnName = GetVNName(ingredient.itemName);
+
+                refs.reqTexts[i].text = $"{vnName}: {count} / {ingredient.amount}";
+                refs.reqTexts[i].color = (count >= ingredient.amount) ? Color.green : Color.red;
             }
         }
     }
 
     string GetVNName(string engName)
     {
-        return ItemNameVN.Get(engName);
+        return ItemNameVN.Get(engName); // Giữ nguyên hàm dịch thuật
     }
-
-
-    //HÀM CRAFT MỚI NHẬN VÀO TRỰC TIẾP CLASS RECIPE
 
     void CraftItem(CraftingRecipe recipe)
     {
         inventoryItemList = InventorySystem.Instance.itemList;
 
-        bool hasReq1 = CountItem(recipe.req1) >= recipe.req1Amount;
-        bool hasReq2 = string.IsNullOrEmpty(recipe.req2) || CountItem(recipe.req2) >= recipe.req2Amount;
-
-        if (hasReq1 && hasReq2)
+        // 1. Kiểm tra xem có đủ TOÀN BỘ nguyên liệu không
+        bool canCraft = true;
+        foreach (var req in recipe.ingredients)
         {
-            RemoveItem(recipe.req1, recipe.req1Amount);
-
-            if (!string.IsNullOrEmpty(recipe.req2) && recipe.req2Amount > 0)
+            if (CountItem(req.itemName) < req.amount)
             {
-                RemoveItem(recipe.req2, recipe.req2Amount);
+                canCraft = false;
+                break;
+            }
+        }
+
+        // 2. Tiến hành chế tạo nếu đủ đồ
+        if (canCraft)
+        {
+            // Trừ toàn bộ nguyên liệu
+            foreach (var req in recipe.ingredients)
+            {
+                RemoveItem(req.itemName, req.amount);
             }
 
-            // logic nhận thêm số lượng đồ crafft
+            // Thêm vật phẩm thành phẩm vào balo
             for (int i = 0; i < recipe.resultAmount; i++)
             {
                 InventorySystem.Instance.AddToInventory(recipe.resultItemName);
@@ -243,7 +231,7 @@ public class CraftingSystem : MonoBehaviour
             Debug.Log($"Chế tạo thành công: {recipe.resultAmount} {recipe.resultItemName}");
             if (SoundManager.Instance != null)
             {
-                SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound); // âm thanh chế tạo
             }
         }
         else
@@ -262,6 +250,8 @@ public class CraftingSystem : MonoBehaviour
     void RemoveItem(string itemName, int amountToRemove)
     {
         int removedCount = 0;
+
+        // Trừ logic trong mảng List trước
         for (int i = InventorySystem.Instance.itemList.Count - 1; i >= 0; i--)
         {
             if (InventorySystem.Instance.itemList[i] == itemName)
@@ -273,6 +263,8 @@ public class CraftingSystem : MonoBehaviour
         }
 
         removedCount = 0;
+
+        // Hủy object UI trong balo
         foreach (GameObject slot in InventorySystem.Instance.slotList)
         {
             if (slot.transform.childCount > 0)
@@ -281,7 +273,6 @@ public class CraftingSystem : MonoBehaviour
                 if (itemInSlot.name == itemName || itemInSlot.name == itemName + "(Clone)")
                 {
                     itemInSlot.transform.SetParent(null);
-
                     Destroy(itemInSlot);
                     removedCount++;
                     if (removedCount >= amountToRemove) break;

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement; // Để xử lý việc tải lại màn chơi khi bấm nút quay lại
+using UnityEngine.SceneManagement;
 
 public class PlayerState : MonoBehaviour
 {
@@ -25,51 +25,53 @@ public class PlayerState : MonoBehaviour
     // ---- Player Stamina ---- //
     public float currentStamina;
     public float maxStamina = 100f;
-    public float staminaDrainPerSecond = 20f;  // Tốc độ giảm khi chạy nước rút (Sprint)
-    public float staminaRegenPerSecond = 12f;  // Tốc độ hồi khi không chạy nước rút
-    public KeyCode sprintKey = KeyCode.LeftShift;// nút shift chạy
+    public float staminaDrainPerSecond = 20f;
+    public float staminaRegenPerSecond = 12f;
+    public KeyCode sprintKey = KeyCode.LeftShift;
 
-    // Cho script di chuyển (PlayerMovement) kiểm tra trước khi cho phép tăng tốc chạy:
     public bool CanSprint => currentStamina > 0f;
 
-    //CÁC BIẾN ĐƯỢC THÊM MỚI ĐỂ PHỤC VỤ HỆ THỐNG CHẾT & HỒI SINH
-    public GameObject deathPanel; // kéo Panel "Bạn đã chết" vào ngoài Unity
-    public float starvationDamageRate = 1f; // Lượng máu bị trừ mỗi giây nếu hết sạch Calo hoặc Nước
-    private bool isDead = false; // Cờ kiểm tra xem người chơi đã chết chưa
+    // ---- HỆ THỐNG CHẾT & HỒI SINH ---- //
+    public GameObject deathPanel;
+    public float starvationDamageRate = 1f;
+    private bool isDead = false;
 
+    // ---- HỆ THỐNG SINH TỒN BAN ĐÊM ---- //
+    [Header("---- Night Survival ----")]
+    public float nightColdDamageRate = 2f;
+    private bool isNearCampfire = false;
+
+    // ==========================================
+    //  HỆ THỐNG BUFF (HIỆU ỨNG THUỐC)
+    // ==========================================
+    [Header("---- Active Buffs ----")]
+    public bool isColdImmune = false;
+    public bool isStaminaInfinite = false;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-            Instance = this;
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
     }
 
     private void Start()
     {
-        // khởi tạo chỉ số đầy đủ mỗi lần vào scene.
         currentHealth = maxHealth;
         currentCalories = maxCalories;
         currentHydrationPercent = maxHydrationPercent;
         currentStamina = maxStamina;
 
-        // Đảm bảo ẩn bảng chết lúc mới vào game
         if (deathPanel != null) deathPanel.SetActive(false);
 
-        // Khởi tạo lastPosition ngay từ đầu, tránh frame đầu tiên tính nhầm 1 quãng đường "ảo" bằng khoảng cách từ gốc toạ độ (0,0,0) tới vị trí spawn thật của người chơi.
         if (playerBody != null) lastPosition = playerBody.transform.position;
-        StartCoroutine(decreaseHydration()); // Khởi chạy Coroutine giảm nước
+        StartCoroutine(decreaseHydration());
     }
 
-    // Coroutine đếm thời gian trừ nước mỗi 2 giây
     IEnumerator decreaseHydration()
     {
         while (true)
         {
-            if (!isDead) // Thêm điều kiện: Chỉ trừ nước khi còn sống
+            if (!isDead)
             {
                 currentHydrationPercent -= 1;
                 if (currentHydrationPercent < 0) currentHydrationPercent = 0;
@@ -78,22 +80,25 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    public void SetNearCampfire(bool isNear)
+    {
+        isNearCampfire = isNear;
+    }
+
     void Update()
     {
-        if (isDead) return; // Nếu đã chết thì dừng mọi xử lý di chuyển hay tính toán chỉ số bên dưới
+        if (isDead) return;
 
-        // Tính khoảng cách di chuyển TRONG FRAME NÀY (dùng để nhận biết đang di chuyển hay đứng yên,
-        // phục vụ tính Stamina), rồi mới cộng dồn vào distanceTravelled như logic Calo cũ.
         float frameDistance = Vector3.Distance(playerBody.transform.position, lastPosition);
         bool isMovingThisFrame = frameDistance > 0.001f;
 
-        distanceTravelled += frameDistance; // khoảng cách di chuyển
-        lastPosition = playerBody.transform.position; //vị trí đứng kết thúc
+        distanceTravelled += frameDistance;
+        lastPosition = playerBody.transform.position;
 
-        // Nhánh Persona (Sinh tồn) có thể làm chậm tốc độ đốt calo qua calorieBurnRateReduction (vd 0.2 = -20%)
         float calorieBurnReduction = PersonaManager.Instance != null ? PersonaManager.Instance.calorieBurnRateReduction : 0f;
         float calorieDistanceThreshold = 5f / Mathf.Max(0.1f, 1f - calorieBurnReduction);
         float healthBurnReduction = PersonaManager.Instance != null ? PersonaManager.Instance.healthBurnRateReduction : 0f;
+
         if (distanceTravelled >= calorieDistanceThreshold)
         {
             distanceTravelled = 0;
@@ -101,20 +106,15 @@ public class PlayerState : MonoBehaviour
             if (currentCalories < 0) currentCalories = 0;
         }
 
-        // ĐÓI KHÁT QUÁ SẼ BỊ TRỪ MÁU
-        // Nếu Calo chạm đáy HOẶC Nước chạm đáy (bằng 0) thì người chơi mất máu dần dần theo thời gian
         if (currentCalories <= 0 || currentHydrationPercent <= 0)
         {
-            // Trước đây healthBurnReduction được tính ra nhưng KHÔNG dùng ở đây - persona
-            // "giảm đốt máu" hoàn toàn không có tác dụng gì. Giờ nhân vào công thức thật.
             float damage = starvationDamageRate * Time.deltaTime * 2 * (1f - healthBurnReduction);
             setHealth(currentHealth - damage);
         }
 
-        //LOGIC STAMINA: chạy nước rút (giữ sprintKey + đang di chuyển) thì tốn thể lực,
-        // còn lại (đứng yên hoặc đi bộ thường) thì hồi thể lực dần ---
+        // CẬP NHẬT: Nếu có buff Thể lực vô hạn thì không bị trừ Stamina khi chạy
         bool isSprinting = Input.GetKey(sprintKey) && isMovingThisFrame && currentStamina > 0f;
-        if (isSprinting)
+        if (isSprinting && !isStaminaInfinite)
         {
             setStamina(currentStamina - staminaDrainPerSecond * Time.deltaTime);
         }
@@ -123,33 +123,85 @@ public class PlayerState : MonoBehaviour
             setStamina(currentStamina + staminaRegenPerSecond * Time.deltaTime);
         }
 
-        // Nút N thần thánh để test tụt máu
-        if (Input.GetKeyDown(KeyCode.N)) //
+        if (Input.GetKeyDown(KeyCode.N))
         {
-            setHealth(currentHealth - 10); //
+            setHealth(currentHealth - 10);
+        }
+
+        // CẬP NHẬT: Nếu có buff Miễn Nhiễm Lạnh thì ban đêm không bị mất máu
+        bool isNight = LightingManager.Instance != null && LightingManager.Instance.IsNight();
+        if (isNight)
+        {
+            if (!isNearCampfire && !isColdImmune)
+            {
+                float coldDamage = nightColdDamageRate * Time.deltaTime;
+                setHealth(currentHealth - coldDamage);
+            }
         }
     }
-    // NÂNG CẤP HÀM SET HEALTH: Tự động kiểm tra chết và chặn vượt giới hạn
+
+    // ==========================================
+    // CÁC HÀM XỬ LÝ BUFF TỪ THUỐC
+    // ==========================================
+    public void ApplyBuff(string buffType, float duration, float value)
+    {
+        switch (buffType)
+        {
+            case "ColdImmunity":
+                StartCoroutine(ColdImmunityRoutine(duration));
+                break;
+            case "InfiniteStamina":
+                StartCoroutine(InfiniteStaminaRoutine(duration));
+                break;
+            case "HealOverTime":
+                StartCoroutine(HealOverTimeRoutine(value, duration));
+                break;
+        }
+    }
+
+    private IEnumerator ColdImmunityRoutine(float duration)
+    {
+        isColdImmune = true;
+        Debug.Log("Đã kích hoạt: Miễn nhiễm lạnh!");
+        yield return new WaitForSeconds(duration);
+        isColdImmune = false;
+        Debug.Log("Hết hiệu lực: Miễn nhiễm lạnh!");
+    }
+
+    private IEnumerator InfiniteStaminaRoutine(float duration)
+    {
+        isStaminaInfinite = true;
+        Debug.Log("Đã kích hoạt: Thể lực vô hạn!");
+        yield return new WaitForSeconds(duration);
+        isStaminaInfinite = false;
+        Debug.Log("Hết hiệu lực: Thể lực vô hạn!");
+    }
+
+    private IEnumerator HealOverTimeRoutine(float healPerSecond, float duration)
+    {
+        Debug.Log("Đã kích hoạt: Hồi máu theo thời gian!");
+        float timePassed = 0f;
+        while (timePassed < duration)
+        {
+            if (isDead) yield break;
+            setHealth(currentHealth + healPerSecond);
+            timePassed += 1f;
+            yield return new WaitForSeconds(1f);
+        }
+        Debug.Log("Hết hiệu lực: Hồi máu theo thời gian!");
+    }
+
+    // ==========================================
+
     public void setHealth(float amount)
     {
         if (isDead) return;
-
         currentHealth = amount;
-
-        // Giới hạn dưới: Không cho máu bị âm
         if (currentHealth < 0) currentHealth = 0;
-
-        // Giới hạn trên: Không cho máu vượt qua giới hạn maxHealth
         if (currentHealth > maxHealth) currentHealth = maxHealth;
-
-        // Nếu máu thực sự bằng 0 thì Kích hoạt chết
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        if (currentHealth <= 0) Die();
     }
 
-    // Tối ưu hàm set Calo & Nước để tránh lỗi chỉ số hiển thị bị âm
     public void setCalories(float amount)
     {
         currentCalories = amount;
@@ -162,7 +214,6 @@ public class PlayerState : MonoBehaviour
         if (currentHydrationPercent < 0) currentHydrationPercent = 0;
     }
 
-    // Set Stamina, giới hạn trong khoảng [0, maxStamina]
     public void setStamina(float amount)
     {
         currentStamina = amount;
@@ -170,61 +221,38 @@ public class PlayerState : MonoBehaviour
         if (currentStamina > maxStamina) currentStamina = maxStamina;
     }
 
-
-
-
-
-
-
-    // ================= HÀM XỬ LÝ KHI NGƯỜI CHƠI CHẾT ================= //
     public void Die()
     {
         isDead = true;
-        Debug.Log("Người chơi đã cạn kiệt sinh lực và chết!");
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Ưu tiên: nếu đã setup GameController + DeathScene riêng, chụp lại khung hình lúc chết,
-        // làm mờ, rồi mới chuyển scene (cần chờ hết frame nên phải chạy qua Coroutine).
         if (GameController.Instance != null)
         {
             StartCoroutine(CaptureDeathScreenshotThenTransition());
             return;
         }
-
-        // Fallback: chưa gắn GameController -> giữ hành vi cũ (hiện Panel ngay trong scene hiện tại).
-        if (deathPanel != null)
-        {
-            deathPanel.SetActive(true);
-        }
+        if (deathPanel != null) deathPanel.SetActive(true);
     }
 
-    [Header("Chụp màn hình lúc chết (dùng cho nền mờ của DeathScene)")]
-    [Tooltip("Số lần downsample khi làm mờ - càng nhiều càng mờ nhiều, nhưng cũng tốn thời gian xử lý hơn 1 chút. 4-5 là hợp lý.")]
+    [Header("Chụp màn hình lúc chết")]
     public int deathScreenshotBlurPasses = 4;
 
     private IEnumerator CaptureDeathScreenshotThenTransition()
     {
-        // Chờ hết frame hiện tại để đảm bảo chụp đúng khung hình đang hiển thị trên màn hình
         yield return new WaitForEndOfFrame();
-
         Texture2D rawScreenshot = ScreenCapture.CaptureScreenshotAsTexture();
         Texture2D blurred = BlurTexture(rawScreenshot, deathScreenshotBlurPasses);
-
-        // Không cần bản gốc (chưa mờ, full-res) nữa, giải phóng ngay để đỡ tốn bộ nhớ.
         Destroy(rawScreenshot);
 
         GameController.SetLastDeathScreenshot(blurred);
         GameController.Instance.TriggerDeath();
     }
 
-    // Làm mờ bằng cách downsample rồi upsample nhiều lần qua RenderTexture (lọc bilinear).
     private Texture2D BlurTexture(Texture2D source, int downsamplePasses)
     {
         int width = source.width;
         int height = source.height;
-
         RenderTexture current = RenderTexture.GetTemporary(width, height, 0);
         current.filterMode = FilterMode.Bilinear;
         Graphics.Blit(source, current);
@@ -233,7 +261,6 @@ public class PlayerState : MonoBehaviour
         {
             width = Mathf.Max(2, width / 2);
             height = Mathf.Max(2, height / 2);
-
             RenderTexture next = RenderTexture.GetTemporary(width, height, 0);
             next.filterMode = FilterMode.Bilinear;
             Graphics.Blit(current, next);
@@ -248,28 +275,22 @@ public class PlayerState : MonoBehaviour
 
         RenderTexture previousActive = RenderTexture.active;
         RenderTexture.active = upsampled;
-
         Texture2D result = new Texture2D(source.width, source.height, TextureFormat.RGB24, false);
         result.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
         result.Apply();
-
         RenderTexture.active = previousActive;
         RenderTexture.ReleaseTemporary(upsampled);
 
         return result;
     }
 
-    // ================= HÀM XỬ LÝ KHI BẤM NÚT "QUAY LẠI / HỒI SINH" ================= //
     public void OnRespawnButtonClick()
     {
-        //luôn load lại Canh1 hoàn toàn mới.
         if (GameController.Instance != null)
         {
             GameController.Instance.RestartGame();
             return;
         }
-
-        // Fallback: chưa gắn GameController -> tải lại chính Scene hiện tại (reset sạch từ đầu).
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
