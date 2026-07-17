@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class EnemyHealth : MonoBehaviour
 {
 
@@ -30,6 +29,12 @@ public class EnemyHealth : MonoBehaviour
     {
         Debug.Log(gameObject.name + " đã gục ngã!");
 
+        // PERSONA: tiêu diệt thành công 1 quái -> +1 Điểm Sinh Tồn
+        if (PersonaManager.Instance != null)
+        {
+            PersonaManager.Instance.AwardPoint(1, "Tiêu diệt quái");
+        }
+
         // Tắt AI để gấu ngừng đuổi đánh
         if (enemyAI != null)
         {
@@ -55,7 +60,7 @@ public class EnemyHealth : MonoBehaviour
     public void DropMeatAndDestroy()
     {
         // 1. Tải prefab từ thư mục Resources
-        GameObject bearMeatPrefab = Resources.Load<GameObject>("bearmeat");
+        GameObject bearMeatPrefab = ResourceCache.Load("bearmeat");
 
         if (bearMeatPrefab != null)
         {

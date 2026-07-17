@@ -2,17 +2,9 @@ using UnityEngine;
 
 public class CreditRoller : MonoBehaviour
 {
-    // Hàm này sẽ được gọi khi người chơi bấm nút "Bắt đầu lại"
+    // Hàm sự kiện này được cấu hình để gắn vào nút "Bắt đầu lại" sau khi credit chạy xong 
     public void ResetGameAndReturn()
     {
-        // Gọi GameController đưa về Main Menu
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.GoToMainMenu();
-        }
-        else
-        {
-            Debug.LogError("Không tìm thấy GameController!");
-        }
+        if (GameController.Instance != null) GameController.Instance.GoToMainMenu(); //về menu start
     }
 }

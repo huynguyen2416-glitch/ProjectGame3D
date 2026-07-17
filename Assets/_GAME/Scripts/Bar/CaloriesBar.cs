@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.UI;
-
 public class CaloriesBar : MonoBehaviour
 {
     private Slider slider;

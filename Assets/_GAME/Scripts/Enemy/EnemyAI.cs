@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class EnemyAI : MonoBehaviour
 {
     public enum State { Patrol, Chase, Attack }

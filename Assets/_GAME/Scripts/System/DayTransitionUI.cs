@@ -2,71 +2,55 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class DayTransitionUI : MonoBehaviour
 {
-    [Tooltip("CanvasGroup của Panel chứa chữ 'Đêm thứ...' - dùng để fade in/out")]
+    // Sử dụng CanvasGroup thay vì bật tắt GameObject. 
     public CanvasGroup canvasGroup;
-
-    [Tooltip("Text hiển thị 'Đêm thứ X'")]
     public Text dayText;
 
-    [Header("Thời lượng (giây)")]
+    [Header("Timing Settings")]
     public float fadeInDuration = 0.6f;
     public float holdDuration = 1.5f;
     public float fadeOutDuration = 0.8f;
-
-    [Tooltip("Định dạng chữ hiển thị, {0} sẽ được thay bằng số ngày")]
     public string textFormat = "Đêm thứ {0}";
 
     private Coroutine currentRoutine;
 
     private void Awake()
     {
+        // Khởi tạo ẩn hoàn toàn UI lúc vừa vào màn chơi.
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false; // Không chặn thao tác của người chơi khi đang mờ/ẩn
+            canvasGroup.blocksRaycasts = false; // Tắt tính năng chặn tia chuột (Raycast)
             canvasGroup.interactable = false;
         }
     }
 
-    // Gọi hàm này từ LightingManager mỗi khi sang ngày mới
     public void ShowDay(int dayNumber)
     {
-        if (canvasGroup == null)
-        {
-            Debug.LogWarning("[DayTransitionUI]: Chưa gán CanvasGroup trong Inspector!");
-            return;
-        }
+        if (canvasGroup == null) return;
+        if (dayText != null) dayText.text = string.Format(textFormat, dayNumber);
 
-        if (dayText != null)
-        {
-            dayText.text = string.Format(textFormat, dayNumber);
-        }
-
-        // Nếu lỡ đang có 1 lần hiển thị trước đó chưa kết thúc, dừng nó lại trước khi bắt đầu
-        // lần mới, tránh 2 coroutine tranh nhau chỉnh alpha.
+        // Cơ chế dọn dẹp Coroutine cũ. 
+        // Nếu trời tối đột ngột khi hiệu ứng cũ chưa chạy xong, lệnh này sẽ ngắt luồng hoạt họa cũ ngay lập tức để chạy luồng mới, tránh hiện tượng hai luồng tranh chấp chỉ số Alpha gây nhấp nháy màn hình.
         if (currentRoutine != null) StopCoroutine(currentRoutine);
         currentRoutine = StartCoroutine(FadeRoutine());
     }
 
     private IEnumerator FadeRoutine()
     {
-        // FADE IN
         float t = 0f;
         while (t < fadeInDuration)
         {
             t += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Clamp01(t / fadeInDuration);
-            yield return null;
+            canvasGroup.alpha = Mathf.Clamp01(t / fadeInDuration); 
+            yield return null; 
         }
         canvasGroup.alpha = 1f;
 
-        // GIỮ NGUYÊN để người chơi đọc chữ
+        // Đóng băng trạng thái hiển thị rõ ràng trong một khoảng thời gian cố định
         yield return new WaitForSeconds(holdDuration);
-
-        // FADE OUT
         t = 0f;
         while (t < fadeOutDuration)
         {
@@ -76,6 +60,6 @@ public class DayTransitionUI : MonoBehaviour
         }
         canvasGroup.alpha = 0f;
 
-        currentRoutine = null;
+        currentRoutine = null; // Trả luồng về trống để chuẩn bị cho đêm tiếp theo
     }
 }

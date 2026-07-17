@@ -3,17 +3,17 @@ using UnityEngine;
 [ExecuteAlways]
 public class LightingManager : MonoBehaviour
 {
-    public static LightingManager Instance { get; private set; } // THÊM MỚI: Để các script khác gọi đến
+    public static LightingManager Instance { get; private set; }
 
     [Header("Scene References")]
     [SerializeField] private Light DirectionalLight;
     [SerializeField] private LightingPreset Preset;
 
     [Header("Time Settings")]
-    [Tooltip("Thời gian hiện tại trong ngày")]
-    [SerializeField, Range(0, 96)] public float TimeOfDay;
-    [Tooltip("Độ dài của 1 ngày (Mặc định: 96)")]
-    [SerializeField] private float dayLength = 96f;
+    [Tooltip("Thời gian hiện tại trong ngày (Gợi ý: Đặt = 12 để game bắt đầu vào lúc Bình minh)")]
+    [SerializeField, Range(0, 48)] public float TimeOfDay = 12f;
+    [Tooltip("Độ dài của 1 ngày (Mặc định: 48)")]
+    [SerializeField] private float dayLength = 48f;
 
     [Header("Win Condition: Survival Mode")]
     public int daysSurvived = 0;
@@ -22,12 +22,14 @@ public class LightingManager : MonoBehaviour
     [Tooltip("Kéo Panel hiệu ứng 'Đêm thứ X' (gắn DayTransitionUI.cs) vào đây")]
     public DayTransitionUI dayTransitionUI;
 
-    private float previousTime = 0f;
     private bool hasWon = false;
+
+    // Tracks transitions between day and night.
+    private bool isNightState = false;
+    public bool ShouldDrainHealth { get; private set; }
 
     private void Awake()
     {
-        // THÊM MỚI: Khởi tạo Singleton
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -36,36 +38,68 @@ public class LightingManager : MonoBehaviour
         Instance = this;
     }
 
-    // THÊM MỚI: Hàm kiểm tra xem trời có đang là ban đêm không
+    private void Start()
+    {
+        // Khởi tạo trạng thái môi trường ngay khi vào game để tránh lỗi UI
+        if (Application.isPlaying)
+        {
+            float percent = TimeOfDay / dayLength;
+            isNightState = (percent >= 0.75f || percent < 0.25f);
+            ShouldDrainHealth = isNightState;
+        }
+    }
+
+    // Hàm kiểm tra tổng quát (Dành cho PlayerState hoặc hệ thống khác gọi tới)
     public bool IsNight()
     {
         if (dayLength <= 0) return false;
         float percent = TimeOfDay / dayLength;
-        // Mặc định: Trước 25% (Sáng sớm) và Sau 70% (Chiều tối) được tính là Đêm lạnh
-        return percent < 0.25f || percent > 0.70f;
+        // Ban đêm chính thức: Hoàng hôn (75%) vòng qua Nửa đêm (0%) đến Bình minh (25%)
+        return (percent >= 0.75f || percent < 0.25f);
     }
 
     private void Update()
     {
-        if (Preset == null)
-            return;
+        if (Preset == null) return;
 
         if (Application.isPlaying)
         {
             if (hasWon) return;
 
-            previousTime = TimeOfDay;
             TimeOfDay += Time.deltaTime;
             TimeOfDay %= dayLength;
 
-            if (TimeOfDay < previousTime)
+            float percent = TimeOfDay / dayLength;
+
+            // Kiểm tra theo quy ước chuẩn: 75% là tối, 25% là sáng
+            bool currentlyNight = (percent >= 0.75f || percent < 0.25f);
+
+            // 1. CHUYỂN GIAO: SẬP TỐI
+            if (currentlyNight && !isNightState)
             {
-                daysSurvived++;
-                Debug.Log($"Trời đã sáng! Bạn đã sống sót được: {daysSurvived}/{daysToWin} đêm.");
+                isNightState = true;
+                ShouldDrainHealth = true; // Kích hoạt thời tiết lạnh
 
                 if (dayTransitionUI != null)
                 {
-                    dayTransitionUI.ShowDay(daysSurvived);
+                    dayTransitionUI.ShowDay(daysSurvived + 1);
+                }
+                Debug.Log($"Trời đổ tối! Bắt đầu vào Đêm thứ {daysSurvived + 1}. Hệ thống kích hoạt hiệu ứng lạnh.");
+            }
+            // 2. CHUYỂN GIAO: BÌNH MINH (Sáng sớm)
+            else if (!currentlyNight && isNightState)
+            {
+                isNightState = false;
+                ShouldDrainHealth = false; // Ngừng đốt máu ban đêm
+
+                daysSurvived++; // Sống sót an toàn đến bình minh mới được cộng ngày
+
+                Debug.Log($"Trời đã sáng! Bạn đã sống sót an toàn qua: {daysSurvived}/{daysToWin} đêm.");
+
+                // Thưởng điểm sinh tồn chính xác lúc mặt trời mọc
+                if (PersonaManager.Instance != null)
+                {
+                    PersonaManager.Instance.AwardPoint(1, "Sống sót qua 1 đêm");
                 }
 
                 if (daysSurvived >= daysToWin)
@@ -74,7 +108,7 @@ public class LightingManager : MonoBehaviour
                 }
             }
 
-            UpdateLighting(TimeOfDay / dayLength);
+            UpdateLighting(percent);
         }
         else
         {
@@ -86,15 +120,7 @@ public class LightingManager : MonoBehaviour
     {
         hasWon = true;
         Debug.Log("CHÚC MỪNG! BẠN ĐÃ SỐNG SÓT ĐỦ SỐ ĐÊM QUY ĐỊNH!");
-
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.TriggerWin();
-        }
-        else
-        {
-            Debug.LogError("[LightingManager]: Không tìm thấy GameController.Instance! Bạn phải chạy game từ StartScene.");
-        }
+        if (GameController.Instance != null) GameController.Instance.TriggerWin();
     }
 
     private void UpdateLighting(float timePercent)
@@ -105,31 +131,15 @@ public class LightingManager : MonoBehaviour
         if (DirectionalLight != null)
         {
             DirectionalLight.color = Preset.DirectionalColor.Evaluate(timePercent);
+
+            // Xoay chuẩn: 0% = Nửa đêm, 25% = Bình minh, 50% = Trưa, 75% = Hoàng hôn
             DirectionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
         }
     }
 
     private void OnValidate()
     {
-        if (DirectionalLight != null)
-            return;
-
-        if (RenderSettings.sun != null)
-        {
-            DirectionalLight = RenderSettings.sun;
-        }
-        else
-        {
-            Light[] lights = UnityEngine.Object.FindObjectsByType<Light>();
-
-            foreach (Light light in lights)
-            {
-                if (light.type == LightType.Directional)
-                {
-                    DirectionalLight = light;
-                    return;
-                }
-            }
-        }
+        if (DirectionalLight != null) return;
+        if (RenderSettings.sun != null) DirectionalLight = RenderSettings.sun;
     }
 }

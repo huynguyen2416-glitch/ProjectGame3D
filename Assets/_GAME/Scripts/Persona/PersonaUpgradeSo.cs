@@ -23,14 +23,6 @@ public enum PersonaEffectType
 }
 
 [System.Serializable]
-public class PersonaRequirement
-{
-    [Tooltip("Phải khớp CHÍNH XÁC với tên item trong InventorySystem.itemList (vd: flower, mushroom, wood)")]
-    public string itemName;
-    public int amount = 1;
-}
-
-[System.Serializable]
 public class PersonaEffect
 {
     public PersonaEffectType type;
@@ -47,11 +39,14 @@ public class PersonaLevelData
     [Tooltip("Mô tả hiệu ứng khi lên level này (Vd: +10 Máu Tối Đa)")]
     public string effectDescription;
 
-    public List<PersonaRequirement> requirements = new List<PersonaRequirement>();
+    [Tooltip("Số Điểm Sinh Tồn (kho điểm DÙNG CHUNG cho cả 2 nhánh) cần để mở khoá level này")]
+    public int pointCost = 1;
+
     public List<PersonaEffect> effects = new List<PersonaEffect>();
 }
 
 [CreateAssetMenu(fileName = "NewPersonaUpgrade", menuName = "Persona/Upgrade")]
+/// <summary>Defines an upgrade branch, levels, costs, and effects for the Persona system.</summary>
 public class PersonaUpgradeSO : ScriptableObject
 {
     public PersonaBranch branch;

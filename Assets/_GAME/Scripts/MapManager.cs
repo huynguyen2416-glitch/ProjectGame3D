@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // Bắt buộc phải thêm dòng này để làm việc với ScrollRect
+using UnityEngine.UI; 
 
 public class MapManager : MonoBehaviour
 {

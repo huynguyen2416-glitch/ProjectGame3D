@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using UnityEngine;
 
+
 public class WeaponHolder : MonoBehaviour
 {
     public static WeaponHolder Instance { get; private set; }
@@ -26,7 +27,7 @@ public class WeaponHolder : MonoBehaviour
     {
         UnquipAllWeapons();
 
-        //  Nếu cất vũ khí (chọn ô trống) thì chỉ cần cất đi là xong, không làm gì thêm
+        // tìm model rìu hoặc cuốc
         if (string.IsNullOrEmpty(itemName)) return;
 
         string fixedName = RemoveDiacritics(itemName).ToLower().Replace(" ", "").Trim();

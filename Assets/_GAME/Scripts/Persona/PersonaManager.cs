@@ -8,16 +8,20 @@ public class PersonaManager : MonoBehaviour
     [Tooltip("Kéo tất cả PersonaUpgradeSO đã tạo (Assets > Create > Persona > Upgrade) vào đây")]
     public List<PersonaUpgradeSO> allUpgrades = new List<PersonaUpgradeSO>();
 
+    [Header("Kho Điểm Sinh Tồn (DÙNG CHUNG cho cả 2 nhánh)")]
+    [Tooltip("Số điểm hiện có, chưa tiêu vào nhánh nào cả")]
+    public int availablePoints = 0;
+
     // Level hiện tại của từng nâng cấp, 0 = chưa mở khoá level nào. Chỉ tồn tại trong runtime (không save).
     private Dictionary<PersonaUpgradeSO, int> currentLevels = new Dictionary<PersonaUpgradeSO, int>();
 
     // Hiệu ứng không map thẳng vào PlayerState, đọc giá trị này ở nơi khác (vd ChoppableTree/MineableRock)
     public float dropRateBonus { get; private set; }
-    public float harvestSpeedBonus { get; private set; } 
+    public float harvestSpeedBonus { get; private set; }
     public float calorieBurnRateReduction { get; private set; } // 0.2 = -20% tốc độ đốt calo
     public float moveSpeedBonus { get; private set; } // 0.1 = +10% tốc độ di chuyển (đi bộ + chạy), đọc ở PlayerMovement
-
     public float healthBurnRateReduction { get; private set; }// 0.3 -20% tốc độ đốt HP
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -46,64 +50,26 @@ public class PersonaManager : MonoBehaviour
         return null;
     }
 
-    private int CountItem(string itemName)
+    // ================= KIẾM ĐIỂM SINH TỒN ================= //
+    // Gọi hàm này từ bất kỳ đâu người chơi hoàn thành 1 hành động sinh tồn: ghép đồ thành công,
+    // giết quái, đập đá, chặt cây, xây lửa trại, sống sót qua 1 đêm...
+    public void AwardPoint(int amount = 1, string reason = "")
     {
-        if (InventorySystem.Instance == null) return 0;
-        int count = 0;
-        foreach (string item in InventorySystem.Instance.itemList)
-        {
-            if (item == itemName) count++;
-        }
-        return count;
+        if (amount <= 0) return;
+
+        availablePoints += amount;
+        Debug.Log($"[PersonaManager]: +{amount} Điểm Sinh Tồn" +
+                   (string.IsNullOrEmpty(reason) ? "" : $" ({reason})") +
+                   $". Tổng hiện có: {availablePoints}");
     }
 
+    // Chỉ còn kiểm tra ĐỦ ĐIỂM hay không - không còn kiểm tra vật phẩm trong balo nữa
     public bool CanUnlockNextLevel(PersonaUpgradeSO upgrade)
     {
         PersonaLevelData nextLevel = GetNextLevelData(upgrade);
         if (nextLevel == null) return false;
 
-        foreach (var req in nextLevel.requirements)
-        {
-            if (CountItem(req.itemName) < req.amount) return false;
-        }
-        return true;
-    }
-
-    // Trừ nguyên liệu khỏi cả danh sách logic (itemList) lẫn UI (slotList), cùng cách CraftingSystem đang làm
-    private void ConsumeRequirements(PersonaLevelData levelData)
-    {
-        foreach (var req in levelData.requirements)
-        {
-            // 1. Trừ trong danh sách Logic (Giữ nguyên)
-            int removed = 0;
-            for (int i = InventorySystem.Instance.itemList.Count - 1; i >= 0; i--)
-            {
-                if (InventorySystem.Instance.itemList[i] == req.itemName)
-                {
-                    InventorySystem.Instance.itemList.RemoveAt(i);
-                    removed++;
-                    if (removed >= req.amount) break;
-                }
-            }
-
-            // 2. Xóa Object trên UI 
-            removed = 0;
-            foreach (GameObject slot in InventorySystem.Instance.slotList)
-            {
-                if (slot.transform.childCount == 0) continue;
-
-                GameObject itemInSlot = slot.transform.GetChild(0).gameObject;
-                if (itemInSlot.name == req.itemName || itemInSlot.name == req.itemName + "(Clone)")
-                {
-                    //Cắt đứt quan hệ cha-con ngay lập tức để ReCalculateList không quét trúng nữa
-                    itemInSlot.transform.SetParent(null);
-
-                    Destroy(itemInSlot);
-                    removed++;
-                    if (removed >= req.amount) break;
-                }
-            }
-        }
+        return availablePoints >= nextLevel.pointCost;
     }
 
     private void ApplyEffects(PersonaLevelData levelData)
@@ -167,19 +133,57 @@ public class PersonaManager : MonoBehaviour
         }
     }
 
-    // Gọi hàm này từ nút "Mở khoá" trên UI
+    // Gọi hàm này từ nút "Mở khoá" trên UI - giờ chỉ trừ ĐIỂM, không đụng tới balo nữa.
+    // Mở khoá xong KHÔNG THỂ hoàn tác riêng lẻ - chỉ có thể ResetAllPersona() để làm lại từ đầu.
     public bool TryUnlockNextLevel(PersonaUpgradeSO upgrade)
     {
         if (!CanUnlockNextLevel(upgrade)) return false;
 
         PersonaLevelData nextLevel = GetNextLevelData(upgrade);
-        ConsumeRequirements(nextLevel);
-        ApplyEffects(nextLevel);
 
+        availablePoints -= nextLevel.pointCost;
+        ApplyEffects(nextLevel);
         currentLevels[upgrade] = nextLevel.level;
 
-        if (InventorySystem.Instance != null) InventorySystem.Instance.ReCalculateList();
+        Debug.Log($"[PersonaManager]: Đã mở khoá '{upgrade.upgradeName}' Lv{nextLevel.level} (-{nextLevel.pointCost} điểm). Còn lại: {availablePoints}");
 
         return true;
+    }
+
+    //reset nhánh
+    public void ResetAllPersona()
+    {
+        int totalRefund = 0;
+
+        foreach (var upgrade in allUpgrades)
+        {
+            if (upgrade == null) continue;
+
+            int currentLevel = GetCurrentLevel(upgrade);
+            for (int lvl = 1; lvl <= currentLevel; lvl++)
+            {
+                PersonaLevelData levelData = upgrade.levels.Find(l => l.level == lvl);
+                if (levelData != null) totalRefund += levelData.pointCost;
+            }
+
+            currentLevels[upgrade] = 0;
+        }
+
+        availablePoints += totalRefund;
+
+        // Reset toàn bộ % bonus cộng dồn về 0
+        dropRateBonus = 0f;
+        harvestSpeedBonus = 0f;
+        calorieBurnRateReduction = 0f;
+        moveSpeedBonus = 0f;
+        healthBurnRateReduction = 0f;
+
+        // Đưa PlayerState về đúng chỉ số GỐC (trước khi có bất kỳ Persona nào từng áp dụng)
+        if (PlayerState.Instance != null)
+        {
+            PlayerState.Instance.ResetToBaseStats();
+        }
+
+        Debug.Log($"[PersonaManager]: ĐÃ RESET TOÀN BỘ PERSONA. Hoàn lại {totalRefund} điểm, tổng điểm hiện có: {availablePoints}");
     }
 }

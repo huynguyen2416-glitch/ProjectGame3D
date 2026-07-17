@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class WeaponHitbox : MonoBehaviour
 {
-    //Tạo danh sách phân loại để chọn trong Inspector
+    //tùy dụng cụ
     public enum ToolType { Axe, Pickaxe }
 
     [Header("Phân loại dụng cụ")]
@@ -24,14 +24,14 @@ public class WeaponHitbox : MonoBehaviour
         GetComponent<Collider>().isTrigger = true;
     }
 
-    // Gọi lúc bắt đầu 1 nhát vung — mở "cửa sổ" cho phép gây damage
+
     public void StartSwing()
     {
         isSwinging = true;
         hasHitThisSwing = false;
     }
 
-    // Gọi lúc kết thúc nhát vung — đóng lại, tránh 1 nhát chạm liên tục nhiều lần
+ 
     public void EndSwing()
     {
         isSwinging = false;
@@ -39,10 +39,10 @@ public class WeaponHitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Chưa trong lúc vung, hoặc nhát này đã tính 1 lần chạm rồi -> bỏ qua
+        // mỗi lần vung dính 1 collider
         if (!isSwinging || hasHitThisSwing) return;
 
-        // 1. CẢ RÌU VÀ CUỐC ĐỀU ĐÁNH ĐƯỢC QUÁI (Giữ nguyên logic của bác)
+        // 2 vũ khí đều có thể gây sát thương
         EnemyHealth enemy = other.GetComponentInParent<EnemyHealth>();
         if (enemy != null)
         {
@@ -51,7 +51,7 @@ public class WeaponHitbox : MonoBehaviour
             return;
         }
 
-        // 2. CHỈ RÌU (AXE) MỚI ĐƯỢC PHÉP CHẶT CÂY
+        // rìu thì chặt cây
         if (toolType == ToolType.Axe)
         {
             ChoppableTree tree = other.GetComponentInParent<ChoppableTree>(); 
@@ -63,7 +63,7 @@ public class WeaponHitbox : MonoBehaviour
             }
         }
 
-        // 3. CHỈ CUỐC (PICKAXE) MỚI ĐƯỢC PHÉP ĐẬP ĐÁ
+        // cuốc thì đập đá
         if (toolType == ToolType.Pickaxe)
         {
             MineableRock rock = other.GetComponentInParent<MineableRock>();

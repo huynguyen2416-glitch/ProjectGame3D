@@ -9,7 +9,7 @@ public class InventorySystem : MonoBehaviour
 
     public GameObject inventoryScreenUI;
 
-    // ĐÂY LÀ KHỐI PREFAB CHỨA UI IMAGE ĐỂ SINH RA (ví dụ file 'silver' hoặc 'stone' dạng Prefab UI)
+    // Prefab used to render an item icon in an inventory slot.
     public GameObject itemIconPrefab;
 
     public List<GameObject> slotList = new List<GameObject>();
@@ -19,7 +19,7 @@ public class InventorySystem : MonoBehaviour
     public bool isOpen;
     public bool isFull;
 
-    //popup
+    // Pickup-notification UI.
     public GameObject pickupAlert;
     public Text pickupName;
     public Image pickupImage;
@@ -47,8 +47,7 @@ public class InventorySystem : MonoBehaviour
 
     private void PopulateSlotList()
     {
-        // Nếu bạn đã tự kéo tay Slot List ngoài Inspector, hãy ẩn hàm này đi.
-        // Còn nếu muốn tự động tìm ô vuông có Tag "Slot", hãy giữ nguyên.
+        // Populate slots from the inventory UI only when none were assigned.
         if (slotList.Count == 0)
         {
             foreach (Transform child in inventoryScreenUI.transform)
@@ -63,6 +62,7 @@ public class InventorySystem : MonoBehaviour
 
     void Update()
     {
+        if (CraftingSystem.Instance != null && CraftingSystem.Instance.isPlacingMode) return;
         if (Input.GetKeyDown(KeyCode.C) && !isOpen)
         {
             inventoryScreenUI.SetActive(true);
@@ -79,7 +79,7 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
-    // Luồng nhặt đồ dựa vào tên Prefab UI trong thư mục Resources
+ 
     public void AddToInventory(string itemName)
     {
         if (CheckIfFull())
@@ -92,18 +92,13 @@ public class InventorySystem : MonoBehaviour
 
             if (whatSlotToEquip != null)
             {
-                // Tìm phôi UI GameObject trong thư mục Resources theo đúng tên itemName được truyền vào
-                GameObject prefabFromResources = Resources.Load<GameObject>(itemName);
+                    // Load the UI prefab using the item's resource identifier.
+                GameObject prefabFromResources = ResourceCache.Load(itemName);
 
                 if (prefabFromResources != null)
                 {
-                    // Tạo ra Icon vật phẩm tại vị trí ô trống
                     itemToAdd = Instantiate(prefabFromResources, whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
-
-                    // Đưa Icon làm con của ô Slot để nó nằm gọn bên trong
                     itemToAdd.transform.SetParent(whatSlotToEquip.transform);
-
-                    // Reset lại tỷ lệ kích thước tránh bị phình to/nhỏ quá cỡ
                     itemToAdd.transform.localScale = Vector3.one;
 
                     itemList.Add(itemName);
@@ -111,7 +106,7 @@ public class InventorySystem : MonoBehaviour
                     InventoryItem itemScript = itemToAdd.GetComponent<InventoryItem>();
                     string displayName = (itemScript != null && !string.IsNullOrEmpty(itemScript.thisName)) ? itemScript.thisName : itemName;
 
-                    // Truyền displayName (Tiếng Việt) vào Popup thay vì itemName (Tiếng Anh)
+                    // Show the item's display name in the pickup notification.
                     TriggerPickupPopup(displayName, itemToAdd.GetComponent<Image>().sprite);
                     ReCalculateList();
                 }
@@ -129,14 +124,14 @@ public class InventorySystem : MonoBehaviour
         pickupName.text = itemName;
         pickupImage.sprite = itemSprite;
 
-        // Dừng các hiệu ứng tắt cũ (nếu có) và bắt đầu đếm ngược tắt Popup
+        // Restart the timeout when another item is collected.
         StopAllCoroutines();
         StartCoroutine(HidePopupCoroutine());
     }
     private IEnumerator HidePopupCoroutine()
     {
-        yield return new WaitForSeconds(2f); // Đợi 2 giây
-        pickupAlert.SetActive(false);        // Tắt Popup
+        yield return new WaitForSeconds(2f);
+        pickupAlert.SetActive(false);
     }
     private GameObject FindNextEmptySlot()
     {
@@ -182,5 +177,29 @@ public class InventorySystem : MonoBehaviour
                 itemList.Add(cleanName);
             }
         }
+    }
+
+    public void RemoveItemAmount(string itemName, int amountToRemove)
+    {
+        int removedCount = 0;
+
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                GameObject itemInSlot = slot.transform.GetChild(0).gameObject;
+                string cleanName = itemInSlot.name.Replace("(Clone)", "");
+
+                if (cleanName == itemName)
+                {
+                    itemInSlot.transform.SetParent(null);
+                    Destroy(itemInSlot);
+
+                    removedCount++;
+                    if (removedCount >= amountToRemove) break;
+                }
+            }
+        }
+        ReCalculateList();
     }
 }

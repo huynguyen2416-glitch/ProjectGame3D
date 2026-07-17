@@ -13,8 +13,8 @@ public class EquipSystem : MonoBehaviour
     public List<GameObject> quickSlotsList = new List<GameObject>();
     public List<string> itemList = new List<string>();
 
-    // --- CẬP NHẬT: BIẾN THEO DÕI Ô ĐANG CHỌN TRÊN TAY ---
-    public int activeSlotIndex = -1; // -1 nghĩa là chưa chọn ô nào cả
+    // Index of the quick slot currently represented by the equipped tool.
+    public int activeSlotIndex = -1;
 
     private void Awake()
     {
@@ -34,13 +34,13 @@ public class EquipSystem : MonoBehaviour
     }
 
 
-    
+
     public void SetQuickSlotItem(int slotIndex, string itemName)
     {
         if (string.IsNullOrEmpty(itemName)) return;
         if (slotIndex < 0 || slotIndex >= quickSlotsList.Count) return;
 
-        GameObject prefab = Resources.Load<GameObject>(itemName);
+        GameObject prefab = ResourceCache.Load(itemName);
         if (prefab == null)
         {
             Debug.LogError($"[EquipSystem]: Không tìm thấy prefab '{itemName}' trong Resources để khôi phục Quick Slot {slotIndex + 1}!");
@@ -56,7 +56,7 @@ public class EquipSystem : MonoBehaviour
         {
             rect.anchoredPosition = Vector2.zero;
             rect.localRotation = Quaternion.identity;
-            rect.localScale = Vector3.one; // Trước đây THIẾU dòng này -> icon dễ bị sai kích thước
+            rect.localScale = Vector3.one;
         }
         else
         {
@@ -122,9 +122,6 @@ public class EquipSystem : MonoBehaviour
         }
     }
 
-    // =========================================================================
-    // CHỐT CHẶN BẢO VỆ: Được gọi từ script Drop trước khi hủy vật phẩm UI
-    // =========================================================================
     public void UnquipIfDropped(GameObject itemUI)
     {
         for (int i = 0; i < quickSlotsList.Count; i++)
@@ -137,10 +134,10 @@ public class EquipSystem : MonoBehaviour
                 {
                     if (WeaponHolder.Instance != null)
                     {
-                        WeaponHolder.Instance.UnquipAllWeapons(); // Cất vũ khí 3D ngay lập tức
+                        WeaponHolder.Instance.UnquipAllWeapons();
                         Debug.LogWarning("[EquipSystem]: Vật phẩm đang cầm trên tay bị Drop! Đã tự động ẩn vũ khí 3D để tránh lỗi.");
                     }
-                    activeSlotIndex = -1; // Reset trạng thái ô chọn
+                    activeSlotIndex = -1;
                 }
                 break;
             }

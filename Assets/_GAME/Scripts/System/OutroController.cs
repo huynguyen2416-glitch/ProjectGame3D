@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-
 public class OutroController : MonoBehaviour
 {
     [Header("Nhân vật")]
@@ -21,7 +20,7 @@ public class OutroController : MonoBehaviour
     [Header("Nhân vật chạy ra gặp thuyền")]
     public Transform playerMeetPoint;
     public float runSpeed = 3.5f;
-    public float arrivalThreshold = 0.3f;
+
 
     [Header("Ánh sáng hoàng hôn")]
     public Light directionalLight;
@@ -61,12 +60,12 @@ public class OutroController : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundManager.Instance.waveSound);
         }
 
-        // BƯỚC 1: Ngồi suy tư
+        // hoạt ảnh ngồi
         if (playerAnimator != null && !string.IsNullOrEmpty(sitTrigger))
             playerAnimator.SetTrigger(sitTrigger);
         yield return new WaitForSeconds(sitDuration);
         yield return StartCoroutine(TransitionToSunset());
-        // BƯỚC 2 Thuyền xuất hiện
+        // tàu đến
         if (boatObject != null)
         {
             if (boatStartPoint != null)
@@ -78,7 +77,7 @@ public class OutroController : MonoBehaviour
         }
         
 
-        // BƯỚC 3: Đứng dậy + Thuyền vào bờ + Chạy ra đón
+        // cả 2 tiến vào nhau
         if (playerAnimator != null && !string.IsNullOrEmpty(standTrigger))
             playerAnimator.SetTrigger(standTrigger);
         if (playerAnimator != null && !string.IsNullOrEmpty(runTrigger))
@@ -89,16 +88,16 @@ public class OutroController : MonoBehaviour
         yield return boatRoutine;
         yield return playerRoutine;
 
-        // BƯỚC 4: Vẫy tay
+        // vẫy tay
         if (playerAnimator != null && !string.IsNullOrEmpty(waveTrigger))
             playerAnimator.SetTrigger(waveTrigger);
         yield return new WaitForSeconds(waveDuration);
 
-        // BƯỚC 5: Fade đen màn hình & nhỏ nhạc
+        // fade ảnh
         yield return StartCoroutine(FadeToBlackAndAudio());
         yield return new WaitForSeconds(delayBeforeReturnToMenu);
 
-        // BƯỚC 6: Chuyển sang CreditScene
+        // chuyển sang cảnh credit
         if (GameController.Instance != null)
         {
             GameController.Instance.GoToCreditScene();
@@ -137,37 +136,70 @@ public class OutroController : MonoBehaviour
     private IEnumerator RunPlayerToMeetPoint()
     {
         if (playerTransform == null || playerMeetPoint == null) yield break;
-        while (Vector3.Distance(playerTransform.position, playerMeetPoint.position) > arrivalThreshold)
+
+        // Tạm thời tắt Root Motion để script toàn quyền điều khiển di chuyển
+        if (playerAnimator != null) playerAnimator.applyRootMotion = false;
+
+        while (true)
         {
-            Vector3 direction = playerMeetPoint.position - playerTransform.position;
-            direction.y = 0f;
+            //di chuyển đến vị trí đúng
+            Vector3 targetPosition = playerMeetPoint.position;
+            targetPosition.y = playerTransform.position.y;
+
+            // KIỂM TRA ĐIỀU KIỆN DỪNG BẰNG SAI SỐ SIÊU NHỎ (0.05 mét)
+            if (Vector3.Distance(playerTransform.position, targetPosition) <= 0.05f)
+            {
+                break; // Thoát vòng lặp ngay khi chạm ngưỡng
+            }
+
+            Vector3 direction = targetPosition - playerTransform.position;
             if (direction.sqrMagnitude > 0.0001f)
             {
                 playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(direction), 10f * Time.deltaTime);
             }
-            playerTransform.position = Vector3.MoveTowards(playerTransform.position, playerMeetPoint.position, runSpeed * Time.deltaTime);
+
+            playerTransform.position = Vector3.MoveTowards(playerTransform.position, targetPosition, runSpeed * Time.deltaTime);
+
             yield return null;
         }
-        playerTransform.position = playerMeetPoint.position;
+
+        // CHỐT VỊ TRÍ CUỐI CÙNG (Snap to target)
+        Vector3 finalPos = playerMeetPoint.position;
+        finalPos.y = playerTransform.position.y; // Giữ nguyên độ cao thực tế
+        playerTransform.position = finalPos;
     }
 
     private IEnumerator MoveBoatToArrivalPoint()
     {
         if (boatObject == null || boatArrivalPoint == null) yield break;
         Transform boatTransform = boatObject.transform;
-        while (Vector3.Distance(boatTransform.position, boatArrivalPoint.position) > arrivalThreshold)
+
+        while (true)
         {
-            Vector3 direction = boatArrivalPoint.position - boatTransform.position;
-            direction.y = 0f;
+            Vector3 targetPosition = boatArrivalPoint.position;
+            targetPosition.y = boatTransform.position.y;
+
+            if (Vector3.Distance(boatTransform.position, targetPosition) <= 0.05f)
+            {
+                break;
+            }
+
+            Vector3 direction = targetPosition - boatTransform.position;
             if (direction.sqrMagnitude > 0.0001f)
             {
                 boatTransform.rotation = Quaternion.Slerp(boatTransform.rotation, Quaternion.LookRotation(direction), 3f * Time.deltaTime);
             }
-            boatTransform.position = Vector3.MoveTowards(boatTransform.position, boatArrivalPoint.position, boatMoveSpeed * Time.deltaTime);
+
+            boatTransform.position = Vector3.MoveTowards(boatTransform.position, targetPosition, boatMoveSpeed * Time.deltaTime);
+
             yield return null;
         }
-        boatTransform.position = boatArrivalPoint.position;
+
+        Vector3 finalPos = boatArrivalPoint.position;
+        finalPos.y = boatTransform.position.y;
+        boatTransform.position = finalPos;
     }
+
 
     private IEnumerator FadeToBlackAndAudio()
     {

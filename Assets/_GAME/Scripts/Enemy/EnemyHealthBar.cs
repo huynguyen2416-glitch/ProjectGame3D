@@ -7,6 +7,9 @@ public class EnemyHealthBar : MonoBehaviour
     public Slider healthSlider;
     public EnemyHealth enemyHealth;
 
+
+    private Transform mainCamTransform;
+
     void Awake()
     {
         // Tự động tìm nếu quên kéo-thả trong Inspector
@@ -17,6 +20,8 @@ public class EnemyHealthBar : MonoBehaviour
             Debug.LogWarning(gameObject.name + ": Chưa gán Health Slider!", this);
         if (enemyHealth == null)
             Debug.LogWarning(gameObject.name + ": Chưa gán Enemy Health (không tìm thấy component EnemyHealth ở object cha)!", this);
+
+        if (Camera.main != null) mainCamTransform = Camera.main.transform;
     }
 
     void Update()
@@ -31,10 +36,12 @@ public class EnemyHealthBar : MonoBehaviour
     // Ép thanh máu luôn xoay mặt về phía Camera (Người chơi)
     void LateUpdate()
     {
-        if (Camera.main != null)
+        if (mainCamTransform == null && Camera.main != null) mainCamTransform = Camera.main.transform; // fallback
+
+        if (mainCamTransform != null)
         {
-            transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward,
-                             Camera.main.transform.rotation * Vector3.up);
+            transform.LookAt(transform.position + mainCamTransform.rotation * Vector3.forward,
+                             mainCamTransform.rotation * Vector3.up);
         }
     }
 }

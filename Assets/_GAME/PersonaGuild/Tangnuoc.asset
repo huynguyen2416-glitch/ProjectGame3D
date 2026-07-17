@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85282aea597a7c146a1dc76f07b74e23, type: 3}
+  m_Name: Tangnuoc
+  m_EditorClassIdentifier: Assembly-CSharp::PersonaUpgradeSO
+  branch: 1
+  upgradeName: "D\u1ED3i d\xE0o"
+  description: "t\u0103ng gi\u1EDBi h\u1EA1n n\u01B0\u1EDBc"
+  icon: {fileID: -340394020, guid: 9a239cfeae00f72458ff1cd048122d2b, type: 3}
+  levels:
+  - level: 1
+    effectDescription: +5
+    pointCost: 1
+    effects:
+    - type: 2
+      value: 5
+  - level: 2
+    effectDescription: +10
+    pointCost: 1
+    effects:
+    - type: 2
+      value: 10

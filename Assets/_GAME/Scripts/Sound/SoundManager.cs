@@ -100,7 +100,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    // ================= CÁC HÀM DÙNG CHO CUTSCENE ================= //
+    // cutscene
 
     // Hàm gọi để làm nhỏ dần (fade out) một âm thanh bất kỳ
     public void FadeOutSound(AudioSource audioSource, float fadeDuration)

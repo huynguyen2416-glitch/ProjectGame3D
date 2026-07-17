@@ -7,12 +7,35 @@ public class Campfire : MonoBehaviour
     public float fireDamagePerSecond = 15f; // Sát thương khi dẫm thẳng vào lửa
     public float burnRadius = 1.2f;         // Khoảng cách bị bỏng 
 
+    [Header("--- Persona ---")]
+    public bool isPlayerBuilt = false;
+
+    private bool hasAwardedPoint = false;
     private bool isPlayerNearby = false;
+
+    // khoảng cách khi bị đốt
+    private float burnRadiusSqr;
+    private Transform cachedPlayerTransform;
+    private PlayerState cachedPlayerState;
+    private Collider triggerCollider;
 
     private void Awake()
     {
-        // Yêu cầu bắt buộc để nhận diện vùng an toàn
-        GetComponent<Collider>().isTrigger = true;
+        triggerCollider = GetComponent<Collider>();
+        if (triggerCollider != null)
+        {
+            triggerCollider.isTrigger = true;
+        }
+    }
+
+    private void Start()
+    {
+        burnRadiusSqr = burnRadius * burnRadius;
+        if (isPlayerBuilt && !hasAwardedPoint && PersonaManager.Instance != null)
+        {
+            hasAwardedPoint = true;
+            PersonaManager.Instance.AwardPoint(1, "Xây lửa trại");// kích hoạt nhận điểm
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -21,10 +44,15 @@ public class Campfire : MonoBehaviour
         {
             isPlayerNearby = true;
 
-            // Báo cho Player biết: "Đang ở cạnh lửa, đêm nay không mất máu!"
             if (PlayerState.Instance != null)
             {
-                PlayerState.Instance.SetNearCampfire(true);
+                cachedPlayerState = PlayerState.Instance;
+                if (cachedPlayerState.playerBody != null)
+                {
+                    cachedPlayerTransform = cachedPlayerState.playerBody.transform;
+                }
+
+                cachedPlayerState.SetNearCampfire(true);
             }
         }
     }
@@ -35,26 +63,27 @@ public class Campfire : MonoBehaviour
         {
             isPlayerNearby = false;
 
-            // Báo cho Player biết: "Đã rời xa đống lửa!"
-            if (PlayerState.Instance != null)
+            if (cachedPlayerState != null)
             {
-                PlayerState.Instance.SetNearCampfire(false);
+                cachedPlayerState.SetNearCampfire(false);
             }
+
+            cachedPlayerTransform = null;
+            cachedPlayerState = null;
         }
     }
 
     private void Update()
     {
-        // Kiểm tra xem người chơi có dẫm chân trực tiếp vào vùng cháy của lửa không
-        if (isPlayerNearby && PlayerState.Instance != null && PlayerState.Instance.playerBody != null)
+        if (isPlayerNearby && cachedPlayerState != null && cachedPlayerTransform != null)
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, PlayerState.Instance.playerBody.transform.position);
+            Vector3 offset = transform.position - cachedPlayerTransform.position;
+            float sqrDistance = offset.sqrMagnitude;
 
-            if (distanceToPlayer <= burnRadius)
+            if (sqrDistance <= burnRadiusSqr)
             {
-                // Dẫm vào lửa -> Trừ máu ngay lập tức
-                float currentHp = PlayerState.Instance.currentHealth;
-                PlayerState.Instance.setHealth(currentHp - fireDamagePerSecond * Time.deltaTime);
+                float currentHp = cachedPlayerState.currentHealth;
+                cachedPlayerState.setHealth(currentHp - fireDamagePerSecond * Time.deltaTime);
             }
         }
     }

@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
+
 public class PlayerMovement : MonoBehaviour
 {
     public float walkSpeed = 3f;
@@ -133,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-        // ÂM THANH BƯỚC CHÂN
+        // Play footsteps while the player is moving on the ground.
         if (controller.isGrounded && isActuallyMoving)
         {
             footstepTimer -= Time.deltaTime;

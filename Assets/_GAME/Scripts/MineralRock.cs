@@ -3,6 +3,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(BoxCollider))]
+
 public class MineableRock : MonoBehaviour
 {
     public bool playerInRange;
@@ -21,6 +22,7 @@ public class MineableRock : MonoBehaviour
 
     [Tooltip("Tên prefab mảnh đá vỡ trong thư mục Resources, mặc định 'BrokenRock'")]
     public string brokenPrefabName = "BrokenRock";
+
     private bool isBeingHit; // Chặn nhiều coroutine hit() chạy chồng nhau
     private bool isDead;     // Chặn RockIsDead() bị gọi 2 lần
 
@@ -119,11 +121,17 @@ public class MineableRock : MonoBehaviour
                 SelectionManager.Instance.mineHolder.gameObject.SetActive(false);
         }
 
+        // PERSONA: đập vỡ thành công 1 cục đá -> +1 Điểm Sinh Tồn
+        if (PersonaManager.Instance != null)
+        {
+            PersonaManager.Instance.AwardPoint(1, "Đập vỡ đá");
+        }
+
         Destroy(objectToDestroy);
 
         if (!string.IsNullOrEmpty(brokenPrefabName))
         {
-            GameObject brokenPrefab = Resources.Load<GameObject>(brokenPrefabName);
+            GameObject brokenPrefab = ResourceCache.Load(brokenPrefabName);
             if (brokenPrefab != null)
             {
                 Instantiate(brokenPrefab, rockPosition, Quaternion.identity);

@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// GameController: quản lý chuyển scene giữa Menu/Gameplay/Death/Outro/Credits.
-// KHÔNG còn tính năng save game - mỗi lần New Game/Restart đều là 1 lượt chơi hoàn toàn mới,
-// không có gì được ghi ra đĩa hay giữ lại giữa các lần chơi.
+
+
 public class GameController : MonoBehaviour
 {
     public static GameController Instance { get; private set; }

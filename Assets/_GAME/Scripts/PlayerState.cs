@@ -31,6 +31,45 @@ public class PlayerState : MonoBehaviour
 
     public bool CanSprint => currentStamina > 0f;
 
+    // ---- LƯU CHỈ SỐ GỐC (trước khi Persona tác động) - phục vụ nút Reset Persona ---- //
+    private float baseMaxHealth, baseMaxStamina, baseMaxCalories, baseMaxHydrationPercent;
+    private float baseStaminaDrainPerSecond, baseStaminaRegenPerSecond;
+    private bool baseStatsCaptured = false;
+
+    private void CaptureBaseStatsIfNeeded()
+    {
+        if (baseStatsCaptured) return;
+        baseMaxHealth = maxHealth;
+        baseMaxStamina = maxStamina;
+        baseMaxCalories = maxCalories;
+        baseMaxHydrationPercent = maxHydrationPercent;
+        baseStaminaDrainPerSecond = staminaDrainPerSecond;
+        baseStaminaRegenPerSecond = staminaRegenPerSecond;
+        baseStatsCaptured = true;
+    }
+
+    // Gọi từ PersonaManager.ResetAllPersona() - đưa toàn bộ chỉ số đã bị Persona cộng dồn
+    // (maxHealth, maxStamina, staminaDrainPerSecond,...) về đúng giá trị GỐC lúc chưa mở khoá gì cả.
+    public void ResetToBaseStats()
+    {
+        CaptureBaseStatsIfNeeded();
+
+        maxHealth = baseMaxHealth;
+        maxStamina = baseMaxStamina;
+        maxCalories = baseMaxCalories;
+        maxHydrationPercent = baseMaxHydrationPercent;
+        staminaDrainPerSecond = baseStaminaDrainPerSecond;
+        staminaRegenPerSecond = baseStaminaRegenPerSecond;
+
+        // Kẹp lại các chỉ số hiện tại để không vượt quá max mới (thấp hơn sau khi reset)
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        if (currentStamina > maxStamina) currentStamina = maxStamina;
+        if (currentCalories > maxCalories) currentCalories = maxCalories;
+        if (currentHydrationPercent > maxHydrationPercent) currentHydrationPercent = maxHydrationPercent;
+
+        Debug.Log("[PlayerState]: Đã reset toàn bộ chỉ số về gốc (trước khi có Persona).");
+    }
+
     // ---- HỆ THỐNG CHẾT & HỒI SINH ---- //
     public GameObject deathPanel;
     public float starvationDamageRate = 1f;
@@ -56,6 +95,8 @@ public class PlayerState : MonoBehaviour
 
     private void Start()
     {
+        CaptureBaseStatsIfNeeded();
+
         currentHealth = maxHealth;
         currentCalories = maxCalories;
         currentHydrationPercent = maxHydrationPercent;
@@ -112,7 +153,7 @@ public class PlayerState : MonoBehaviour
             setHealth(currentHealth - damage);
         }
 
-        // CẬP NHẬT: Nếu có buff Thể lực vô hạn thì không bị trừ Stamina khi chạy
+        // thể lực vô hạn khi sprint
         bool isSprinting = Input.GetKey(sprintKey) && isMovingThisFrame && currentStamina > 0f;
         if (isSprinting && !isStaminaInfinite)
         {
@@ -128,10 +169,13 @@ public class PlayerState : MonoBehaviour
             setHealth(currentHealth - 10);
         }
 
-        // CẬP NHẬT: Nếu có buff Miễn Nhiễm Lạnh thì ban đêm không bị mất máu
-        bool isNight = LightingManager.Instance != null && LightingManager.Instance.IsNight();
-        if (isNight)
+        //  Đọc biến ShouldDrainHealth từ LightingManager mới
+
+        bool isDrainTime = LightingManager.Instance != null && LightingManager.Instance.ShouldDrainHealth;
+
+        if (isDrainTime)
         {
+            // Chỉ mất máu nếu KHÔNG đứng gần lửa trại VÀ KHÔNG có buff miễn nhiễm lạnh
             if (!isNearCampfire && !isColdImmune)
             {
                 float coldDamage = nightColdDamageRate * Time.deltaTime;

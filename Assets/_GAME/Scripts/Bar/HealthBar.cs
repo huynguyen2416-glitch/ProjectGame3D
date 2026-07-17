@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class HealthBar : MonoBehaviour
 {
     private Slider slider;
@@ -12,12 +13,10 @@ public class HealthBar : MonoBehaviour
 
     void Update()
     {
-        // 1. Bảo vệ lỗi rỗng để game không bị đứng nếu nhân vật lỡ bị xóa
+        // The player can be unavailable while scenes are changing.
         if (PlayerState.Instance == null) return;
-        // 2. Lấy dữ liệu trực tiếp từ Singleton 
         float currentHealth = PlayerState.Instance.currentHealth;
         float maxHealth = PlayerState.Instance.maxHealth;
-        // 3. Cập nhật UI
         float fillValue = currentHealth / maxHealth;
         slider.value = fillValue;
 

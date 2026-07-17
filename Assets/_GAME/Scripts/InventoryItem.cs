@@ -1,44 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    // --- Is this item trashable --- //
+    [Header("Item Info")]
+    public string thisName;
+    public string thisDescription;
+    public string thisFunctionality;
     public bool isTrashable;
+    public GameObject item3DPrefab;
 
-    // --- Item Info UI --- //
-    private GameObject itemInfoUI;
-    private Text itemInfoUI_itemName;
-    private Text itemInfoUI_itemDescription;
-    private Text itemInfoUI_itemFunctionality;
-
-    public string thisName, thisDescription, thisFunctionality;
-
-    // --- Consumption (Hồi trực tiếp) --- //
     [Header("Immediate Consumption Effects")]
     public bool isConsumable;
     public float healthEffect;
     public float caloriesEffect;
     public float hydrationEffect;
 
-    // ==========================================
-    // CÀI ĐẶT BUFF (HIỆU ỨNG KÉO DÀI)
-    // ==========================================
     public enum BuffType { None, ColdImmunity, InfiniteStamina, HealOverTime }
 
     [Header("Over-Time Buff Effects")]
-    public BuffType itemBuffType = BuffType.None; // Chọn loại hiệu ứng
-    public float buffDuration = 120f;             // Thời gian tác dụng (giây)
-    public float buffValue = 2f;                  // Giá trị (Ví dụ: Hồi 2 máu mỗi giây nếu chọn HealOverTime)
+    public BuffType itemBuffType = BuffType.None;
+    public float buffDuration = 120f;
+    public float buffValue = 2f;
 
-    // --- Bàn phím & Vứt đồ --- //
+    // Tooltip UI and pointer state.
+    private GameObject itemInfoUI;
+    private Text itemInfoUI_itemName;
+    private Text itemInfoUI_itemDescription;
+    private Text itemInfoUI_itemFunctionality;
     private bool isHovering = false;
-    public GameObject item3DPrefab;
 
-    // --- Biến hỗ trợ Kéo Thả --- //
+    // State needed to restore an interrupted drag operation.
     private Transform originalParent;
     private int originalSiblingIndex;
     private CanvasGroup canvasGroup;
@@ -98,27 +91,27 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-        if (item3DPrefab == null) return;
+        if (eventData.button != PointerEventData.InputButton.Left || item3DPrefab == null) return;
+
         DragDrop.itemBeingDragged = gameObject;
         originalParent = transform.parent;
         originalSiblingIndex = transform.GetSiblingIndex();
+
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
+
         if (canvasGroup != null) canvasGroup.blocksRaycasts = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-        if (item3DPrefab == null) return;
+        if (eventData.button != PointerEventData.InputButton.Left || item3DPrefab == null) return;
         transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-        if (item3DPrefab == null) return;
+        if (eventData.button != PointerEventData.InputButton.Left || item3DPrefab == null) return;
         if (canvasGroup != null) canvasGroup.blocksRaycasts = true;
 
         if (eventData.pointerCurrentRaycast.gameObject == null)
@@ -132,41 +125,32 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 transform.SetParent(originalParent);
                 transform.SetSiblingIndex(originalSiblingIndex);
             }
-            else
+            else if (SoundManager.Instance != null)
             {
-                if (SoundManager.Instance != null)
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
             }
         }
+
         DragDrop.itemBeingDragged = null;
         if (InventorySystem.Instance != null) InventorySystem.Instance.ReCalculateList();
     }
 
-    // --- HÀM ĂN ĐỒ/UỐNG THUỐC --- //
     private void ConsumeItemWithKey()
     {
-        // 1. Hồi các chỉ số gốc trực tiếp (Nếu có)
-        consumingFunction(healthEffect, caloriesEffect, hydrationEffect);
+        ApplyConsumptionEffects(healthEffect, caloriesEffect, hydrationEffect);
 
-        // 2. KÍCH HOẠT BUFF (Nếu vật phẩm có chứa Buff)
+        // Apply an optional timed effect.
         if (itemBuffType != BuffType.None && PlayerState.Instance != null)
         {
             PlayerState.Instance.ApplyBuff(itemBuffType.ToString(), buffDuration, buffValue);
         }
 
-        // Báo cho EquipSystem cất vũ khí/đồ vật
-        if (EquipSystem.Instance != null)
-        {
-            EquipSystem.Instance.UnquipIfDropped(gameObject);
-        }
+        if (EquipSystem.Instance != null) EquipSystem.Instance.UnquipIfDropped(gameObject);
 
         RemoveFromInventoryList();
         Destroy(gameObject);
 
-        if (InventorySystem.Instance != null)
-        {
-            InventorySystem.Instance.Invoke("ReCalculateList", 0.1f);
-        }
+        if (InventorySystem.Instance != null) InventorySystem.Instance.Invoke(nameof(InventorySystem.ReCalculateList), 0.1f);
     }
 
     public void DropItem()
@@ -179,21 +163,18 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 GameObject droppedItem = Instantiate(item3DPrefab, dropPosition, Quaternion.identity);
                 droppedItem.name = item3DPrefab.name;
-                droppedItem.transform.SetParent(null);
             }
         }
 
         if (itemInfoUI != null) itemInfoUI.SetActive(false);
         isHovering = false;
+
         if (EquipSystem.Instance != null) EquipSystem.Instance.UnquipIfDropped(gameObject);
 
         RemoveFromInventoryList();
         Destroy(gameObject);
 
-        if (InventorySystem.Instance != null)
-        {
-            InventorySystem.Instance.Invoke("ReCalculateList", 0.1f);
-        }
+        if (InventorySystem.Instance != null) InventorySystem.Instance.Invoke(nameof(InventorySystem.ReCalculateList), 0.1f);
     }
 
     private void RemoveFromInventoryList()
@@ -205,15 +186,15 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
-    private void consumingFunction(float healthEffect, float caloriesEffect, float hydrationEffect)
+    private void ApplyConsumptionEffects(float health, float calories, float hydration)
     {
         if (itemInfoUI != null) itemInfoUI.SetActive(false);
-        healthEffectCalculation(healthEffect);
-        caloriesEffectCalculation(caloriesEffect);
-        hydrationEffectCalculation(hydrationEffect);
+        CalculateHealthEffect(health);
+        CalculateCaloriesEffect(calories);
+        CalculateHydrationEffect(hydration);
     }
 
-    private static void healthEffectCalculation(float healthEffect)
+    private static void CalculateHealthEffect(float healthEffect)
     {
         if (healthEffect == 0) return;
         float healthBefore = PlayerState.Instance.currentHealth;
@@ -221,7 +202,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         PlayerState.Instance.setHealth(Mathf.Min(healthBefore + healthEffect, maxHealth));
     }
 
-    private static void caloriesEffectCalculation(float caloriesEffect)
+    private static void CalculateCaloriesEffect(float caloriesEffect)
     {
         if (caloriesEffect == 0) return;
         float caloriesBefore = PlayerState.Instance.currentCalories;
@@ -229,7 +210,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         PlayerState.Instance.setCalories(Mathf.Min(caloriesBefore + caloriesEffect, maxCalories));
     }
 
-    private static void hydrationEffectCalculation(float hydrationEffect)
+    private static void CalculateHydrationEffect(float hydrationEffect)
     {
         if (hydrationEffect == 0) return;
         float hydrationBefore = PlayerState.Instance.currentHydrationPercent;

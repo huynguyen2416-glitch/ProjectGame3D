@@ -1,39 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class DeathScreenUI : MonoBehaviour
 {
-    [Tooltip("Kéo 1 RawImage phủ toàn màn hình vào đây để làm nền mờ lúc chết")]
     public RawImage backgroundImage;
 
     void Start()
     {
+        // Cơ chế nạp cảnh khi run time
+        // Lấy bức ảnh chụp màn hình lúc nhân vật vừa hết máu từ GameController gán vào rawimage
         if (backgroundImage != null && GameController.LastDeathScreenshot != null)
         {
             backgroundImage.texture = GameController.LastDeathScreenshot;
         }
     }
 
-    // Gắn vào Button "Quay lại" (load lại Canh1 HOÀN TOÀN MỚI, không còn save để rollback)
     public void OnClickRestart()
     {
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.RestartGame();
-        }
-        else
-        {
-            Debug.LogWarning("[DeathScreenUI]: Không tìm thấy GameController.Instance!");
-        }
+        if (GameController.Instance != null) GameController.Instance.RestartGame();
     }
 
-    //  Gắn vào Button "Về Menu" 
     public void OnClickMainMenu()
     {
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.GoToMainMenu();
-        }
+        if (GameController.Instance != null) GameController.Instance.GoToMainMenu();
     }
 }

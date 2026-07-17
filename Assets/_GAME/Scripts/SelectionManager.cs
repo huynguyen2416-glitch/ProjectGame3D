@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class SelectionManager : MonoBehaviour
 {
     // --- KHỞI TẠO SINGLETON  ---
@@ -18,8 +19,22 @@ public class SelectionManager : MonoBehaviour
     public GameObject selectedRock;
     public GameObject mineHolder;
 
+    [Header("--- Hiệu năng ---")]
+    [Tooltip("Khoảng cách tối đa cho phép tương tác/nhắm. TRƯỚC ĐÂY là Mathf.Infinity (bắn tia vô hạn " +
+             "mỗi frame, rất tốn) - giờ giới hạn lại để giảm tải Physics.Raycast chạy liên tục mỗi frame.")]
+    public float maxInteractDistance = 8f;
+
+    [Tooltip("Chỉ raycast vào các layer thực sự cần thiết (cây, đá, vật phẩm, quái, mặt đất...). " +
+             "Để mặc định ~0 (mọi layer) vẫn chạy được, nhưng thu hẹp lại trong Inspector sẽ giảm tải " +
+             "đáng kể vì Physics không cần kiểm tra va chạm với các layer không liên quan (UI, VFX...).")]
+    public LayerMask interactionMask = ~0;
+
     // --- PROPERTY HỖ TRỢ ---
     public bool handIsVisible => handIcon != null && handIcon.gameObject.activeSelf;
+
+    // Cache Camera.main 1 lần thay vì gọi lại mỗi frame (Camera.main phải tìm object có tag
+    // "MainCamera" trong scene nếu chưa cache nội bộ - gọi lặp lại mỗi frame là lãng phí không cần thiết).
+    private Camera mainCam;
 
     private void Awake()
     {
@@ -30,15 +45,19 @@ public class SelectionManager : MonoBehaviour
     private void Start()
     {
         interaction_text = interaction_Info_UI.GetComponent<Text>();
+        mainCam = Camera.main;
     }
 
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (mainCam == null) mainCam = Camera.main; // fallback phòng trường hợp camera đổi/scene reload
+        if (mainCam == null) return;
+
+        Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out hit, maxInteractDistance, interactionMask, QueryTriggerInteraction.Ignore))
         {
             var selectionTransform = hit.transform;
 

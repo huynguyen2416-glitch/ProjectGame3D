@@ -11,7 +11,7 @@ public class EquipableItem : MonoBehaviour
     public float attackCooldown = 0.8f;
 
     [Tooltip("Thời gian chờ từ lúc bấm chuột đến lúc lưỡi rìu chạm mục tiêu (giây)")]
-    public float hitDelay = 0.3f; // THÊM BIẾN NÀY ĐỂ CANH CHUẨN THỜI GIAN
+    public float hitDelay = 0.3f;
 
     private float lastAttackTime = 0f;
 

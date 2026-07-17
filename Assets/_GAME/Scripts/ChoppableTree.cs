@@ -115,12 +115,17 @@ public class ChoppableTree : MonoBehaviour
                 SelectionManager.Instance.chopHolder.gameObject.SetActive(false);
         }
 
+        // PERSONA: chặt hạ thành công 1 cây -> +1 Điểm Sinh Tồn
+        if (PersonaManager.Instance != null)
+        {
+            PersonaManager.Instance.AwardPoint(1, "Chặt hạ cây");
+        }
 
         Destroy(objectToDestroy);
 
         if (!string.IsNullOrEmpty(brokenPrefabName))
         {
-            GameObject brokenTree = Resources.Load<GameObject>(brokenPrefabName);
+            GameObject brokenTree = ResourceCache.Load(brokenPrefabName);
             if (brokenTree != null)
             {
                 Instantiate(brokenTree, treePosition, Quaternion.identity);

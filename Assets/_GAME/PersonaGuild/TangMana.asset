@@ -9,36 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: TangMana
+  m_Script: {fileID: 11500000, guid: 85282aea597a7c146a1dc76f07b74e23, type: 3}
+  m_Name: Tangmana
   m_EditorClassIdentifier: Assembly-CSharp::PersonaUpgradeSO
-  branch: 1
-  upgradeName: "C\u01B0\u1EDDng Tr\xE1ng"
-  description: "T\u0103ng gi\u1EDBi h\u1EA1n th\u1EC3 l\u1EF1c t\u1ED1i \u0111a c\u1EE7a
-    ban"
+  branch: 0
+  upgradeName: "Ph\u1ED5i s\u1EAFt"
+  description: "t\u0103ng gi\u1EDBi h\u1EA1n mana"
   icon: {fileID: 1270574734, guid: 9a239cfeae00f72458ff1cd048122d2b, type: 3}
   levels:
   - level: 1
-    effectDescription: "Th\u1EC3 l\u1EF1c +5"
-    requirements:
-    - itemName: mushroom
-      amount: 1
+    effectDescription: +5
+    pointCost: 1
     effects:
     - type: 1
       value: 5
   - level: 2
-    effectDescription: "Th\u1EC3 l\u1EF1c +10"
-    requirements:
-    - itemName: mushroom
-      amount: 2
+    effectDescription: +10
+    pointCost: 1
     effects:
     - type: 1
       value: 10
-  - level: 3
-    effectDescription: "Th\u1EC3 l\u1EF1c +20"
-    requirements:
-    - itemName: mushroom
-      amount: 4
-    effects:
-    - type: 1
-      value: 20

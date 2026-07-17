@@ -180,8 +180,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.06, z: -0.06}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.1, y: 0.06, z: 0.1}
+  m_Center: {x: 0, y: 0, z: 0.03}
 --- !u!114 &6230126462993143543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,4 +194,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 342ba182c702bc64b8ddd42221f075af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponHitbox
+  toolType: 1
   damage: 25

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -51,6 +50,16 @@ public class PersonaUI : MonoBehaviour
     [Tooltip("Bấm để đóng chi tiết Level, bật lại UpgradeShelf")]
     public Button backToShelfButton;
 
+    [Header("Kho Điểm Sinh Tồn (dùng chung 2 nhánh)")]
+    [Tooltip("Text hiển thị số điểm hiện có, VD 'Điểm: 5'")]
+    public Text availablePointsText;
+    [Tooltip("Nút Reset toàn bộ Persona - hoàn lại điểm, đưa mọi nhánh về 0")]
+    public Button resetPersonaButton;
+    [Tooltip("Panel xác nhận trước khi Reset (tránh bấm nhầm mất hết tiến trình) - để trống nếu không cần xác nhận")]
+    public GameObject resetConfirmPanel;
+    public Button resetConfirmYesButton;
+    public Button resetConfirmNoButton;
+
     [Header("Thanh Level tượng trưng (vd 2/5)")]
     public Image progressFillImage;
     public Text levelCounterText;
@@ -76,6 +85,51 @@ public class PersonaUI : MonoBehaviour
         if (sinhTonTabButton != null) sinhTonTabButton.onClick.AddListener(() => ShowBranch(PersonaBranch.SinhTon));
         if (closeBookButton != null) closeBookButton.onClick.AddListener(ClosePanel);
         if (backToShelfButton != null) backToShelfButton.onClick.AddListener(CloseLevelDetail);
+
+        if (resetConfirmPanel != null) resetConfirmPanel.SetActive(false);
+
+        if (resetPersonaButton != null)
+        {
+            resetPersonaButton.onClick.AddListener(OnClickResetPersona);
+        }
+        if (resetConfirmYesButton != null)
+        {
+            resetConfirmYesButton.onClick.AddListener(ConfirmResetPersona);
+        }
+        if (resetConfirmNoButton != null)
+        {
+            resetConfirmNoButton.onClick.AddListener(() =>
+            {
+                if (resetConfirmPanel != null) resetConfirmPanel.SetActive(false);
+            });
+        }
+    }
+
+    // Bấm nút Reset: nếu có Panel xác nhận thì hiện nó ra trước, không thì Reset luôn
+    private void OnClickResetPersona()
+    {
+        if (resetConfirmPanel != null)
+        {
+            resetConfirmPanel.SetActive(true);
+        }
+        else
+        {
+            ConfirmResetPersona();
+        }
+    }
+
+    private void ConfirmResetPersona()
+    {
+        if (resetConfirmPanel != null) resetConfirmPanel.SetActive(false);
+
+        if (PersonaManager.Instance != null)
+        {
+            PersonaManager.Instance.ResetAllPersona();
+        }
+
+        // Làm mới lại toàn bộ UI đang hiển thị cho khớp trạng thái mới (level về 0 hết)
+        RefreshAvailablePointsText();
+        ShowBranch(currentBranch);
     }
 
     private void CloseLevelDetail()
@@ -100,10 +154,15 @@ public class PersonaUI : MonoBehaviour
 
     void Update()
     {
-        // Vẫn giữ phím P phòng khi bác muốn test song song
+        // P is an alternate shortcut for opening the Persona interface.
         if (Input.GetKeyDown(toggleKey))
         {
             TogglePersonaPanel();
+        }
+
+        if (personaPanel != null && personaPanel.activeSelf)
+        {
+            RefreshAvailablePointsText();
         }
 
         bool detailIsOpen = levelDetailPanel != null && levelDetailPanel.activeSelf;
@@ -118,6 +177,12 @@ public class PersonaUI : MonoBehaviour
                 refreshTimer = 0f;
             }
         }
+    }
+
+    private void RefreshAvailablePointsText()
+    {
+        if (availablePointsText == null || PersonaManager.Instance == null) return;
+        availablePointsText.text = $"Điểm Sinh Tồn: {PersonaManager.Instance.availablePoints}";
     }
 
     // LUỒNG ĐỒNG BỘ: Hàm public để Button bên ngoài Canvas gọi tới
@@ -141,6 +206,8 @@ public class PersonaUI : MonoBehaviour
         // Khởi tạo trạng thái ruột trang sách khi mở
         if (willOpen)
         {
+            RefreshAvailablePointsText();
+
             if (shelfGroup != null) shelfGroup.SetActive(true);
             if (levelDetailPanel != null) levelDetailPanel.SetActive(false);
             if (upgradeShelfPanel != null) upgradeShelfPanel.SetActive(false);
@@ -305,17 +372,17 @@ public class PersonaUI : MonoBehaviour
 
             if (reqText != null)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var req in levelData.requirements)
+                if (isUnlocked)
                 {
-                    int have = CountItemInInventory(req.itemName);
-                    string vnName = ItemNameVN.Get(req.itemName);
-                    sb.AppendLine($"{vnName}: {have}/{req.amount}");
+                    reqText.text = "Đã mở khoá";
+                    reqText.color = Color.grey;
                 }
-                reqText.text = sb.ToString();
-                reqText.color = isUnlocked
-                    ? Color.grey
-                    : (isNextLevel && PersonaManager.Instance.CanUnlockNextLevel(upgrade) ? Color.green : Color.red);
+                else
+                {
+                    int have = PersonaManager.Instance.availablePoints;
+                    reqText.text = $"Cần {levelData.pointCost} Điểm Sinh Tồn (đang có {have})";
+                    reqText.color = (have >= levelData.pointCost) ? Color.green : Color.red;
+                }
             }
 
             if (unlockBtn != null)
@@ -345,14 +412,4 @@ public class PersonaUI : MonoBehaviour
         }
     }
 
-    private int CountItemInInventory(string itemName)
-    {
-        if (InventorySystem.Instance == null) return 0;
-        int count = 0;
-        foreach (string item in InventorySystem.Instance.itemList)
-        {
-            if (item == itemName) count++;
-        }
-        return count;
-    }
 }
