@@ -105,7 +105,8 @@ public class PlayerState : MonoBehaviour
         if (deathPanel != null) deathPanel.SetActive(false);
 
         if (playerBody != null) lastPosition = playerBody.transform.position;
-        StartCoroutine(decreaseHydration());
+        StartCoroutine(decreaseHydration());// kích hoạt hàm khát
+        StartCoroutine(decreaseCalories());// kích hoạt hàm đói
     }
 
     IEnumerator decreaseHydration()
@@ -117,7 +118,21 @@ public class PlayerState : MonoBehaviour
                 currentHydrationPercent -= 1;
                 if (currentHydrationPercent < 0) currentHydrationPercent = 0;
             }
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(2);
+        }
+    }
+    IEnumerator decreaseCalories()
+    {
+        while (true)
+        {
+            if (!isDead)
+            {
+                currentCalories -= 1;
+                if (currentCalories < 0) currentCalories = 0;
+            }
+
+            // Cứ mỗi 4 giây sẽ trừ 1 điểm đói 
+            yield return new WaitForSeconds(4);
         }
     }
 
