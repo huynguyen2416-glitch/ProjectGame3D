@@ -90,17 +90,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
-  isTrashable: 1
   thisName: "Th\u1ECBt"
   thisDescription: "Nguy\xEAn li\u1EC7u tuy\u1EC7t v\u1EDDi \u0111\u1EC3 n\u1EA5u
     nh\u1EEFng m\xF3n \u0103n h\u1EA5p d\u1EABn. \u0110\xE2y l\xE0 th\xE0nh qu\u1EA3
     x\u1EE9ng \u0111\xE1ng v\u1EDBi c\xF4ng s\u1EE9c c\u1EE7a b\u1EA1n"
   thisFunctionality: "Nh\u1EADn \u0111\u01B0\u1EE3c t\u1EEB Chi\u1EBFn \u0111\u1EA5u"
-  isConsumable: 1
-  healthEffect: 10
-  caloriesEffect: 70
-  hydrationEffect: 30
+  isTrashable: 1
   item3DPrefab: {fileID: 7378516215676792982, guid: 742793e0ddfc37a42ad43022af483e1f, type: 3}
+  isConsumable: 1
+  healthEffect: 40
+  caloriesEffect: 70
+  hydrationEffect: 20
+  itemBuffType: 3
+  buffDuration: 120
+  buffValue: 1
 --- !u!114 &7826137215562996217
 MonoBehaviour:
   m_ObjectHideFlags: 0

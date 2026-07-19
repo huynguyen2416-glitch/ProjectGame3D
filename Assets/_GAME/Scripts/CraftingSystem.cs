@@ -39,6 +39,7 @@ public class CraftingSystem : MonoBehaviour
     public GameObject toolsScreenUI;
     public GameObject survivalScreenUI;
     public GameObject medScreenUI;
+    public GameObject processingScreenUI;
 
     [Header("--- Hệ Thống Nhắm Đặt Công Trình ---")]
     public GameObject placementCrosshair; // Kéo UI Tâm ngắm (như dấu cộng nhỏ giữa màn hình) vào đây
@@ -54,7 +55,7 @@ public class CraftingSystem : MonoBehaviour
     public bool isPlacingMode = false; // Đã chuyển thành public để InventorySystem truy cập được
 
     private CraftingRecipe pendingRecipe;
-    private Button toolsBTN, survivalBTN, MedBTN;
+    private Button toolsBTN, survivalBTN, MedBTN, processingBTN;
     private readonly Dictionary<CraftingRecipe, CraftingRecipeUIRefs> uiRefsCache = new Dictionary<CraftingRecipe, CraftingRecipeUIRefs>();
 
     private void Awake()
@@ -80,6 +81,8 @@ public class CraftingSystem : MonoBehaviour
         MedBTN = craftingScreenUI.transform.Find("MedButton").GetComponent<Button>();
         MedBTN.onClick.AddListener(() => OpenCategory(medScreenUI));
 
+        processingBTN = craftingScreenUI.transform.Find("ProcessingButton").GetComponent<Button>();
+        processingBTN.onClick.AddListener(() => OpenCategory(processingScreenUI));
         // Cài đặt nút bấm cho từng công thức
         foreach (var recipe in recipes)
         {
@@ -127,6 +130,7 @@ public class CraftingSystem : MonoBehaviour
         toolsScreenUI.SetActive(false);
         survivalScreenUI.SetActive(false);
         medScreenUI.SetActive(false);
+        processingScreenUI.SetActive(false);
         screenToOpen.SetActive(true);
     }
 
@@ -154,6 +158,7 @@ public class CraftingSystem : MonoBehaviour
                 toolsScreenUI.SetActive(false);
                 survivalScreenUI.SetActive(false);
                 medScreenUI.SetActive(false);
+                processingScreenUI.SetActive(false);
             }
 
             Cursor.lockState = isOpen ? CursorLockMode.None : (InventorySystem.Instance.isOpen ? CursorLockMode.None : CursorLockMode.Locked);

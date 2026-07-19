@@ -115,7 +115,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
-  isTrashable: 1
   thisName: "L\u1ECD an th\u1EA7n"
   thisDescription: "M\xF9i h\u01B0\u01A1ng O\u1EA3i H\u01B0\u01A1ng xoa d\u1ECBu
     th\u1EA7n kinh k\u1EBFt h\u1EE3p v\u1EDBi s\u1EF1 k\xEDch th\xEDch nh\u1ECBp
@@ -123,11 +122,12 @@ MonoBehaviour:
     ch\u1EA1y n\u01B0\u1EDBc r\xFAt b\u1EA1t m\u1EA1ng m\xE0 kh\xF4ng c\u1EA3m th\u1EA5y
     m\u1EC7t m\u1ECFi"
   thisFunctionality: "Thu\u1ED1c"
+  isTrashable: 1
+  item3DPrefab: {fileID: 0}
   isConsumable: 1
   healthEffect: 0
   caloriesEffect: 0
   hydrationEffect: 10
   itemBuffType: 2
-  buffDuration: 60
+  buffDuration: 30
   buffValue: 0
-  item3DPrefab: {fileID: 0}

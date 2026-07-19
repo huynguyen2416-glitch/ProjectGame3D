@@ -2,13 +2,13 @@ using System.Globalization;
 using System.Text;
 using UnityEngine;
 
-
 public class WeaponHolder : MonoBehaviour
 {
     public static WeaponHolder Instance { get; private set; }
 
     public GameObject realAxeInHand;
     public GameObject realPickaxeInHand;
+    public GameObject realBowInHand;
 
     private void Awake()
     {
@@ -27,13 +27,14 @@ public class WeaponHolder : MonoBehaviour
     {
         UnquipAllWeapons();
 
-        // tìm model rìu hoặc cuốc
+        //  Nếu cất vũ khí (chọn ô trống) thì chỉ cần cất đi là xong, không làm gì thêm
         if (string.IsNullOrEmpty(itemName)) return;
 
         string fixedName = RemoveDiacritics(itemName).ToLower().Replace(" ", "").Trim();
 
         bool isPickaxe = fixedName.Contains("pickaxe") || fixedName.Contains("cuoc") || fixedName.Contains("miner");
         bool isAxe = !isPickaxe && (fixedName.Contains("axe") || fixedName.Contains("riu") || fixedName.Contains("hatchet") || fixedName.Contains("choptree"));
+        bool isBow = !isPickaxe && !isAxe && (fixedName.Contains("bow") || fixedName.Contains("cung"));
 
         if (isPickaxe)
         {
@@ -45,6 +46,11 @@ public class WeaponHolder : MonoBehaviour
             if (realAxeInHand != null) realAxeInHand.SetActive(true);
             else Debug.LogError("[WeaponHolder]: realAxeInHand chưa được gán trong Inspector!");
         }
+        else if (isBow)
+        {
+            if (realBowInHand != null) realBowInHand.SetActive(true);
+            else Debug.LogError("[WeaponHolder]: realBowInHand chưa được gán trong Inspector!");
+        }
         else
         {
             Debug.LogWarning($"[WeaponHolder]: Không nhận diện được vũ khí từ tên '{itemName}'.");
@@ -55,6 +61,7 @@ public class WeaponHolder : MonoBehaviour
     {
         if (realAxeInHand != null) realAxeInHand.SetActive(false);
         if (realPickaxeInHand != null) realPickaxeInHand.SetActive(false);
+        if (realBowInHand != null) realBowInHand.SetActive(false);
     }
 
     private static string RemoveDiacritics(string text)

@@ -20,6 +20,8 @@ public class SoundManager : MonoBehaviour
     public AudioSource introSound; //Intro
     public AudioSource creditsSound; //Credit
     public AudioSource personaSound;
+    public AudioSource waterWalkSound;
+    public AudioSource dieSound;
 
     private void Awake()
     {
@@ -50,7 +52,7 @@ public class SoundManager : MonoBehaviour
         StopSound(waveSound);
         StopSound(introSound);
         StopSound(creditsSound);
-
+        StopSound(dieSound);
         switch (scene.name)
         {
             case "StartScene":
@@ -75,7 +77,7 @@ public class SoundManager : MonoBehaviour
                 PlaySound(outroMusic);
                 break;
             case "DeathScene":
-
+                PlaySound(dieSound);
                 break;
 
             default:
