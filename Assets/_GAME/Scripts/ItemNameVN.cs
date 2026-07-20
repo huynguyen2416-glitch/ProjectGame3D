@@ -15,7 +15,7 @@ public static class ItemNameVN
         { "potion3", "Tiên thảo dược" },
         { "potion", "Tinh dầu thanh lọc" },
         {"meat", "Thịt" },
-        {"hoacuc", "Cúc trắng" },
+        {"cuctrang", "Cúc trắng" },
         {"boconganh", "Bồ công anh" },
         {"dalanhuong", "Dạ lan hương" },
         {"hongden", "Hồng đen" },
@@ -23,7 +23,11 @@ public static class ItemNameVN
         {"oaihuong", "Oải hương" },
         {"campfire","Lửa trại" },
         {"drygrass","Cỏ khô" },
-        {"rope","Dây thừng" }
+        {"rope","Dây thừng" },
+        {"sword","Kiếm Thánh" },
+        {"gem1","Khởi Nguyên" },
+        {"gem2","Giao Ước" },
+        {"gem3","Khải Huyền" },
     };
 
     public static string Get(string englishName)

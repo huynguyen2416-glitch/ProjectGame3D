@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
+        
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -36,8 +38,7 @@ public class EnemyAI : MonoBehaviour
 
         rend = GetComponentInChildren<Renderer>();
         if (rend != null && patrolMaterial != null) rend.material = patrolMaterial;
-
-        if (anim == null) anim = GetComponent<Animator>();
+        if (anim == null) anim = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -55,8 +56,6 @@ public class EnemyAI : MonoBehaviour
     // TUẦN TRA (PATROL)
     void Patrol()
     {
-        if (patrolPoints == null || patrolPoints.Length == 0) return;
-
         if (rend != null && patrolMaterial != null) rend.material = patrolMaterial;
         if (anim != null)
         {
@@ -65,12 +64,30 @@ public class EnemyAI : MonoBehaviour
             anim.SetBool("atk", false);
         }
 
+        //  NẾU KHÔNG CÓ ĐIỂM TUẦN TRA -> Tự động ĐI BỘ từ từ về phía người chơi
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            if (player != null)
+            {
+                MoveTowards(player.position, patrolSpeed); // Dùng tốc độ đi bộ
+
+                // Nếu đi bộ đến đủ gần (lọt vào tầm nhìn) thì mới bắt đầu CHẠY (Chase)
+                if (HorizontalDistance(transform.position, player.position) < chaseDistance)
+                {
+                    currentState = State.Chase;
+                }
+            }
+            return; // Thoát hàm để không chạy logic tuần tra bên dưới
+        }
+
+        //  NẾU CÓ ĐIỂM TUẦN TRA -> Đi lượn lờ theo các điểm đó (Dành cho gấu ban ngày)
         Transform point = patrolPoints[patrolIndex];
         MoveTowards(point.position, patrolSpeed);
 
         if (HorizontalDistance(transform.position, point.position) < 0.5f)
             patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
 
+        // Thấy người chơi là chuyển sang chạy
         if (player != null && HorizontalDistance(transform.position, player.position) < chaseDistance)
             currentState = State.Chase;
     }
@@ -162,5 +179,33 @@ public class EnemyAI : MonoBehaviour
             transform.position += dir * speed * Time.deltaTime;
             transform.LookAt(lookPos);
         }
+    }
+    public void ForceChasePlayer()
+    {
+        // 1. Chữa cháy lỗi Start() chưa kịp chạy bằng cách ép tìm Player ngay lập tức
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null) player = playerObj.transform;
+        }
+
+        // 2. Chuyển state sang rượt đuổi nếu có player
+        if (player != null)
+        {
+            currentState = State.Chase;
+            chaseDistance = 999f; // Tầm nhìn vô hạn
+        }
+
+        // 3. Đưa các lệnh Buff và hóa điên ra ngoài để LUÔN ĐƯỢC KÍCH HOẠT
+        chaseSpeed *= 1.5f;
+        damageAmount *= 1.5f;
+
+        if (rend != null && attackMaterial != null) rend.material = attackMaterial;
+
+        // Đánh dấu con gấu này là tha hóa để KHÔNG RỚT THỊT NỮA
+        EnemyHealth health = GetComponent<EnemyHealth>();
+        if (health != null) health.isCorrupted = true;
+
+        Debug.Log(gameObject.name + " đã bị Boss tha hóa! Không rớt thịt!");
     }
 }

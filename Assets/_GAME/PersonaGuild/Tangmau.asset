@@ -18,14 +18,20 @@ MonoBehaviour:
   icon: {fileID: 1704935971, guid: 9a239cfeae00f72458ff1cd048122d2b, type: 3}
   levels:
   - level: 1
-    effectDescription: +10
-    pointCost: 1
-    effects:
-    - type: 0
-      value: 10
-  - level: 2
     effectDescription: +20
     pointCost: 1
     effects:
     - type: 0
       value: 20
+  - level: 2
+    effectDescription: +40
+    pointCost: 1
+    effects:
+    - type: 0
+      value: 40
+  - level: 3
+    effectDescription: +60
+    pointCost: 1
+    effects:
+    - type: 0
+      value: 60

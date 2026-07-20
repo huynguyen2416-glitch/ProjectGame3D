@@ -24,8 +24,8 @@ public class EquipableItem : MonoBehaviour
     {
         bool axeActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realAxeInHand != null && WeaponHolder.Instance.realAxeInHand.activeSelf;
         bool pickaxeActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realPickaxeInHand != null && WeaponHolder.Instance.realPickaxeInHand.activeSelf;
-
-        if (!axeActive && !pickaxeActive)
+        bool swordActive = WeaponHolder.Instance != null && WeaponHolder.Instance.realSwordInHand != null && WeaponHolder.Instance.realSwordInHand.activeSelf;
+        if (!axeActive && !pickaxeActive && !swordActive)
         {
             return;
         }
@@ -66,34 +66,41 @@ public class EquipableItem : MonoBehaviour
             // 1. Chỉ gọi Animation vung tay
             animator.SetTrigger("hit");
 
-            // 2. Bắt đầu bộ đếm ngược để nổ sát thương (Hàm Coroutine bác đang dùng)
-            StartCoroutine(ExecuteHit(hitDelay, axeActive, pickaxeActive));
+            GameObject activeWeapon = null;
+            if (axeActive) activeWeapon = WeaponHolder.Instance.realAxeInHand;
+            else if (pickaxeActive) activeWeapon = WeaponHolder.Instance.realPickaxeInHand;
+            else if (swordActive) activeWeapon = WeaponHolder.Instance.realSwordInHand;
+
+            // 2. Bắt đầu bộ đếm ngược để kích hoạt hitbox sát thương
+            StartCoroutine(ExecuteHit(hitDelay, activeWeapon));
         }
     }
 
     // HÀM HẸN GIỜ ĐỂ CHỜ LƯỠI RÌU CHẠM ĐÍCH
-    private IEnumerator ExecuteHit(float delay, bool isAxe, bool isPickaxe)
+    private IEnumerator ExecuteHit(float delay, GameObject activeWeapon)
     {
-        // Chờ đúng khoảng thời gian rìu vung từ trên cao xuống
+        // Chờ đúng khoảng thời gian vũ khí vung đến đích
         yield return new WaitForSeconds(delay);
 
-        GameObject activeWeapon = isAxe ? WeaponHolder.Instance.realAxeInHand : WeaponHolder.Instance.realPickaxeInHand;
+        // Tìm component WeaponHitbox nằm trên vũ khí đang active
         WeaponHitbox hitbox = activeWeapon != null ? activeWeapon.GetComponentInChildren<WeaponHitbox>() : null;
 
         if (hitbox == null)
         {
-            Debug.LogWarning("[EquipableItem]: Không tìm thấy WeaponHitbox trên vũ khí đang cầm — cần gắn script này + BoxCollider lên model rìu/cuốc.");
+            Debug.LogWarning("[EquipableItem]: Không tìm thấy WeaponHitbox trên vũ khí đang cầm. Hãy chắc chắn đã gắn script WeaponHitbox + BoxCollider (IsTrigger) vào model!");
             yield break;
         }
 
+        // Mở cửa sổ va chạm
         hitbox.StartSwing();
 
-        // Giữ "cửa sổ" va chạm mở trong khoảng thời gian ngắn tương ứng lúc lưỡi rìu thực sự quét qua mục tiêu
+        // Giữ va chạm mở trong 0.15 giây (khoảng thời gian lưỡi kiếm/rìu quét qua trước mặt)
         yield return new WaitForSeconds(0.15f);
 
+        // Đóng cửa sổ va chạm
         hitbox.EndSwing();
 
-        // Phát âm thanh dựa trên việc WeaponHitbox có thực sự chạm trúng gì không
+        // Phát âm thanh tương ứng
         if (SoundManager.Instance != null)
         {
             if (hitbox.HasHitThisSwing)

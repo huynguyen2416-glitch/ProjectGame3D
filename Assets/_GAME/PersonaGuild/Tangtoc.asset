@@ -29,3 +29,9 @@ MonoBehaviour:
     effects:
     - type: 9
       value: 0.1
+  - level: 3
+    effectDescription: +20%
+    pointCost: 1
+    effects:
+    - type: 9
+      value: 0.2

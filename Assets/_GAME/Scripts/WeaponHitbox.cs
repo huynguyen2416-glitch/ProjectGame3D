@@ -5,7 +5,7 @@ using UnityEngine;
 public class WeaponHitbox : MonoBehaviour
 {
     //tùy dụng cụ
-    public enum ToolType { Axe, Pickaxe }
+    public enum ToolType { Axe, Pickaxe, Sword }
 
     [Header("Phân loại dụng cụ")]
     [Tooltip("Chọn đúng loại cho prefab vũ khí (Rìu chọn Axe, Cuốc chọn Pickaxe)")]

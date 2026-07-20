@@ -93,7 +93,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2053014149, guid: d0dd00d1c88dca2479e5096fc454fdc3, type: 3}
+  m_Sprite: {fileID: -1616743386, guid: d0dd00d1c88dca2479e5096fc454fdc3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -115,13 +115,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
-  isTrashable: 0
   thisName: "Tinh d\u1EA7u thanh l\u1ECDc"
   thisDescription: "V\u1EAFt ki\u1EC7t l\u01B0\u1EE3ng n\u01B0\u1EDBc thanh khi\u1EBFt
     ng\u1EADm trong cu\u1ED1ng kh\u1ED5ng l\u1ED3 c\u1EE7a D\u1EA1 Lan H\u01B0\u01A1ng,
     h\xF2a v\u1EDBi ch\xFAt m\u1EE7 C\xFAc Tr\u1EAFng. \u0110\xE2y l\xE0 li\u1EC1u
     thu\u1ED1c c\u1EE9u m\u1EA1ng khi ng\u01B0\u1EDDi ch\u01A1i"
   thisFunctionality: "Thu\u1ED1c"
+  isTrashable: 0
+  item3DPrefab: {fileID: 0}
   isConsumable: 1
   healthEffect: 15
   caloriesEffect: 10
@@ -129,4 +130,3 @@ MonoBehaviour:
   itemBuffType: 0
   buffDuration: 0
   buffValue: 0
-  item3DPrefab: {fileID: 0}

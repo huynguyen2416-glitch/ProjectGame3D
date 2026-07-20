@@ -186,7 +186,7 @@ public class PlayerState : MonoBehaviour
 
         //  Đọc biến ShouldDrainHealth từ LightingManager mới
 
-        bool isDrainTime = LightingManager.Instance != null && LightingManager.Instance.ShouldDrainHealth;
+        bool isDrainTime = LightingManager.Instance != null && LightingManager.Instance.IsNight();
 
         if (isDrainTime)
         {

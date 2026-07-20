@@ -9,6 +9,7 @@ public class WeaponHolder : MonoBehaviour
     public GameObject realAxeInHand;
     public GameObject realPickaxeInHand;
     public GameObject realBowInHand;
+    public GameObject realSwordInHand;
 
     private void Awake()
     {
@@ -27,7 +28,7 @@ public class WeaponHolder : MonoBehaviour
     {
         UnquipAllWeapons();
 
-        //  Nếu cất vũ khí (chọn ô trống) thì chỉ cần cất đi là xong, không làm gì thêm
+        // Nếu cất vũ khí (chọn ô trống) thì chỉ cần cất đi là xong, không làm gì thêm
         if (string.IsNullOrEmpty(itemName)) return;
 
         string fixedName = RemoveDiacritics(itemName).ToLower().Replace(" ", "").Trim();
@@ -35,6 +36,7 @@ public class WeaponHolder : MonoBehaviour
         bool isPickaxe = fixedName.Contains("pickaxe") || fixedName.Contains("cuoc") || fixedName.Contains("miner");
         bool isAxe = !isPickaxe && (fixedName.Contains("axe") || fixedName.Contains("riu") || fixedName.Contains("hatchet") || fixedName.Contains("choptree"));
         bool isBow = !isPickaxe && !isAxe && (fixedName.Contains("bow") || fixedName.Contains("cung"));
+        bool isSword = !isPickaxe && !isAxe && !isBow && (fixedName.Contains("sword") || fixedName.Contains("kiem"));
 
         if (isPickaxe)
         {
@@ -51,6 +53,11 @@ public class WeaponHolder : MonoBehaviour
             if (realBowInHand != null) realBowInHand.SetActive(true);
             else Debug.LogError("[WeaponHolder]: realBowInHand chưa được gán trong Inspector!");
         }
+        else if (isSword)
+        {
+            if (realSwordInHand != null) realSwordInHand.SetActive(true);
+            else Debug.LogError("[WeaponHolder]: realSwordInHand chưa được gán trong Inspector!");
+        }
         else
         {
             Debug.LogWarning($"[WeaponHolder]: Không nhận diện được vũ khí từ tên '{itemName}'.");
@@ -62,6 +69,7 @@ public class WeaponHolder : MonoBehaviour
         if (realAxeInHand != null) realAxeInHand.SetActive(false);
         if (realPickaxeInHand != null) realPickaxeInHand.SetActive(false);
         if (realBowInHand != null) realBowInHand.SetActive(false);
+        if (realSwordInHand != null) realSwordInHand.SetActive(false);
     }
 
     private static string RemoveDiacritics(string text)
