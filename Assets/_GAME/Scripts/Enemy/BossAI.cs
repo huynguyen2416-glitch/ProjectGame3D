@@ -292,12 +292,8 @@ public class BossAI : MonoBehaviour
         }
 
         // Chờ đúng lúc Boss gầm to nhất (Animation Event AE_TauntRoarPeak) mới triệu hồi gấu,
-        // thay vì WaitForSeconds(1.5f) đoán mò
         tauntRoarPeakHappened = false;
         yield return new WaitUntil(() => tauntRoarPeakHappened);
-
-        SummonMinions();
-
         // Chờ animation taunt kết thúc hẳn (Animation Event AE_TauntComplete)
         tauntComplete = false;
         yield return new WaitUntil(() => tauntComplete);
@@ -322,30 +318,6 @@ public class BossAI : MonoBehaviour
         tauntComplete = true;
     }
 
-    private void SummonMinions()
-    {
-        if (minionPrefab != null)
-        {
-            for (int i = 0; i < minionCount; i++)
-            {
-                Vector2 randomCircle = Random.insideUnitCircle.normalized * 5f;
-                Vector3 spawnPos = transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
-
-                GameObject newBear = Instantiate(minionPrefab, spawnPos, Quaternion.identity);
-
-                EnemyAI bearAI = newBear.GetComponent<EnemyAI>();
-                if (bearAI != null)
-                {
-                    bearAI.ForceChasePlayer();
-                }
-            }
-            Debug.Log($"[BossAI] Boss đã triệu hồi {minionCount} con gấu tha hóa từ trong rừng sâu!");
-        }
-        else
-        {
-            Debug.LogWarning("[BossAI] Chưa kéo Prefab gấu vào ô Minion Prefab của Boss!");
-        }
-    }
 
     // UTILS
     float HorizontalDistance(Vector3 a, Vector3 b)

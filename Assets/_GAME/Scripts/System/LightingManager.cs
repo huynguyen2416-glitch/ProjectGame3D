@@ -10,12 +10,12 @@ public class LightingManager : MonoBehaviour
     [SerializeField] private LightingPreset Preset;
 
     [Header("Time Settings")]
-    [SerializeField, Range(0, 96)] public float TimeOfDay;
-    [SerializeField] private float dayLength = 96f;
+    [SerializeField, Range(0, 48)] public float TimeOfDay;
+    [SerializeField] private float dayLength = 48f;
 
     [Header("Win Condition: Survival Mode")]
     public int daysSurvived = 0;
-    public int daysToWin = 10;
+    public int daysToWin = 7;
 
     [Header("Boss cuối game")]
     public GameObject bossPrefab;
