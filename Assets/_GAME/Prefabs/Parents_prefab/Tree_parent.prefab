@@ -101,8 +101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoppableTree
   playerInRange: 0
   canBeChopped: 0
-  treeMaxHealth: 10
-  treeHealth: 10
+  treeMaxHealth: 5
+  treeHealth: 5
+  baseHitDelay: 0.6
   rootToDestroy: {fileID: 6116205595544168599}
   brokenPrefabName: ChoppedTree
 --- !u!1 &2417883904924982479

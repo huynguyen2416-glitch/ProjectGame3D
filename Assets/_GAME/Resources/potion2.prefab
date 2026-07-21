@@ -115,18 +115,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
-  isTrashable: 1
   thisName: "Tinh D\u1EA7u S\u01B0\u1EDFi \u1EA4m"
   thisDescription: "D\xF9ng tinh ch\u1EA5t n\u0103ng l\u01B0\u1EE3ng r\u1EF1c r\u1EE1
     c\u1EE7a H\u1ED3ng \u0110\u1ECF h\xF2a tan trong n\u1EC1n O\u1EA3i H\u01B0\u01A1ng.
     B\xF4i l\xEAn da gi\xFAp m\xE1u huy\u1EBFt l\u01B0u th\xF4ng m\u1EA1nh, \u0111\u1EA9y
     l\xF9i c\xE1i r\xE9t th\u1EA5u x\u01B0\u01A1ng c\u1EE7a m\xE0n \u0111\xEAm"
   thisFunctionality: "Thu\u1ED1c"
+  isTrashable: 1
+  item3DPrefab: {fileID: 0}
   isConsumable: 1
   healthEffect: 10
   caloriesEffect: 10
   hydrationEffect: 0
   itemBuffType: 1
-  buffDuration: 60
+  buffDuration: 20
   buffValue: 0
-  item3DPrefab: {fileID: 0}

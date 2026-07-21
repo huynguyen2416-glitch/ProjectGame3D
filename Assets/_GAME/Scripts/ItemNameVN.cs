@@ -21,7 +21,10 @@ public static class ItemNameVN
         {"hongden", "Hồng đen" },
         {"hongdo", "Hồng đỏ" },
         {"oaihuong", "Oải hương" },
-        {"campfire","Lửa trại" }
+        {"campfire","Lửa trại" },
+        {"water","Nước biển" },
+        {"purewater","Nước tinh khiết" }
+        
     };
 
     public static string Get(string englishName)

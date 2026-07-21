@@ -114,7 +114,7 @@ public class PlayerState : MonoBehaviour
         {
             if (!isDead)
             {
-                currentHydrationPercent -= 1;
+                currentHydrationPercent -= 3;
                 if (currentHydrationPercent < 0) currentHydrationPercent = 0;
             }
             yield return new WaitForSeconds(3);

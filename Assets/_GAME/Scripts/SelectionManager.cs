@@ -32,9 +32,26 @@ public class SelectionManager : MonoBehaviour
     // --- PROPERTY HỖ TRỢ ---
     public bool handIsVisible => handIcon != null && handIcon.gameObject.activeSelf;
 
-    // Cache Camera.main 1 lần thay vì gọi lại mỗi frame (Camera.main phải tìm object có tag
-    // "MainCamera" trong scene nếu chưa cache nội bộ - gọi lặp lại mỗi frame là lãng phí không cần thiết).
+    // Cache Camera.main 1 lần thay vì gọi lại mỗi frame 
     private Camera mainCam;
+
+    private WaterSource nearbyWaterSource;
+
+    public void RegisterWaterSource(WaterSource source) => nearbyWaterSource = source;
+
+    public void UnregisterWaterSource(WaterSource source)
+    {
+        if (nearbyWaterSource == source) nearbyWaterSource = null;
+    }
+
+    private Campfire nearbyCampfire;
+
+    public void RegisterCampfire(Campfire fire) => nearbyCampfire = fire;
+
+    public void UnregisterCampfire(Campfire fire)
+    {
+        if (nearbyCampfire == fire) nearbyCampfire = null;
+    }
 
     private void Awake()
     {
@@ -158,6 +175,7 @@ public class SelectionManager : MonoBehaviour
                 handIcon.gameObject.SetActive(false);
                 centerDotImage.gameObject.SetActive(true);
             }
+
         }
         else
         {
@@ -181,6 +199,47 @@ public class SelectionManager : MonoBehaviour
                 selectedRock.gameObject.GetComponent<MineableRock>().canBeMined = false;
                 selectedRock = null;
                 if (mineHolder != null) mineHolder.gameObject.SetActive(false);
+            }
+        }
+
+        // --- XỬ LÝ VÙNG LẤY NƯỚC (theo khoảng cách/trigger, KHÔNG theo raycast) ---
+        if (nearbyWaterSource != null)
+        {
+            bool isUIOpenForWater = (InventorySystem.Instance != null && InventorySystem.Instance.isOpen)
+                                   || (CraftingSystem.Instance != null && CraftingSystem.Instance.isOpen);
+
+            if (!isUIOpenForWater)
+            {
+                onTarget = true;
+                interaction_text.text = nearbyWaterSource.UsesRemainingToday > 0
+                    ? $"Nhấn F để lấy nước ({nearbyWaterSource.UsesRemainingToday}/{nearbyWaterSource.maxUsesPerDay} lượt hôm nay)"
+                    : "Đã hết lượt lấy nước hôm nay";
+                interaction_Info_UI.SetActive(true);
+                handIcon.gameObject.SetActive(false);
+                centerDotImage.gameObject.SetActive(true);
+
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    nearbyWaterSource.TryCollectWater();
+                }
+            }
+        }
+
+        // --- XỬ LÝ ĐỨNG GẦN LỬA TRẠI (theo trigger, giống cơ chế WaterSource ở trên) ---
+        if (nearbyCampfire != null)
+        {
+            bool isUIOpenForCampfire = (InventorySystem.Instance != null && InventorySystem.Instance.isOpen)
+                                      || (CraftingSystem.Instance != null && CraftingSystem.Instance.isOpen);
+
+            if (!isUIOpenForCampfire)
+            {
+                onTarget = true;
+                interaction_text.text = nearbyCampfire.RawWaterCount > 0
+                    ? $"Nhấn {nearbyCampfire.boilWaterKey} để đun nước tinh khiết"
+                    : "Đang sưởi ấm cạnh lửa trại";
+                interaction_Info_UI.SetActive(true);
+                handIcon.gameObject.SetActive(false);
+                centerDotImage.gameObject.SetActive(true);
             }
         }
     }

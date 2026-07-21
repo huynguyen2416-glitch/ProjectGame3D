@@ -5,13 +5,18 @@ public class LightingManager : MonoBehaviour
 {
     public static LightingManager Instance { get; private set; }
 
+
+    public static event System.Action OnDawn;
+
     [Header("Scene References")]
     [SerializeField] private Light DirectionalLight;
     [SerializeField] private LightingPreset Preset;
 
     [Header("Time Settings")]
-    [Tooltip("Thời gian hiện tại trong ngày (Gợi ý: Đặt = 12 để game bắt đầu vào lúc Bình minh)")]
-    [SerializeField, Range(0, 48)] public float TimeOfDay = 12f;
+    [Tooltip("Thời gian hiện tại trong ngày. MẶC ĐỊNH = 0 (Nửa đêm) để game LUÔN bắt đầu vào ĐÊM THỨ " +
+             "1 đúng như thiết kế sinh tồn (trước đây mặc định = 12, tức đúng lúc Bình minh, khiến " +
+             "game bắt đầu giữa ban ngày thay vì ban đêm - đây chính là nguyên nhân gây lỗi).")]
+    [SerializeField, Range(0, 48)] public float TimeOfDay = 0f;
     [Tooltip("Độ dài của 1 ngày (Mặc định: 48)")]
     [SerializeField] private float dayLength = 48f;
 
@@ -46,6 +51,10 @@ public class LightingManager : MonoBehaviour
             float percent = TimeOfDay / dayLength;
             isNightState = (percent >= 0.75f || percent < 0.25f);
             ShouldDrainHealth = isNightState;
+            if (isNightState && dayTransitionUI != null)
+            {
+                dayTransitionUI.ShowDay(daysSurvived + 1);
+            }
         }
     }
 
@@ -101,6 +110,9 @@ public class LightingManager : MonoBehaviour
                 {
                     PersonaManager.Instance.AwardPoint(1, "Sống sót qua 1 đêm");
                 }
+
+                // Báo cho các hệ thống khác (VD WaterSource) biết trời vừa sáng để tự làm mới theo ngày
+                OnDawn?.Invoke();
 
                 if (daysSurvived >= daysToWin)
                 {

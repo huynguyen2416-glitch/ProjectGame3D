@@ -79,6 +79,19 @@ public class EnemyAI : MonoBehaviour
     void Chase()
     {
         if (player == null) return;
+
+        // Người chơi đang trong vùng Shelter -> an toàn tuyệt đối, quái bỏ cuộc, quay lại tuần tra
+        if (Shelter.IsPointProtected(player.position))
+        {
+            currentState = State.Patrol;
+            if (anim != null)
+            {
+                anim.SetBool("walk", false);
+                anim.SetBool("run", false);
+            }
+            return;
+        }
+
         if (rend != null && chaseMaterial != null) rend.material = chaseMaterial;
 
         if (anim != null)
@@ -159,7 +172,17 @@ public class EnemyAI : MonoBehaviour
         if (Vector3.Distance(transform.position, lookPos) > 0.1f)
         {
             Vector3 dir = (lookPos - transform.position).normalized;
-            transform.position += dir * speed * Time.deltaTime;
+            Vector3 nextPos = transform.position + dir * speed * Time.deltaTime;
+
+            // Không cho quái bước vào vùng Shelter dù đang di chuyển đúng hướng đó - đứng khựng lại
+            // ngay trước ranh giới, chỉ xoay mặt về hướng mục tiêu chứ không tiến thêm.
+            if (Shelter.IsPointProtected(nextPos))
+            {
+                transform.LookAt(lookPos);
+                return;
+            }
+
+            transform.position = nextPos;
             transform.LookAt(lookPos);
         }
     }

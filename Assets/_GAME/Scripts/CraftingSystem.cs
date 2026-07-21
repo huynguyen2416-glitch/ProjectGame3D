@@ -195,27 +195,27 @@ public class CraftingSystem : MonoBehaviour
     // Logic chính xử lý khi nhấn nút "Craft" trên giao diện
     private void CraftItem(CraftingRecipe recipe)
     {
-        inventoryItemList = InventorySystem.Instance.itemList; 
+        inventoryItemList = InventorySystem.Instance.itemList;
 
         // Bước 1: Kiểm tra xem người chơi có đủ nguyên liệu không
-        foreach (var req in recipe.ingredients) 
+        foreach (var req in recipe.ingredients)
         {
-            if (CountItem(req.itemName) < req.amount) 
+            if (CountItem(req.itemName) < req.amount)
             {
-                Debug.Log("Không đủ nguyên liệu chế tạo!"); 
+                Debug.Log("Không đủ nguyên liệu chế tạo!");
                 return;
             }
         }
 
         // Bước 2: Phân loại cơ chế Chế tạo
-        if (recipe.isStructure) 
+        if (recipe.isStructure)
         {
             // BẮT ĐẦU CHẾ ĐỘ ĐẶT (Ví dụ: Lửa Trại)
-            pendingRecipe = recipe; 
+            pendingRecipe = recipe;
             isPlacingMode = true;
 
             // Ẩn giao diện chế tạo trước khi nhắm hướng đặt 
-            isOpen = false; 
+            isOpen = false;
             if (craftingScreenUI != null) craftingScreenUI.SetActive(false);
 
             // Ẩn túi đồ để khôi phục lại các phím 
@@ -224,36 +224,36 @@ public class CraftingSystem : MonoBehaviour
                 InventorySystem.Instance.isOpen = false;
                 if (InventorySystem.Instance.inventoryScreenUI != null)
                 {
-                    InventorySystem.Instance.inventoryScreenUI.SetActive(false); 
+                    InventorySystem.Instance.inventoryScreenUI.SetActive(false);
                 }
             }
 
             // Khóa con trỏ chuột vào giữa màn hình để xoay Camera nhắm hướng đặt
-            Cursor.lockState = CursorLockMode.Locked; 
-            Cursor.visible = false; 
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
             // Hiển thị tâm ngắm nhắm bắn UI ở giữa màn hình
             if (placementCrosshair != null) placementCrosshair.SetActive(true);
 
-            Debug.Log("Đã vào chế độ nhắm đặt. Nhấn Chuột Trái để xây, Chuột Phải hoặc ESC để Hủy."); 
+            Debug.Log("Đã vào chế độ nhắm đặt. Nhấn Chuột Trái để xây, Chuột Phải hoặc ESC để Hủy.");
         }
         else
         {
             // CHẾ TẠO ĐỒ VẬT THƯỜNG (Ví dụ: Rìu, Thuốc)
-            foreach (var req in recipe.ingredients) 
+            foreach (var req in recipe.ingredients)
             {
-                InventorySystem.Instance.RemoveItemAmount(req.itemName, req.amount); 
+                InventorySystem.Instance.RemoveItemAmount(req.itemName, req.amount);
             }
 
-            for (int i = 0; i < recipe.resultAmount; i++) 
+            for (int i = 0; i < recipe.resultAmount; i++)
             {
-                InventorySystem.Instance.AddToInventory(recipe.resultItemName); 
+                InventorySystem.Instance.AddToInventory(recipe.resultItemName);
             }
 
-            if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound); 
-            if (PersonaManager.Instance != null) PersonaManager.Instance.AwardPoint(1, $"Chế tạo {recipe.resultItemName}"); 
+            if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+            if (PersonaManager.Instance != null) PersonaManager.Instance.AwardPoint(1, $"Chế tạo {recipe.resultItemName}");
 
-            RefreshRequirementsUI(); 
+            RefreshRequirementsUI();
         }
     }
 
@@ -290,10 +290,17 @@ public class CraftingSystem : MonoBehaviour
             {
                 GameObject structure = Instantiate(pendingRecipe.structurePrefab, hit.point, Quaternion.identity);
                 structure.name = pendingRecipe.structurePrefab.name;
+
                 Campfire campfireScript = structure.GetComponent<Campfire>();
                 if (campfireScript != null)
                 {
                     campfireScript.isPlayerBuilt = true;
+                }
+
+                Shelter shelterScript = structure.GetComponent<Shelter>();
+                if (shelterScript != null)
+                {
+                    shelterScript.isPlayerBuilt = true;
                 }
             }
 

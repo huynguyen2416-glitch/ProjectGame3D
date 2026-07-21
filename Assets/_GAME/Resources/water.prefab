@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8971540396001914063
+--- !u!1 &5274339241808281985
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,28 +8,28 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3614177701370466220}
-  - component: {fileID: 839906497497650093}
-  - component: {fileID: 1739249594197892237}
-  - component: {fileID: 5291591370453311083}
-  - component: {fileID: 4374480622610446812}
-  - component: {fileID: -8294113487045560936}
+  - component: {fileID: 6986197974863405046}
+  - component: {fileID: 8547589448116931275}
+  - component: {fileID: 2008600979910275472}
+  - component: {fileID: 8072570951365976347}
+  - component: {fileID: 7505841465075545775}
+  - component: {fileID: 5692579224520440325}
   m_Layer: 0
-  m_Name: potion1
+  m_Name: water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &3614177701370466220
+--- !u!224 &6986197974863405046
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971540396001914063}
+  m_GameObject: {fileID: 5274339241808281985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2628.4136}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37,38 +37,38 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1328.0691, y: -2.24998}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &839906497497650093
+--- !u!222 &8547589448116931275
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971540396001914063}
+  m_GameObject: {fileID: 5274339241808281985}
   m_CullTransparentMesh: 1
---- !u!114 &1739249594197892237
+--- !u!114 &2008600979910275472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971540396001914063}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.08362404, g: 0.35419518, b: 0.509434, a: 0.85882354}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2053014149, guid: d0dd00d1c88dca2479e5096fc454fdc3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: af0d51d0570cc7241a62253e69524990, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -78,56 +78,52 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5291591370453311083
+--- !u!114 &8072570951365976347
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971540396001914063}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1824a6dab9a982c4eb3e6d0cb3155e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragDrop
   canvas: {fileID: 0}
---- !u!225 &4374480622610446812
+--- !u!225 &7505841465075545775
 CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971540396001914063}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &-8294113487045560936
+--- !u!114 &5692579224520440325
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971540396001914063}
+  m_GameObject: {fileID: 5274339241808281985}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea3cea71fd696984883c926c68af42db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
-  thisName: "L\u1ECD an th\u1EA7n"
-  thisDescription: "M\xF9i h\u01B0\u01A1ng O\u1EA3i H\u01B0\u01A1ng xoa d\u1ECBu
-    th\u1EA7n kinh k\u1EBFt h\u1EE3p v\u1EDBi s\u1EF1 k\xEDch th\xEDch nh\u1ECBp
-    tim c\u1EE7a r\u1EC5 B\u1ED3 C\xF4ng Anh. Cho ph\xE9p ng\u01B0\u1EDDi ch\u01A1i
-    ch\u1EA1y n\u01B0\u1EDBc r\xFAt b\u1EA1t m\u1EA1ng m\xE0 kh\xF4ng c\u1EA3m th\u1EA5y
-    m\u1EC7t m\u1ECFi"
-  thisFunctionality: "Thu\u1ED1c"
+  thisName: "N\u01B0\u1EDBc bi\u1EC3n"
+  thisDescription: "Ch\u01B0a ch\u1EAFc u\u1ED1ng \u0111\u01B0\u1EE3c"
+  thisFunctionality: "C\xF3 th\u1EC3 ti\xEAu th\u1EE5 [R-click]"
   isTrashable: 1
   item3DPrefab: {fileID: 0}
   isConsumable: 1
   healthEffect: 0
   caloriesEffect: 0
-  hydrationEffect: 10
-  itemBuffType: 2
-  buffDuration: 20
-  buffValue: 0
+  hydrationEffect: -10
+  itemBuffType: 0
+  buffDuration: 120
+  buffValue: 2

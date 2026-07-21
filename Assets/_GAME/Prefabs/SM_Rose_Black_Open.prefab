@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3565017874535021431}
   m_Layer: 0
   m_Name: SM_Rose_Black_Open
-  m_TagString: Untagged
+  m_TagString: pickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
